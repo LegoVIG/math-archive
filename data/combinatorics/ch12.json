@@ -1,0 +1,436 @@
+{
+  "n": 12,
+  "intro": [
+    {
+      "title": "О чём эта глава",
+      "html": "<p>Вероятностный метод доказывает <em>существование</em> объекта, не строя его: выбираем объект случайно и показываем, что с положительной вероятностью он обладает нужным свойством, или что среднее значение некоторой величины не меньше <span class=\"m\">c</span> — тогда найдётся объект со значением не меньше <span class=\"m\">c</span>. По сути это усреднение (глава 1), записанное на языке вероятностей; язык удобен тем, что позволяет пользоваться линейностью матожидания и оценками вероятностей.</p><p><strong>Инструменты.</strong> <em>Линейность:</em> <span class=\"m\">\\mathbb E(X+Y)=\\mathbb EX+\\mathbb EY</span> всегда, даже для зависимых величин; поэтому ожидание числа «плохих» событий — сумма их вероятностей. <em>Оценка объединения:</em> <span class=\"m\">P(A_1\\cup\\dots\\cup A_k)\\le\\sum P(A_i)</span>; если сумма меньше 1, то с положительной вероятностью не происходит ни одно <span class=\"m\">A_i</span>. <em>Удаление:</em> выбираем случайный объект, затем исправляем его, удаляя по элементу из каждого «плохого» места. <em>Второй момент:</em> <span class=\"m\">P(|X-\\mathbb EX|\\ge t)\\le\\frac{\\operatorname{Var}X}{t^2}</span> (Чебышёв). <em>Локальная лемма Ловаса</em> (§2): если каждое плохое событие маловероятно и зависит лишь от немногих других, то с положительной вероятностью не происходит ни одно — даже когда событий так много, что оценка объединения бесполезна.</p>"
+    }
+  ],
+  "secs": [
+    {
+      "n": 1,
+      "t": "Ожидание, оценка объединения, второй момент",
+      "th": [
+        {
+          "title": "Ожидание, оценка объединения, второй момент",
+          "html": "<div class=\"ex\"><div class=\"ex-h\">Пример 12.1</div><p>Докажите, что вершины любого графа можно разбить на две доли так, чтобы между долями шло не меньше половины рёбер.</p><div class=\"exsol\"><button type=\"button\" class=\"exsol-b\" aria-expanded=\"false\">Решение</button><div class=\"exsol-c\" hidden><p>Отнесём каждую вершину к одной из долей независимо с вероятностью <span class=\"m\">\\frac12</span>. Ребро идёт между долями с вероятностью <span class=\"m\">\\frac12</span>, поэтому ожидание числа таких рёбер равно <span class=\"m\">|E|/2</span>. Значит, существует разбиение, где их не меньше <span class=\"m\">|E|/2</span>. (Детерминированный вариант — полуинвариант из главы 6: пересаживаем вершину, у которой больше половины соседей в её доле.)</p></div></div></div><div class=\"ex\"><div class=\"ex-h\">Пример 12.2 <span class=\"ex-t\">(Эрдёш)</span></div><p>Докажите, что при <span class=\"m\">n=\\lfloor2^{k/2}\\rfloor</span>, <span class=\"m\">k\\ge3</span>, рёбра полного графа на <span class=\"m\">n</span> вершинах можно раскрасить в два цвета без одноцветного полного подграфа на <span class=\"m\">k</span> вершинах.</p><div class=\"exsol\"><button type=\"button\" class=\"exsol-b\" aria-expanded=\"false\">Решение</button><div class=\"exsol-c\" hidden><p>Красим каждое ребро случайно. Данные <span class=\"m\">k</span> вершин образуют одноцветный <span class=\"m\">K_k</span> с вероятностью <span class=\"m\">2^{1-\\binom k2}</span>. По оценке объединения вероятность того, что одноцветный <span class=\"m\">K_k</span> есть, не больше <span class=\"m\">\\binom nk2^{1-\\binom k2}&lt;\\frac{n^k}{k!}2^{1-k(k-1)/2}\\le\\frac{2^{1+k/2}}{k!}&lt;1</span>. Значит, есть раскраска без одноцветных <span class=\"m\">K_k</span>; поэтому число Рамсея <span class=\"m\">R(k,k)&gt;2^{k/2}</span>.</p></div></div></div><div class=\"ex\"><div class=\"ex-h\">Пример 12.3 <span class=\"ex-t\">(Каро–Вэй)</span></div><p>В графе вершина <span class=\"m\">v</span> имеет степень <span class=\"m\">d_v</span>. Докажите, что в графе есть независимое множество (попарно несмежные вершины) из не менее <span class=\"m\">\\sum_v\\frac1{d_v+1}</span> вершин.</p><div class=\"exsol\"><button type=\"button\" class=\"exsol-b\" aria-expanded=\"false\">Решение</button><div class=\"exsol-c\" hidden><p>Упорядочим вершины случайно и возьмём вершины, стоящие раньше всех своих соседей; они попарно несмежны. Вершина <span class=\"m\">v</span> взята с вероятностью <span class=\"m\">\\frac1{d_v+1}</span> (среди неё и её соседей она первая), и по линейности ожидание размера множества равно <span class=\"m\">\\sum\\frac1{d_v+1}</span>.</p></div></div></div><p><strong>Как применять.</strong> (1) Выбрать вероятностное пространство (случайная раскраска, случайный сдвиг, случайная перестановка, случайное подмножество с вероятностью <span class=\"m\">p</span> — параметр <span class=\"m\">p</span> подбирают в конце). (2) Записать нужную величину как сумму индикаторов. (3) Посчитать ожидание по линейности. (4) Сослаться на то, что значение не меньше среднего встречается.</p><p><strong>Упражнения.</strong> 1) Докажите, что существует турнир на <span class=\"m\">n</span> участниках, в котором не меньше <span class=\"m\">\\frac{n!}{2^{n-1}}</span> гамильтоновых путей (цепочек «каждый выиграл у следующего»). (Случайный турнир: каждая из <span class=\"m\">n!</span> перестановок — путь с вероятностью <span class=\"m\">2^{1-n}</span>.) 2) Докажите, что из любых <span class=\"m\">n</span> ненулевых целых чисел можно выбрать больше <span class=\"m\">n/3</span> чисел, среди которых нет <span class=\"m\">a,b,c</span> с <span class=\"m\">a+b=c</span>. (Случайно домножьте по модулю простого <span class=\"m\">p=3k+2</span> и возьмите числа, попавшие в «среднюю треть».) 3) <span class=\"m\">m</span> подмножеств по <span class=\"m\">k</span> элементов, <span class=\"m\">m&lt;2^{k-1}</span>. Докажите, что элементы можно покрасить в два цвета так, чтобы ни одно подмножество не было одноцветным.</p>"
+        }
+      ],
+      "g": [
+        {
+          "t": null,
+          "p": [
+            {
+              "id": "12.1.1",
+              "src": "Питергор 2017 (II тур, 11 кл.) №63",
+              "st": "<p>Ученики посещают <span class=\"m\">m</span> кружков, в каждом ровно <span class=\"m\">mk</span> детей. Докажите, что всех учеников можно рассадить по <span class=\"m\">k</span> кабинетам так, чтобы в каждом кабинете был хотя бы один представитель каждого кружка.</p>",
+              "d": 2,
+              "sol": {
+                "idea": "<p>Жадно: из каждого кружка по очереди выбираем <span class=\"m\">k</span> ещё не рассаженных учеников и сажаем их в разные кабинеты.</p>",
+                "plan": "<p>Когда очередь доходит до <span class=\"m\">i</span>-го кружка, рассажено <span class=\"m\">(i-1)k\\le(m-1)k</span> учеников, а в кружке <span class=\"m\">mk</span> человек — найдутся <span class=\"m\">k</span> свободных. Остальных сажаем куда угодно.</p>",
+                "note": "<p>Вероятностное усиление: то же верно при числе кружков <span class=\"m\">N\\approx e^{m/2}</span> (случайная рассадка по <span class=\"m\">k+a</span> комнатам и отбрасывание «подозрительных»).</p>",
+                "ans": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.1.2",
+              "src": "ISL 1987/17",
+              "st": "<p>Докажите, что числа <span class=\"m\">1,2,\\dots,1987</span> можно покрасить в 4 цвета так, чтобы не было одноцветной арифметической прогрессии из 10 членов.</p>",
+              "d": 3,
+              "sol": {
+                "idea": "<p>Случайная раскраска и оценка объединения.</p>",
+                "plan": "<p>Прогрессий из 10 членов с разностью <span class=\"m\">d</span> ровно <span class=\"m\">1987-9d</span>; всего <span class=\"m\">\\sum_{d=1}^{220}(1987-9d)=218350</span>. Каждая одноцветна с вероятностью <span class=\"m\">4^{-9}=\\frac1{262144}</span>; ожидаемое число одноцветных меньше 1.</p>",
+                "ans": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.1.3",
+              "src": "файл 2.44; файл 16.17; Всерос 1995 (закл., 9 кл.) №8; Всерос 1995 (закл., 10 кл.) №7",
+              "st": "<p>В каждой клетке доски <span class=\"m\">2000\\times2000</span> стоит <span class=\"m\">1</span> или <span class=\"m\">-1</span>, сумма всех чисел положительна. Докажите, что можно выбрать 1000 строк и 1000 столбцов так, что сумма чисел на их пересечении не меньше 1000.</p>",
+              "d": 5,
+              "sol": {
+                "idea": "<p>Переставляем строки и столбцы так, чтобы в первой строке первые 1000 чисел были единицами; затем выбираем 1000 строк с наибольшими суммами в левой половине, иначе работаем с правой половиной.</p>",
+                "plan": "<p>Сумма положительна, поэтому есть строка, в которой единиц больше 1000; переставим столбцы так, чтобы её первые 1000 чисел были единицами. Суммы строк по 1000 клеткам чётны. Левая половина <span class=\"m\">L</span> (первые 1000 столбцов): возьмём 1000 строк с наибольшими суммами в <span class=\"m\">L</span>. Если их сумма не меньше 1000 — победа. Иначе, так как среди них есть строка с суммой 1000, найдётся выбранная строка с отрицательной суммой (<span class=\"m\">\\le-2</span>), а тогда все невыбранные строки имеют сумму <span class=\"m\">\\le-2</span>, и сумма всей половины <span class=\"m\">L</span> меньше <span class=\"m\">1000-2000=-1000</span>. Значит, сумма правой половины <span class=\"m\">R</span> больше 1000. Возьмём в <span class=\"m\">R</span> 1000 строк с наибольшими суммами: если их сумма меньше 1000, то какая-то из них имеет сумму <span class=\"m\">\\le0</span>, все остальные строки — тоже <span class=\"m\">\\le0</span>, и сумма <span class=\"m\">R</span> меньше 1000 — противоречие.</p>",
+                "ans": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.1.4",
+              "src": "ISL 1977/13",
+              "st": "<p><span class=\"m\">B</span> — множество из <span class=\"m\">k</span> последовательностей из <span class=\"m\">\\pm1</span> длины <span class=\"m\">n</span>. Докажите, что найдётся последовательность <span class=\"m\">c</span>, для которой <span class=\"m\">B</span> и <span class=\"m\">c\\cdot B=\\{(c_1b_1,\\dots,c_nb_n): b\\in B\\}</span> имеют не более <span class=\"m\">\\frac{k^2}{2^n}</span> общих элементов.</p>",
+              "d": 2,
+              "sol": {
+                "idea": "<p>Среднее <span class=\"m\">|B\\cap cB|</span> по всем <span class=\"m\">c</span> равно <span class=\"m\">\\frac{k^2}{2^n}</span>.</p>",
+                "plan": "<p>Пара <span class=\"m\">(b,b')\\in B^2</span> даёт совпадение ровно при одном <span class=\"m\">c=bb'</span>, поэтому <span class=\"m\">\\sum_c|B\\cap cB|=k^2</span>.</p>",
+                "ans": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.1.5",
+              "src": "файл 2.89",
+              "st": "<p>На доске выписаны положительные числа <span class=\"m\">a_1,\\dots,a_n</span>. Вася хочет выписать под каждым <span class=\"m\">a_i</span> число <span class=\"m\">b_i\\ge a_i</span> так, чтобы отношение любых двух чисел <span class=\"m\">b_i</span> было целым (большего к меньшему). Докажите, что можно добиться <span class=\"m\">b_1b_2\\cdots b_n\\le2^{\\frac{n-1}2}a_1\\cdots a_n</span>.</p>",
+              "d": 5,
+              "sol": {
+                "idea": "<p>Все <span class=\"m\">b_i</span> — вида <span class=\"m\">2^{x+\\text{целое}}</span>; выбрать сдвиг <span class=\"m\">x</span> усреднением по <span class=\"m\">n</span> «особым» значениям.</p>",
+                "plan": "<p>Пусть <span class=\"m\">y_i=\\log_2a_i</span>, для сдвига <span class=\"m\">x</span> положим <span class=\"m\">b_i=2^{x+\\lceil y_i-x\\rceil}</span>, тогда <span class=\"m\">\\log_2\\frac{b_i}{a_i}=f_i(x)\\in[0,1)</span>. При <span class=\"m\">x=\\{y_j\\}</span> имеем <span class=\"m\">f_j=0</span> и <span class=\"m\">f_i(\\{y_j\\})+f_j(\\{y_i\\})=1</span> для <span class=\"m\">i\\ne j</span>; сумма по <span class=\"m\">j</span> всех <span class=\"m\">\\sum_if_i(\\{y_j\\})</span> равна <span class=\"m\">\\binom n2</span>, так что для некоторого <span class=\"m\">j</span> сумма не больше <span class=\"m\">\\frac{n-1}2</span>.</p>",
+                "ans": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.1.6",
+              "src": "ISL 1999 C4",
+              "st": "<p>Дано множество <span class=\"m\">A</span> из <span class=\"m\">N</span> вычетов по модулю <span class=\"m\">N^2</span>. Докажите, что существует множество <span class=\"m\">B</span> из <span class=\"m\">N</span> вычетов по модулю <span class=\"m\">N^2</span> такое, что <span class=\"m\">A+B</span> содержит не менее половины всех вычетов.</p>",
+              "d": 4,
+              "sol": {
+                "idea": "<p>Случайное <span class=\"m\">N</span>-элементное <span class=\"m\">B</span>.</p>",
+                "plan": "<p>Вычет <span class=\"m\">r</span> не лежит в <span class=\"m\">A+B</span> <span class=\"m\">\\iff</span> <span class=\"m\">B\\cap(r-A)=\\varnothing</span>; вероятность этого <span class=\"m\">\\binom{N^2-N}N/\\binom{N^2}N\\le(1-\\frac1N)^N&lt;\\frac1e&lt;\\frac12</span>. Значит, <span class=\"m\">E|A+B|&gt;\\frac{N^2}2</span>.</p>",
+                "ans": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.1.7",
+              "src": "ISL 2022 C5",
+              "st": "<p>Даны <span class=\"m\">m,n\\ge2</span>, множество <span class=\"m\">X</span> из <span class=\"m\">n</span> элементов и различные непустые подмножества <span class=\"m\">X_1,\\dots,X_m</span>. Функция <span class=\"m\">f:X\\to\\{1,\\dots,n+1\\}</span> хорошая, если найдётся <span class=\"m\">k</span> с <span class=\"m\">\\sum_{x\\in X_k}f(x)&gt;\\sum_{x\\in X_i}f(x)</span> при всех <span class=\"m\">i\\ne k</span>. Докажите, что хороших функций не меньше <span class=\"m\">n^n</span>.</p>",
+              "d": 5,
+              "sol": {
+                "idea": "<p>Инъекция из множества всех <span class=\"m\">n^n</span> функций <span class=\"m\">X\\to\\{1,\\dots,n\\}</span> в хорошие: к функции прибавить 1 на множестве <span class=\"m\">X_l</span> с наибольшей суммой.</p>",
+                "plan": "<p>Обозначим <span class=\"m\">f(Y)=\\sum_{x\\in Y}f(x)</span>. Для <span class=\"m\">f:X\\to\\{1..n\\}</span> выберем <span class=\"m\">l</span> с наибольшим <span class=\"m\">f(X_l)</span> и положим <span class=\"m\">f^+=f+1</span> на <span class=\"m\">X_l</span>, <span class=\"m\">f^+=f</span> вне <span class=\"m\">X_l</span>; значения <span class=\"m\">f^+</span> лежат в <span class=\"m\">\\{1..n+1\\}</span>. Для <span class=\"m\">j\\ne l</span> невозможно <span class=\"m\">X_l\\subset X_j</span>: тогда <span class=\"m\">X_l\\subsetneq X_j</span> и <span class=\"m\">f(X_j)&gt;f(X_l)</span>, так как <span class=\"m\">f\\ge1</span>. Значит, <span class=\"m\">|X_j\\cap X_l|&lt;|X_l|</span> и <span class=\"m\">f^+(X_l)=f(X_l)+|X_l|&gt;f(X_j)+|X_j\\cap X_l|=f^+(X_j)</span>, т.е. <span class=\"m\">X_l</span> — единственный максимум для <span class=\"m\">f^+</span>, и <span class=\"m\">f^+</span> хорошая. По <span class=\"m\">f^+</span> множество <span class=\"m\">X_l</span> восстанавливается как единственный максимум, а затем <span class=\"m\">f=f^+-1</span> на <span class=\"m\">X_l</span>; поэтому отображение <span class=\"m\">f\\mapsto f^+</span> инъективно, и хороших функций не меньше <span class=\"m\">n^n</span>.</p>",
+                "ans": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.1.8",
+              "src": "USAMO 2010/6",
+              "st": "<p>На доске записаны 68 пар ненулевых целых чисел; для каждого натурального <span class=\"m\">k</span> на доске есть не более одной из пар <span class=\"m\">(k,k)</span> и <span class=\"m\">(-k,-k)</span>. Ученик стирает некоторые из 136 чисел так, что никакие два стёртых числа не дают в сумме 0, и получает очко за каждую пару, в которой стёрто хотя бы одно число. Какое наибольшее число очков <span class=\"m\">N</span> он может гарантировать?</p>",
+              "d": 6,
+              "sol": {
+                "ans": "43",
+                "idea": "<p>Для каждого <span class=\"m\">k&gt;0</span> стираем все вхождения <span class=\"m\">k</span> с вероятностью <span class=\"m\">p</span>, иначе все вхождения <span class=\"m\">-k</span>; <span class=\"m\">p</span> — золотое сечение.</p>",
+                "plan": "<p>Пара <span class=\"m\">(k,k)</span> (если её нет в виде <span class=\"m\">(-k,-k)</span>, то считаем знак <span class=\"m\">k</span> «преимущественным» и выбираем его с вероятностью <span class=\"m\">p</span>) даёт очко с вероятностью <span class=\"m\">p</span>, пара <span class=\"m\">(a,b)</span> с разными модулями — с вероятностью <span class=\"m\">\\ge1-p^2</span>; при <span class=\"m\">p=\\frac{\\sqrt5-1}2</span> обе <span class=\"m\">\\ge p\\approx0{,}618</span>, и <span class=\"m\">68p&gt;42</span>. Пример, в котором больше 43 гарантировать нельзя, строится из пар на 8 числах.</p>"
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.1.9",
+              "src": "USAMO 2012/6",
+              "st": "<p>Действительные <span class=\"m\">x_1,\\dots,x_n</span> удовлетворяют <span class=\"m\">\\sum x_i=0</span>, <span class=\"m\">\\sum x_i^2=1</span>. Для <span class=\"m\">A\\subseteq\\{1,\\dots,n\\}</span> положим <span class=\"m\">S_A=\\sum_{i\\in A}x_i</span>. Докажите, что для любого <span class=\"m\">\\lambda&gt;0</span> число множеств <span class=\"m\">A</span> с <span class=\"m\">S_A\\ge\\lambda</span> не больше <span class=\"m\">\\frac{2^{n-3}}{\\lambda^2}</span>, и найдите случаи равенства.</p>",
+              "d": 5,
+              "sol": {
+                "idea": "<p>Второй момент случайной суммы и симметрия <span class=\"m\">A\\leftrightarrow\\overline A</span>.</p>",
+                "plan": "<p>Для случайного <span class=\"m\">A</span>: <span class=\"m\">ES_A^2=\\frac14\\sum x_i^2=\\frac14</span> (так как <span class=\"m\">\\sum x_i=0</span>). По Чебышёву <span class=\"m\">\\#\\{|S_A|\\ge\\lambda\\}\\le\\frac{2^n}{4\\lambda^2}</span>, а <span class=\"m\">S_{\\overline A}=-S_A</span>, поэтому <span class=\"m\">\\#\\{S_A\\ge\\lambda\\}</span> — половина. Равенство: все <span class=\"m\">S_A\\in\\{0,\\pm\\lambda\\}</span>, что даёт, например, <span class=\"m\">x=(\\frac1{\\sqrt2},-\\frac1{\\sqrt2},0,\\dots,0)</span> с <span class=\"m\">\\lambda=\\frac1{\\sqrt2}</span> (разобрать все случаи).</p>",
+                "ans": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.1.10",
+              "src": "USAMO 2024/6",
+              "st": "<p>Даны <span class=\"m\">n&gt;\\ell\\ge1</span>. Семейство подмножеств <span class=\"m\">A_1,\\dots,A_k</span> множества <span class=\"m\">\\{1,\\dots,n\\}</span> называется <span class=\"m\">\\ell</span>-большим, если <span class=\"m\">|A_i|\\ge\\ell</span> для всех <span class=\"m\">i</span>. Найдите наибольшее <span class=\"m\">c</span>, при котором для всех <span class=\"m\">k</span>, всех неотрицательных <span class=\"m\">x_1,\\dots,x_k</span> и всех <span class=\"m\">\\ell</span>-больших семейств <span class=\"m\">\\sum_{i,j}x_ix_j\\frac{|A_i\\cap A_j|^2}{|A_i||A_j|}\\ge c\\left(\\sum x_i\\right)^2</span>.</p>",
+              "d": 6,
+              "sol": {
+                "ans": "<span class=\"m\">c=\\frac{n+\\ell^2-2\\ell}{n(n-1)}</span>",
+                "idea": "<p><span class=\"m\">|A\\cap B|^2=\\#\\{(u,v): u,v\\in A\\cap B\\}</span>; левая часть <span class=\"m\">=\\sum_{(u,v)}y_{uv}^2</span>, где <span class=\"m\">y_{uv}=\\sum_ix_i\\frac{[u,v\\in A_i]}{|A_i|}</span>.</p>",
+                "plan": "<p><span class=\"m\">\\sum_uy_{uu}=\\sum x_i</span>, <span class=\"m\">\\sum_{u\\ne v}y_{uv}=\\sum x_i(|A_i|-1)\\ge(\\ell-1)\\sum x_i</span>. По КБШ отдельно для диагональных и внедиагональных пар получаем <span class=\"m\">\\ge\\left(\\frac1n+\\frac{(\\ell-1)^2}{n(n-1)}\\right)(\\sum x_i)^2</span>. Равенство — все <span class=\"m\">\\ell</span>-подмножества с равными весами.</p>"
+              },
+              "ggb": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "t": "Локальная лемма Ловаса",
+      "th": [
+        {
+          "title": "Независимость и локальная лемма",
+          "html": "<p>Подмножества <span class=\"m\">A</span> и <span class=\"m\">B</span> конечного множества <span class=\"m\">M</span> <em>независимы</em>, если <span class=\"m\">|A\\cap B|\\cdot|M|=|A|\\cdot|B|</span>; при <span class=\"m\">B\\ne\\varnothing</span> это значит, что доля <span class=\"m\">A\\cap B</span> в <span class=\"m\">B</span> равна доле <span class=\"m\">A</span> в <span class=\"m\">M</span>. На языке вероятностей (случайный элемент <span class=\"m\">M</span>) это <span class=\"m\">P(AB)=P(A)P(B)</span>. Множество <span class=\"m\">A</span> <em>не зависит от набора</em> <span class=\"m\">B_1,\\dots,B_k</span>, если <span class=\"m\">A</span> независимо с каждым пересечением нескольких (возможно, одного) множеств набора. Обозначения: <span class=\"m\">\\overline A=M\\setminus A</span>, <span class=\"m\">A_X=\\bigcap_{j\\in X}A_j</span> (и <span class=\"m\">A_\\varnothing=M</span>), <span class=\"m\">a_X=|A_X|/|M|</span> — доля пересечения.</p><p>Главный источник независимости — <em>независимость по координатам</em>: если элемент <span class=\"m\">M</span> — это набор независимых выборов (цвет каждого числа, выходной каждого сотрудника, представитель каждой группы), а <span class=\"m\">A</span> определяется выборами на множестве координат <span class=\"m\">S</span>, то <span class=\"m\">A</span> не зависит от любого набора множеств, каждое из которых определяется выборами вне <span class=\"m\">S</span>.</p><div class=\"ex\"><div class=\"ex-h\">Пример 12.4 <span class=\"ex-t\">(Локальная лемма Ловаса, симметричная форма)</span></div><p>Пусть <span class=\"m\">A_1,\\dots,A_n\\subset M</span>, <span class=\"m\">d\\ge2</span>, доля каждого <span class=\"m\">A_k</span> не меньше <span class=\"m\">1-\\frac1{4d}</span>, и каждое <span class=\"m\">A_k</span> не зависит от набора всех остальных <span class=\"m\">A_j</span>, кроме, быть может, <span class=\"m\">d</span> из них. Докажите, что <span class=\"m\">A_1\\cap\\dots\\cap A_n\\ne\\varnothing</span>.</p><div class=\"exsol\"><button type=\"button\" class=\"exsol-b\" aria-expanded=\"false\">Решение</button><div class=\"exsol-c\" hidden><p>Докажем индукцией по <span class=\"m\">|X|</span>, что <span class=\"m\">a_{X\\cup\\{x\\}}\\ge\\left(1-\\frac1d\\right)a_X</span> для любых <span class=\"m\">X</span> и <span class=\"m\">x\\notin X</span>; отсюда <span class=\"m\">a_{\\{1,\\dots,n\\}}\\ge\\left(1-\\frac1d\\right)^n&gt;0</span>. Пусть <span class=\"m\">Y\\subset X</span> — индексы из <span class=\"m\">X</span>, от набора которых <span class=\"m\">A_x</span> не зависит; <span class=\"m\">|X\\setminus Y|\\le d</span>. Так как <span class=\"m\">\\overline{A_x}</span> тоже не зависит от этого набора (упражнение 3), то <span class=\"m\">a_X-a_{X\\cup\\{x\\}}=\\frac{|\\overline{A_x}\\cap A_X|}{|M|}\\le\\frac{|\\overline{A_x}\\cap A_Y|}{|M|}=\\frac{|\\overline{A_x}|}{|M|}\\,a_Y\\le\\frac{a_Y}{4d}</span>. По предположению индукции (добавляем к <span class=\"m\">Y</span> элементы <span class=\"m\">X\\setminus Y</span> по одному) <span class=\"m\">a_X\\ge\\left(1-\\frac1d\\right)^da_Y\\ge\\frac14a_Y</span>. Значит, <span class=\"m\">a_X-a_{X\\cup\\{x\\}}\\le\\frac{a_X}d</span>.</p></div></div></div><p><strong>Как применять.</strong> Обычно говорят о «плохих» событиях <span class=\"m\">B_k=\\overline{A_k}</span>: если <span class=\"m\">P(B_k)\\le p</span>, каждое <span class=\"m\">B_k</span> не зависит от набора всех остальных, кроме не более чем <span class=\"m\">d</span>, и <span class=\"m\">4pd\\le1</span> (или <span class=\"m\">ep(d+1)\\le1</span> — задача 12.2.5), то с положительной вероятностью не происходит ни одно <span class=\"m\">B_k</span>. В отличие от оценки объединения, число событий здесь не важно — важно лишь, со сколькими событиями связано каждое. Общая форма (задача 12.2.6): если <span class=\"m\">P(B_k)\\le x_k\\prod_{j\\sim k}(1-x_j)</span>, где <span class=\"m\">j\\sim k</span> — события, от которых <span class=\"m\">B_k</span> может зависеть, то вероятность того, что не произошло ни одно <span class=\"m\">B_k</span>, не меньше <span class=\"m\">\\prod(1-x_k)&gt;0</span>.</p><p><strong>Упражнения.</strong> 1) Зависимы ли в множестве клеток шахматной доски первые три строки и последние четыре столбца? Подмножества <span class=\"m\">\\{1,2\\}</span> и <span class=\"m\">\\{1,3\\}</span> в <span class=\"m\">\\{1,2,3,4\\}</span>? А в <span class=\"m\">\\{1,\\dots,6\\}</span>? (Независимы, независимы, зависимы.) 2) В <span class=\"m\">\\{1,\\dots,105\\}</span> зависимы ли числа, делящиеся на 5, и делящиеся на 7? На 15 и на 21? На 15 и на 5? На 10 и на 7? (Только первая пара независима.) 3) <span class=\"m\">A</span> и <span class=\"m\">B</span> независимы <span class=\"m\">\\iff</span> <span class=\"m\">A</span> и <span class=\"m\">\\overline B</span> независимы. Следующие условия равносильны: <span class=\"m\">A</span> не зависит от набора <span class=\"m\">B_1,\\dots,B_k</span>; <span class=\"m\">\\overline A</span> не зависит от него; <span class=\"m\">\\overline A</span> не зависит от набора <span class=\"m\">\\overline{B_1},</span> <span class=\"m\">\\dots,</span> <span class=\"m\">\\overline{B_k}</span>. 4) Среди раскрасок <span class=\"m\">\\{1,\\dots,400\\}</span> в два цвета: множества раскрасок, где одноцветно <span class=\"m\">\\{1,\\dots,8\\}</span> и где одноцветно <span class=\"m\">\\{11,\\dots,18\\}</span>, независимы; где одноцветно <span class=\"m\">\\{1,\\dots,8\\}</span> и где одноцветно <span class=\"m\">\\{6,\\dots,13\\}</span> — зависимы (<span class=\"m\">2^{-12}\\ne2^{-14}</span>). Множество раскрасок, где <span class=\"m\">\\{1,\\dots,8\\}</span> одноцветно, не зависит от набора <span class=\"m\">\\{A_\\alpha:\\alpha\\subset\\{9,</span> <span class=\"m\">\\dots,</span> <span class=\"m\">400\\}\\}</span>, где <span class=\"m\">A_\\alpha</span> — раскраски с одноцветным <span class=\"m\">\\alpha</span>. 5) Попарная независимость не влечёт независимости от набора: в <span class=\"m\">\\{1,2,3,4\\}</span> возьмите <span class=\"m\">A=\\{1,4\\}</span>, <span class=\"m\">B_1=\\{1,2\\}</span>, <span class=\"m\">B_2=\\{1,3\\}</span>. Обратно, <span class=\"m\">A</span> может не зависеть от набора <span class=\"m\">B_1,B_2</span>, хотя <span class=\"m\">B_1</span> и <span class=\"m\">B_2</span> зависимы: <span class=\"m\">B_1=B_2=\\{1,2\\}</span>, <span class=\"m\">A=\\{1,3\\}</span>.</p>"
+        }
+      ],
+      "g": [
+        {
+          "t": "Независимость множеств",
+          "p": [
+            {
+              "id": "12.2.1",
+              "src": "",
+              "st": "<p>Каждый житель города либо богат, либо беден, а также либо здоров, либо болен. Богатство и здоровье независимы, т.е. доля здоровых среди богатых равна доле здоровых среди всех жителей. Известно, что есть богатый горожанин и есть здоровый горожанин. Обязательно ли найдётся богатый здоровый горожанин?</p>",
+              "d": 1,
+              "sol": {
+                "ans": "да",
+                "plan": "<p>Из независимости <span class=\"m\">|Б\\cap З|\\cdot|M|=|Б|\\cdot|З|&gt;0</span>.</p>",
+                "idea": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.2.2",
+              "src": "",
+              "st": "<p>Обязательно ли найдётся богатый здоровый умный горожанин, если: (а) доля богатых, доля здоровых и доля умных больше <span class=\"m\">\\frac23</span>; (б) есть богатый, есть здоровый и есть умный горожанин, богатство, здоровье и ум попарно независимы, и доля богатых здоровых умных среди богатых здоровых такая же, как доля умных среди всех жителей (вместе с попарной независимостью это <em>независимость в совокупности</em>); (в) богатых, здоровых и умных больше половины, богатство и ум независимы, здоровье и ум независимы?</p>",
+              "d": 2,
+              "sol": {
+                "ans": "во всех трёх случаях да",
+                "idea": "<p>Чем сильнее условие независимости, тем меньшая доля каждого множества гарантирует непустое пересечение; (в) — промежуточный случай, и именно его рассуждение обобщает лемма Ловаса.</p>",
+                "plan": "<p>(а) Доли бедных, больных и глупых меньше <span class=\"m\">\\frac13</span> каждая, в сумме меньше 1. (б) <span class=\"m\">|БЗУ|=\\frac{|БЗ|\\cdot|У|}{|M|}=\\frac{|Б|\\cdot|З|\\cdot|У|}{|M|^2}&gt;0</span>. (в) Пропуская знаки пересечения и мощности: <span class=\"m\">УБ&gt;\\frac У2</span> (независимость <span class=\"m\">У</span> и <span class=\"m\">Б</span>), <span class=\"m\">У\\overline З&lt;\\frac У2</span> (независимость <span class=\"m\">У</span> и <span class=\"m\">\\overline З</span>), поэтому <span class=\"m\">УБЗ=УБ-УБ\\overline З\\ge УБ-У\\overline З&gt;\\frac У2-\\frac У2=0</span>.</p>",
+                "note": "<p>В (в) достаточно, чтобы был хотя бы один умный; доля умных может быть любой.</p>"
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.2.3",
+              "src": "",
+              "st": "<p>(а) <span class=\"m\">A_1,A_2,A_3,A_4</span> — подмножества 720-элементного множества, в каждом больше 480 элементов, и <span class=\"m\">A_k</span>, <span class=\"m\">A_{k+1}</span> независимы при <span class=\"m\">k=1,2,3</span>. Докажите, что <span class=\"m\">A_1\\cap A_2\\cap A_3\\cap A_4\\ne\\varnothing</span>. (б) Пусть <span class=\"m\">n\\ge2</span> и <span class=\"m\">A_1,\\dots,A_n</span> — подмножества конечного множества, доля каждого из которых больше <span class=\"m\">1-\\frac1{n-1}</span>, причём <span class=\"m\">A_k</span> и <span class=\"m\">A_{k+1}</span> независимы при всех <span class=\"m\">k=1,\\dots,n-1</span>. Докажите, что <span class=\"m\">A_1\\cap\\dots\\cap A_n\\ne\\varnothing</span>.</p>",
+              "d": 4,
+              "sol": {
+                "idea": "<p>Как в предыдущей задаче (в): отрезая очередное <span class=\"m\">A_{k+1}</span>, забываем все множества, кроме соседнего <span class=\"m\">A_k</span>.</p>",
+                "plan": "<p>Пусть <span class=\"m\">q_k&lt;p=\\frac1{n-1}</span> — доля <span class=\"m\">\\overline{A_k}</span>, <span class=\"m\">a_k</span> — доля <span class=\"m\">A_1\\cap\\dots\\cap A_k</span>. Тогда <span class=\"m\">a_2=(1-q_1)(1-q_2)</span>, а <span class=\"m\">a_k-a_{k+1}=\\frac{|A_1\\cdots A_k\\overline{A_{k+1}}|}{|M|}\\le\\frac{|A_k\\overline{A_{k+1}}|}{|M|}=q_{k+1}(1-q_k)</span> (независимость <span class=\"m\">A_k</span> и <span class=\"m\">\\overline{A_{k+1}}</span>). Значит, <span class=\"m\">a_n\\ge f(q)=(1-q_1)(1-q_2)-\\sum_{k=3}^nq_k(1-q_{k-1})</span>. Функция <span class=\"m\">f</span> линейна по каждой переменной, коэффициент при <span class=\"m\">q_1</span> равен <span class=\"m\">-(1-q_2)&lt;0</span>, а при <span class=\"m\">q_k</span> (<span class=\"m\">k\\ge2</span>) равен <span class=\"m\">-(1-q_{k-1})+q_{k+1}\\le0</span>, так как все <span class=\"m\">q&lt;p\\le\\frac12</span> (при <span class=\"m\">n=2</span> утверждение очевидно). Поэтому <span class=\"m\">f(q)&gt;f(p,\\dots,p)=(1-p)(1-(n-1)p)=0</span>. Пункт (а) — случай <span class=\"m\">n=4</span>: <span class=\"m\">480/720=\\frac23=1-\\frac13</span>.</p>",
+                "note": "<p>Пункт (б) решили А. Ляховец, А. Матушкин и О. Орел; авторам исходной заметки решение известно не было.</p>",
+                "ans": ""
+              },
+              "ggb": null
+            }
+          ]
+        },
+        {
+          "t": "Лемма Ловаса и её варианты",
+          "p": [
+            {
+              "id": "12.2.4",
+              "src": "",
+              "st": "<p>Последовательность <span class=\"m\">a_k</span> такова, что <span class=\"m\">a_k=1</span> при <span class=\"m\">k\\le0</span> и для некоторого <span class=\"m\">d\\ge2</span> выполнено <span class=\"m\">a_{k+1}\\ge a_k-\\frac{a_{k-d}}{4d}</span> при всех <span class=\"m\">k\\ge0</span>. Докажите, что <span class=\"m\">a_k&gt;0</span> при всех <span class=\"m\">k</span>.</p>",
+              "d": 3,
+              "sol": {
+                "idea": "<p>Это лемма Ловаса для «цепочки», где каждое множество зависит от <span class=\"m\">d</span> предыдущих. Доказывать по индукции надо более сильное утверждение <span class=\"m\">a_{k+1}\\ge\\left(1-\\frac1d\\right)a_k</span>.</p>",
+                "plan": "<p>Индукция по <span class=\"m\">k\\ge0</span> для утверждения <span class=\"m\">a_{k+1}\\ge\\left(1-\\frac1d\\right)a_k&gt;0</span>. Из предположения индукции (и <span class=\"m\">a_j=1</span> при <span class=\"m\">j\\le0</span>) следует <span class=\"m\">a_k\\ge\\left(1-\\frac1d\\right)^{\\min(d,k)}a_{k-d}\\ge\\left(1-\\frac1d\\right)^da_{k-d}\\ge\\frac14a_{k-d}</span>, так как <span class=\"m\">\\left(1-\\frac1d\\right)^d\\ge\\frac14</span> при <span class=\"m\">d\\ge2</span>. Поэтому <span class=\"m\">a_{k+1}\\ge a_k-\\frac{a_{k-d}}{4d}\\ge a_k-\\frac{a_k}d</span>.</p>",
+                "ans": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.2.5",
+              "src": "",
+              "st": "<p>Докажите, что в симметричной форме леммы Ловаса (см. теорию) условие «доля каждого <span class=\"m\">A_k</span> не меньше <span class=\"m\">1-\\frac1{4d}</span>» можно заменить на «доля каждого <span class=\"m\">A_k</span> не меньше <span class=\"m\">1-\\frac1{e(d+1)}</span>».</p>",
+              "d": 3,
+              "sol": {
+                "idea": "<p>То же доказательство с множителем <span class=\"m\">1-\\frac1{d+1}</span> вместо <span class=\"m\">1-\\frac1d</span>.</p>",
+                "plan": "<p>Индукцией по <span class=\"m\">|X|</span> докажем <span class=\"m\">a_{X\\cup\\{x\\}}\\ge\\left(1-\\frac1{d+1}\\right)a_X</span>. Как в теории, <span class=\"m\">a_X-a_{X\\cup\\{x\\}}\\le\\frac{a_Y}{e(d+1)}</span>, где <span class=\"m\">|X\\setminus Y|\\le d</span>, и по предположению индукции <span class=\"m\">a_X\\ge\\left(1-\\frac1{d+1}\\right)^da_Y=\\left(\\frac d{d+1}\\right)^da_Y\\ge\\frac{a_Y}e</span>, так как <span class=\"m\">\\left(1+\\frac1d\\right)^d&lt;e</span>. Поэтому <span class=\"m\">a_X-a_{X\\cup\\{x\\}}\\le\\frac{a_X}{d+1}</span>.</p>",
+                "ans": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.2.6",
+              "src": "",
+              "st": "<p>(Локальная лемма Ловаса, общая форма.) Пусть <span class=\"m\">A_1,\\dots,A_n</span> — подмножества конечного множества, <span class=\"m\">J_1,\\dots,J_n\\subset\\{1,\\dots,n\\}</span> и <span class=\"m\">\\gamma_1,\\dots,\\gamma_n\\in(0,1)</span>. Пусть для любого <span class=\"m\">k</span> доля <span class=\"m\">A_k</span> не меньше <span class=\"m\">1-(1-\\gamma_k)\\prod_{j\\notin J_k}\\gamma_j</span> и <span class=\"m\">A_k</span> не зависит от набора <span class=\"m\">\\{A_j:j\\in J_k\\}</span>. Докажите, что доля пересечения <span class=\"m\">A_1\\cap\\dots\\cap A_n</span> не меньше <span class=\"m\">\\gamma_1\\gamma_2\\cdots\\gamma_n&gt;0</span>.</p>",
+              "d": 4,
+              "sol": {
+                "idea": "<p>Индукцией по <span class=\"m\">|X|</span> доказать, что <span class=\"m\">a_{X\\cup\\{x\\}}\\ge\\gamma_xa_X</span> для любых <span class=\"m\">X</span> и <span class=\"m\">x\\notin X</span>.</p>",
+                "plan": "<p>Пусть <span class=\"m\">Y=X\\cap J_x</span>, <span class=\"m\">Z=X\\setminus Y</span>; тогда <span class=\"m\">Z\\subset\\{j\\notin J_x\\}</span>. По независимости <span class=\"m\">\\overline{A_x}</span> от набора <span class=\"m\">\\{A_j:j\\in J_x\\}</span>: <span class=\"m\">a_X-a_{X\\cup\\{x\\}}\\le\\frac{|\\overline{A_x}\\cap A_Y|}{|M|}=\\frac{|\\overline{A_x}|}{|M|}a_Y\\le(1-\\gamma_x)\\prod_{j\\notin J_x}\\gamma_ja_Y</span>. Добавляя к <span class=\"m\">Y</span> элементы <span class=\"m\">Z</span> по одному (множества меньше <span class=\"m\">X\\cup\\{x\\}</span>), по предположению индукции получаем <span class=\"m\">a_X\\ge\\prod_{z\\in Z}\\gamma_z\\,a_Y\\ge\\prod_{j\\notin J_x}\\gamma_j\\,a_Y</span> (лишние множители меньше 1). Значит, <span class=\"m\">a_X-a_{X\\cup\\{x\\}}\\le(1-\\gamma_x)a_X</span>. Перемножая по <span class=\"m\">x=1,\\dots,n</span>, получаем <span class=\"m\">a_{\\{1,\\dots,n\\}}\\ge\\prod\\gamma_k</span>.</p>",
+                "note": "<p>При <span class=\"m\">\\gamma_k=1-\\frac1{d+1}</span> получается задача 12.2.5: <span class=\"m\">\\frac1{d+1}\\left(1-\\frac1{d+1}\\right)^d\\ge\\frac1{e(d+1)}</span>.</p>",
+                "ans": ""
+              },
+              "ggb": null
+            }
+          ]
+        },
+        {
+          "t": "Применения",
+          "p": [
+            {
+              "id": "12.2.7",
+              "src": "",
+              "st": "<p>По каждому из нескольких видов работ в фирме имеется ровно 8 специалистов; сотрудник может быть специалистом по нескольким видам. Каждому сотруднику нужно дать выходной в субботу или в воскресенье так, чтобы и в субботу, и в воскресенье по каждому виду работ на работе был специалист. Докажите, что это можно сделать, если (а) видов работ 100; (б) каждый вид работ имеет общих специалистов не более чем с 30 другими видами.</p>",
+              "d": 3,
+              "sol": {
+                "idea": "<p>Случайные выходные. В (а) хватает оценки объединения, в (б) — лемма Ловаса: событие «вид <span class=\"m\">x</span> провален» зависит лишь от видов с общими специалистами.</p>",
+                "plan": "<p>Плохое событие <span class=\"m\">B_x</span>: все 8 специалистов по виду <span class=\"m\">x</span> отдыхают в один день; <span class=\"m\">P(B_x)=2\\cdot2^{-8}=2^{-7}</span>. (а) <span class=\"m\">100\\cdot2^{-7}&lt;1</span>. (б) <span class=\"m\">B_x</span> определяется выходными специалистов по <span class=\"m\">x</span>, поэтому не зависит от набора всех <span class=\"m\">B_y</span>, у которых нет общих специалистов с <span class=\"m\">x</span>; остальных не больше 30. Симметричная лемма с <span class=\"m\">d=30</span>: <span class=\"m\">4\\cdot30\\cdot2^{-7}&lt;1</span>.</p>",
+                "ans": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.2.8",
+              "src": "",
+              "st": "<p>(а) По кругу стоят 200 студентов из 10 групп, по 20 в каждой. Докажите, что можно в каждой группе выбрать по старосте так, чтобы никакие два старосты не стояли рядом. (б) То же для 1600 студентов из 100 групп по 16 в каждой.</p>",
+              "d": 4,
+              "sol": {
+                "idea": "<p>(а) Жадно. (б) Случайный выбор старост и лемма Ловаса для событий «выбраны студент <span class=\"m\">x</span> и следующий за ним по часовой стрелке <span class=\"m\">x_+</span>».</p>",
+                "plan": "<p>(а) Выбираем старост по одному: если выбрано не больше 9, у них не больше 18 соседей, и в очередной группе из 20 найдётся подходящий студент. (б) В каждой группе выбираем старосту равновероятно и независимо. <span class=\"m\">B_x</span>: выбраны и <span class=\"m\">x</span>, и <span class=\"m\">x_+</span>; <span class=\"m\">P(B_x)\\le\\frac1{256}</span> (0, если они одногруппники). <span class=\"m\">B_x</span> определяется выбором в группах <span class=\"m\">x</span> и <span class=\"m\">x_+</span> и не зависит от всех <span class=\"m\">B_z</span>, для которых ни <span class=\"m\">z</span>, ни <span class=\"m\">z_+</span> не лежит в этих двух группах. Остальных <span class=\"m\">z</span> не больше <span class=\"m\">4\\cdot16=64</span> вместе с самим <span class=\"m\">x</span>, т.е. других не больше 63. Лемма с <span class=\"m\">d=63</span>: <span class=\"m\">4\\cdot63\\cdot\\frac1{256}&lt;1</span>.</p>",
+                "note": "<p>Необычно, что вместо «увеличения симметрии» (рассмотреть оба соседа <span class=\"m\">x</span>) полезно её уменьшить (рассмотреть только следующего по часовой стрелке): так каждое событие связано с меньшим числом других.</p>",
+                "ans": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.2.9",
+              "src": "",
+              "st": "<p>(а) Докажите, что можно раскрасить первые 8 натуральных чисел в 2 цвета так, чтобы не было одноцветной арифметической прогрессии длины 3. (б) Докажите, что можно раскрасить первые 15 миллионов натуральных чисел в 2 цвета так, чтобы не было одноцветной арифметической прогрессии длины 32.</p>",
+              "d": 3,
+              "sol": {
+                "idea": "<p>(б) Случайная раскраска и симметричная лемма Ловаса: каждая прогрессия пересекается с относительно небольшим числом других.</p>",
+                "plan": "<p>(а) <span class=\"m\">1,2,5,6</span> красные, <span class=\"m\">3,4,7,8</span> синие — перебор всех 12 прогрессий. (б) <span class=\"m\">n=15\\cdot10^6</span>. Для 32-элементной прогрессии <span class=\"m\">\\alpha</span> событие «<span class=\"m\">\\alpha</span> одноцветна» имеет вероятность <span class=\"m\">2^{-31}</span> и не зависит от набора событий для прогрессий, не пересекающих <span class=\"m\">\\alpha</span>. Прогрессия <span class=\"m\">\\beta</span>, пересекающая <span class=\"m\">\\alpha</span>, задаётся общим элементом (<span class=\"m\">32</span> способа), его номером в <span class=\"m\">\\beta</span> (<span class=\"m\">32</span> способа) и разностью <span class=\"m\">\\beta</span> (не больше <span class=\"m\">\\floor{\\frac n{31}}</span> способов): всего меньше <span class=\"m\">2^{10}\\cdot2^{19}=2^{29}</span>, так как <span class=\"m\">\\frac n{31}&lt;5\\cdot10^5&lt;2^{19}</span>. Лемма с <span class=\"m\">d=2^{29}</span>: <span class=\"m\">4\\cdot2^{29}\\cdot2^{-31}=1</span>.</p>",
+                "ans": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.2.10",
+              "src": "",
+              "st": "<p>(а) Докажите, что для любого <span class=\"m\">M\\ne0</span> можно так раскрасить все вещественные числа в 2 цвета, чтобы для любого <span class=\"m\">x</span> числа <span class=\"m\">x</span> и <span class=\"m\">x+M</span> были разных цветов. (б) Докажите, что для любых различных 25 чисел <span class=\"m\">M_1,\\dots,M_{25}\\in\\R</span> можно раскрасить все вещественные числа в 3 цвета так, чтобы для любого <span class=\"m\">x\\in\\R</span> среди чисел <span class=\"m\">x+M_1,\\dots,x+M_{25}</span> были числа каждого из трёх цветов.</p>",
+              "d": 5,
+              "sol": {
+                "idea": "<p>(б) Сначала для конечного множества <span class=\"m\">X</span> значений <span class=\"m\">x</span> — случайная раскраска и лемма Ловаса, затем переход к <span class=\"m\">X=\\R</span> соображениями компактности.</p>",
+                "plan": "<p>(а) Красим <span class=\"m\">x</span> в чётность числа <span class=\"m\">\\floor{x/M}</span>. (б) Пусть <span class=\"m\">X</span> конечно; красим <span class=\"m\">\\bigcup_i(X+M_i)</span> случайно. <span class=\"m\">B_x</span>: среди цветов <span class=\"m\">x+M_1,\\dots,x+M_{25}</span> есть не все три; <span class=\"m\">P(B_x)\\le3\\left(\\frac23\\right)^{25}</span>. <span class=\"m\">B_x</span> и <span class=\"m\">B_y</span> используют общие точки, только если <span class=\"m\">y=x+M_i-M_j</span>, <span class=\"m\">i\\ne j</span>: не больше <span class=\"m\">600</span> других. Лемма с <span class=\"m\">d=600</span>: <span class=\"m\">4\\cdot600\\cdot3\\left(\\frac23\\right)^{25}&lt;1</span>, так как <span class=\"m\">\\left(\\frac32\\right)^{25}&gt;2^{14}&gt;7200</span>. Переход к <span class=\"m\">\\R</span>: пусть <span class=\"m\">G</span> — подгруппа, порождённая разностями <span class=\"m\">M_i-M_j</span>; каждое условие живёт в одном смежном классе <span class=\"m\">x+M_1+G</span>, и классы можно красить независимо. Класс счётен: занумеруем его точки и условия, для каждого <span class=\"m\">N</span> возьмём хорошую раскраску первых <span class=\"m\">N</span> условий и диагональным процессом выберем подпоследовательность раскрасок, у которой цвет каждой точки стабилизируется; предельная раскраска удовлетворяет всем условиям (каждое условие касается 25 точек).</p>",
+                "ans": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.2.11",
+              "src": "",
+              "st": "<p>Даны число <span class=\"m\">k</span> и семейство <span class=\"m\">k</span>-элементных подмножеств конечного множества <span class=\"m\">M</span>, причём каждый элемент <span class=\"m\">M</span> лежит ровно в <span class=\"m\">k</span> подмножествах семейства. Докажите, что существует раскраска <span class=\"m\">M</span> в два цвета, при которой каждое подмножество семейства содержит элементы обоих цветов, если (а) <span class=\"m\">k\\ge10</span>; (б) <span class=\"m\">k=9</span>.</p>",
+              "d": 3,
+              "sol": {
+                "idea": "<p>Случайная раскраска; каждое подмножество пересекается не более чем с <span class=\"m\">k(k-1)</span> другими.</p>",
+                "plan": "<p>Событие «подмножество <span class=\"m\">S</span> одноцветно» имеет вероятность <span class=\"m\">2^{1-k}</span> и не зависит от событий для подмножеств, не пересекающих <span class=\"m\">S</span>. Каждый из <span class=\"m\">k</span> элементов <span class=\"m\">S</span> лежит ещё в <span class=\"m\">k-1</span> подмножествах, так что <span class=\"m\">d\\le k(k-1)</span>. (а) <span class=\"m\">4k(k-1)2^{1-k}\\le1\\iff k(k-1)\\le2^{k-3}</span>; верно при <span class=\"m\">k=10</span> (<span class=\"m\">90\\le128</span>) и далее по индукции. (б) Форма с <span class=\"m\">e(d+1)</span>: <span class=\"m\">e\\cdot73\\cdot2^{-8}&lt;\\frac{2{,}72\\cdot73}{256}&lt;1</span> (а <span class=\"m\">4\\cdot72\\cdot2^{-8}&gt;1</span>).</p>",
+                "note": "<p>Иначе говоря, хроматическое число любого <span class=\"m\">k</span>-однородного <span class=\"m\">k</span>-регулярного гиперграфа равно 2 при <span class=\"m\">k\\ge9</span>.</p>",
+                "ans": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.2.12",
+              "src": "",
+              "st": "<p>В конечном множестве выбрано несколько подмножеств, в каждом из них не менее 3 элементов. Каждое выбранное подмножество пересекается не более чем с <span class=\"m\">a_i</span> выбранными <span class=\"m\">i</span>-элементными подмножествами. Докажите, что если <span class=\"m\">\\sum_ia_i2^{-i}\\le\\frac18</span>, то элементы можно покрасить в два цвета так, чтобы каждое выбранное подмножество содержало элементы обоих цветов.</p>",
+              "d": 4,
+              "sol": {
+                "idea": "<p>Общая форма леммы Ловаса с <span class=\"m\">1-\\gamma_S=2^{2-|S|}</span>.</p>",
+                "plan": "<p>Случайная раскраска; <span class=\"m\">P(S\\text{ одноцветно})=2^{1-|S|}</span>, и это событие не зависит от событий для подмножеств, не пересекающих <span class=\"m\">S</span>. Положим <span class=\"m\">x_S=2^{2-|S|}\\le\\frac12</span>. Для множеств <span class=\"m\">T</span>, пересекающих <span class=\"m\">S</span>: <span class=\"m\">\\prod_T(1-x_T)\\ge1-\\sum_Tx_T\\ge1-4\\sum_ia_i2^{-i}\\ge\\frac12</span>. Значит, <span class=\"m\">x_S\\prod_T(1-x_T)\\ge2^{1-|S|}</span>, и по общей форме леммы с <span class=\"m\">\\gamma_S=1-x_S</span> хорошая раскраска существует.</p>",
+                "ans": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.2.13",
+              "src": "",
+              "st": "<p>(а) Для любого разбиения множества вершин цикла длины <span class=\"m\">16n</span> на <span class=\"m\">n</span> множеств по 16 вершин можно выбрать по вершине из каждого множества так, что между выбранными <span class=\"m\">n</span> вершинами нет рёбер. (б) То же для <span class=\"m\">11n</span> вершин и множеств по 11. (в) В графе степень каждой вершины не превосходит <span class=\"m\">\\Delta</span>, вершины раскрашены в <span class=\"m\">r</span> цветов, вершин каждого цвета не менее <span class=\"m\">2e\\Delta+1</span>. Докажите, что можно выбрать <span class=\"m\">r</span> вершин разных цветов, никакие две из которых не соединены ребром.</p>",
+              "d": 4,
+              "sol": {
+                "idea": "<p>Из каждого класса случайно выбираем одну вершину; плохие события — «выбраны оба конца ребра».</p>",
+                "plan": "<p>(в) Оставим в каждом классе ровно <span class=\"m\">s\\ge2e\\Delta</span> вершин, выбираем по одной равновероятно и независимо. Для ребра <span class=\"m\">uv</span> между разными классами <span class=\"m\">P(B_{uv})=\\frac1{s^2}</span>; событие определяется выбором в классах <span class=\"m\">u</span> и <span class=\"m\">v</span> и не зависит от событий для рёбер, не касающихся этих двух классов. Рёбер, касающихся их, не больше <span class=\"m\">2s\\Delta</span> (вместе с <span class=\"m\">uv</span>), поэтому <span class=\"m\">d+1\\le2s\\Delta</span> и <span class=\"m\">ep(d+1)\\le\\frac{2e\\Delta}s\\le1</span>. (б) То же при <span class=\"m\">\\Delta=2</span>, <span class=\"m\">s=11</span>: <span class=\"m\">e\\cdot\\frac{44}{121}&lt;1</span>. (а) Следует из (б) (или из симметричной формы: <span class=\"m\">d\\le63</span>, <span class=\"m\">4\\cdot63\\cdot\\frac1{256}&lt;1</span>).</p>",
+                "ans": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.2.14",
+              "src": "",
+              "st": "<p>(а) Докажите, что каждую <span class=\"m\">k</span>-элементную арифметическую прогрессию в <span class=\"m\">\\{1,\\dots,n\\}</span> пересекает не более <span class=\"m\">k^2\\floor{\\frac n{k-1}}</span> других таких прогрессий. (б) Для любого натурального <span class=\"m\">k</span> существует раскраска первых <span class=\"m\">\\floor{\\frac{2^{k-3}(k-1)}{k^2}}</span> натуральных чисел в 2 цвета, для которой нет одноцветной <span class=\"m\">k</span>-элементной арифметической прогрессии. (в) Каждую <span class=\"m\">k</span>-элементную арифметическую прогрессию в <span class=\"m\">\\{1,\\dots,n\\}</span> пересекает не более <span class=\"m\">nk</span> других таких прогрессий. (г) Для любого натурального <span class=\"m\">k</span> существует раскраска первых <span class=\"m\">\\floor{\\frac{2^{k-3}}k}</span> натуральных чисел в 2 цвета, для которой нет одноцветной <span class=\"m\">k</span>-элементной арифметической прогрессии.</p>",
+              "d": 4,
+              "sol": {
+                "idea": "<p>(б), (г) — случайная раскраска и симметричная лемма; (в) — через каждую точку проходит не больше <span class=\"m\">n-1</span> прогрессий длины <span class=\"m\">k</span>.</p>",
+                "plan": "<p>(а) Прогрессия <span class=\"m\">\\beta</span>, пересекающая <span class=\"m\">\\alpha</span>, задаётся общим элементом (<span class=\"m\">k</span> способов), его номером в <span class=\"m\">\\beta</span> (<span class=\"m\">k</span> способов) и разностью (<span class=\"m\">\\le\\frac{n-1}{k-1}</span>). (б) <span class=\"m\">P(\\alpha\\text{ одноцветна})=2^{1-k}</span>, <span class=\"m\">d\\le k^2\\cdot\\frac n{k-1}\\le2^{k-3}</span>, и <span class=\"m\">4d\\cdot2^{1-k}\\le1</span>. (в) Пусть <span class=\"m\">a=</span> точка, <span class=\"m\">x=a-1</span>, <span class=\"m\">y=n-a</span>. Прогрессий с разностью <span class=\"m\">D</span>, где <span class=\"m\">a</span> стоит на <span class=\"m\">j</span>-м месте, не больше одной, и они существуют, только если <span class=\"m\">(j-1)D\\le x</span>, <span class=\"m\">(k-j)D\\le y</span>. Поэтому число прогрессий через <span class=\"m\">a</span> равно <span class=\"m\">\\sum_{j=1}^k\\floor{\\min\\left(\\frac x{j-1},\\frac y{k-j}\\right)}</span>, а <span class=\"m\">\\min(u,v)\\le\\lambda u+(1-\\lambda)v</span> при <span class=\"m\">\\lambda_j=\\frac{j-1}{k-1}</span> даёт <span class=\"m\">\\sum_j\\frac{x[j&gt;1]+y[j&lt;k]}{k-1}=x+y=n-1</span>. Суммируя по <span class=\"m\">k</span> точкам <span class=\"m\">\\alpha</span>, получаем меньше <span class=\"m\">nk</span>. (г) <span class=\"m\">d&lt;nk\\le2^{k-3}</span>, и <span class=\"m\">4d\\cdot2^{1-k}&lt;1</span>.</p>",
+                "ans": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.2.15",
+              "src": "",
+              "st": "<p>(а) Пусть <span class=\"m\">X\\subset\\R</span> — конечное множество и <span class=\"m\">m,r</span> — натуральные числа, для которых <span class=\"m\">4rm(m-1)\\left(1-\\frac1r\\right)^m&lt;1</span>. Докажите, что для любого <span class=\"m\">m</span>-элементного <span class=\"m\">M\\subset\\R</span> существует раскраска <span class=\"m\">\\R</span> в <span class=\"m\">r</span> цветов такая, что для любого <span class=\"m\">x\\in X</span> множество <span class=\"m\">x+M=\\{x+a:a\\in M\\}</span> содержит точки каждого из <span class=\"m\">r</span> цветов. (б) То же для <span class=\"m\">X=\\Z</span>. (в) То же для <span class=\"m\">X=\\R</span>.</p>",
+              "d": 5,
+              "sol": {
+                "idea": "<p>(а) Случайная раскраска и симметричная лемма; (б), (в) — компактность (диагональный процесс по счётным классам).</p>",
+                "plan": "<p>(а) <span class=\"m\">B_x</span>: в <span class=\"m\">x+M</span> нет какого-то цвета; <span class=\"m\">P(B_x)\\le r\\left(1-\\frac1r\\right)^m</span>. Множества <span class=\"m\">x+M</span> и <span class=\"m\">y+M</span> пересекаются только при <span class=\"m\">y=x+a-b</span>, <span class=\"m\">a\\ne b\\in M</span>: <span class=\"m\">d\\le m(m-1)</span>, и <span class=\"m\">4d\\,P(B_x)&lt;1</span>. (б) Для <span class=\"m\">X_N=\\{-N,\\dots,N\\}</span> есть хорошие раскраски <span class=\"m\">c_N</span> множества <span class=\"m\">\\Z+M</span> (счётного); диагональным процессом выберем подпоследовательность, у которой цвет каждой точки стабилизируется; предел хорош, так как каждое условие касается <span class=\"m\">m</span> точек и выполнено для всех больших <span class=\"m\">N</span>. (в) Условия для <span class=\"m\">x</span> касаются только смежного класса <span class=\"m\">x+a_1+G</span>, где <span class=\"m\">G</span> — подгруппа, порождённая разностями элементов <span class=\"m\">M</span>; классы счётны и красятся независимо, а внутри класса работает рассуждение (б).</p>",
+                "ans": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.2.16",
+              "src": "",
+              "st": "<p>(а) Докажите, что если <span class=\"m\">\\binom n2\\binom k{n-2}+1&lt;\\frac{2^{\\binom n2-1}}e</span>, то <span class=\"m\">R(n,n)&gt;k</span>, где <span class=\"m\">R(n,n)</span> — число Рамсея. (б) Выведите, что <span class=\"m\">R(n,n)\\ge(1+o(1))\\frac{\\sqrt2}e\\,n\\,2^{n/2}</span>.</p>",
+              "d": 5,
+              "sol": {
+                "idea": "<p>Случайная раскраска рёбер <span class=\"m\">K_k</span> и форма леммы с <span class=\"m\">e(d+1)</span>; по сравнению с оценкой объединения выигрыш в <span class=\"m\">\\sqrt2</span> раз.</p>",
+                "plan": "<p>(а) Для <span class=\"m\">n</span>-множества <span class=\"m\">S</span> вершин <span class=\"m\">P(S\\text{ одноцветно})=2^{1-\\binom n2}</span>; событие не зависит от событий для <span class=\"m\">T</span>, у которых нет общих рёбер с <span class=\"m\">S</span>, т.е. <span class=\"m\">|S\\cap T|\\le1</span>. Остальных <span class=\"m\">T</span> не больше <span class=\"m\">\\binom n2\\binom k{n-2}</span> (общее ребро и ещё <span class=\"m\">n-2</span> вершины). Условие <span class=\"m\">e\\cdot2^{1-\\binom n2}(d+1)\\le1</span> — ровно данное неравенство. (б) Подставим <span class=\"m\">k=(1-\\varepsilon)\\frac{\\sqrt2}e\\,n\\,2^{n/2}</span>: по Стирлингу <span class=\"m\">\\binom k{n-2}\\le\\frac{k^{n-2}}{(n-2)!}=2^{\\frac{n^2-n}2}(1-\\varepsilon)^{n}\\cdot n^{O(1)}</span>, а <span class=\"m\">(1-\\varepsilon)^n</span> убывает быстрее любой степени <span class=\"m\">n</span>, так что условие (а) выполнено при больших <span class=\"m\">n</span>.</p>",
+                "ans": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.2.17",
+              "src": "",
+              "st": "<p>Имеется несколько цветов. Каждой вершине некоторого графа сопоставлен список из не менее чем <span class=\"m\">10d</span> этих цветов, где <span class=\"m\">d&gt;1</span>. Для любой вершины <span class=\"m\">v</span> и цвета из её списка имеется не более <span class=\"m\">d</span> соседей вершины <span class=\"m\">v</span>, в списке которых есть этот цвет. Докажите, что можно так раскрасить каждую вершину графа в некоторый цвет из её списка, чтобы концы любого ребра были разных цветов.</p>",
+              "d": 4,
+              "sol": {
+                "idea": "<p>Каждая вершина выбирает случайный цвет из своего списка; плохие события — «ребро <span class=\"m\">uv</span> получило с обоих концов цвет <span class=\"m\">c</span>».</p>",
+                "plan": "<p>Укоротим списки до <span class=\"m\">L=\\lceil10d\\rceil</span> цветов (условие сохранится). <span class=\"m\">B_{uv,c}</span> (для <span class=\"m\">c</span> из обоих списков) имеет вероятность <span class=\"m\">\\frac1{L^2}</span> и определяется выбором в <span class=\"m\">u</span> и <span class=\"m\">v</span>, поэтому не зависит от событий для рёбер, не содержащих <span class=\"m\">u</span> и <span class=\"m\">v</span>. Событий, затрагивающих <span class=\"m\">u</span>: цвет из списка <span class=\"m\">u</span> (<span class=\"m\">L</span> способов) и сосед с этим цветом (<span class=\"m\">\\le d</span>), всего <span class=\"m\">\\le Ld</span>; столько же для <span class=\"m\">v</span>. Лемма с <span class=\"m\">d'=2Ld</span>: <span class=\"m\">4\\cdot2Ld\\cdot\\frac1{L^2}=\\frac{8d}L&lt;1</span>.</p>",
+                "ans": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.2.18",
+              "src": "",
+              "st": "<p>В ориентированном графе в каждую вершину входит не больше <span class=\"m\">\\Delta</span> рёбер и из каждой вершины выходит не меньше <span class=\"m\">\\delta</span> рёбер. Докажите, что для любого натурального <span class=\"m\">k\\le\\frac1{1-(4\\delta\\Delta)^{-1/\\delta}}</span> найдётся ориентированный цикл длины, кратной <span class=\"m\">k</span>.</p>",
+              "d": 5,
+              "sol": {
+                "idea": "<p>Случайная функция <span class=\"m\">f:V\\to\\Z_k</span>; если у каждой вершины есть исходящий сосед со значением <span class=\"m\">f+1</span>, то, идя по таким рёбрам, получим цикл, вдоль которого <span class=\"m\">f</span> растёт на 1 за шаг, — его длина кратна <span class=\"m\">k</span>.</p>",
+                "plan": "<p>Удалим лишние рёбра, чтобы из каждой вершины выходило ровно <span class=\"m\">\\delta</span> (входящие степени только уменьшатся). <span class=\"m\">B_v</span>: ни у одного из <span class=\"m\">\\delta</span> исходящих соседей <span class=\"m\">u</span> нет <span class=\"m\">f(u)=f(v)+1</span>; при любых значениях <span class=\"m\">f</span> вне <span class=\"m\">N^+(v)</span> вероятность равна <span class=\"m\">\\left(1-\\frac1k\\right)^\\delta</span>, поэтому <span class=\"m\">B_v</span> не зависит от набора событий, определяемых значениями вне <span class=\"m\">N^+(v)</span>. Связанных <span class=\"m\">u\\ne v</span> (с <span class=\"m\">(\\{u\\}\\cup N^+(u))\\cap N^+(v)\\ne\\varnothing</span>) не больше <span class=\"m\">\\delta\\Delta</span>: для каждого <span class=\"m\">w\\in N^+(v)</span> это сама <span class=\"m\">w</span> и не больше <span class=\"m\">\\Delta-1</span> других вершин, из которых идёт ребро в <span class=\"m\">w</span>. Условие <span class=\"m\">4\\delta\\Delta\\left(1-\\frac1k\\right)^\\delta\\le1</span> равносильно данному ограничению на <span class=\"m\">k</span>.</p>",
+                "ans": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.2.19",
+              "src": "",
+              "st": "<p>Клетки доски <span class=\"m\">n\\times n</span> раскрашены в несколько цветов, клеток каждого цвета не больше <span class=\"m\">\\frac{n-1}{16}</span>. Докажите, что можно поставить на доску <span class=\"m\">n</span> попарно не бьющих друг друга ладей так, чтобы они стояли на клетках разных цветов.</p>",
+              "d": 6,
+              "sol": {
+                "idea": "<p>Случайная перестановка (расстановка ладей). События здесь не независимы, но в доказательстве леммы Ловаса используется лишь неравенство <span class=\"m\">|\\overline{A_x}\\cap A_Y|\\le\\frac{|A_Y|}{4d}</span>, а его можно доказать «переключением».</p>",
+                "plan": "<p>Плохое событие <span class=\"m\">B_{e,f}</span> для пары одноцветных клеток <span class=\"m\">e,f</span> в разных строках и столбцах: ладьи стоят на обеих; <span class=\"m\">P=\\frac1{n(n-1)}</span>. Пары <span class=\"m\">\\{e,f\\}</span> и <span class=\"m\">\\{g,h\\}</span> назовём связанными, если клетки одной пары делят строку или столбец с клетками другой. Связанных с <span class=\"m\">\\{e,f\\}</span> пар меньше <span class=\"m\">4n\\cdot\\frac{n-1}{16}=\\frac{n(n-1)}4=d</span>. Ключевое: если <span class=\"m\">U</span> — расстановки, избегающие всех <span class=\"m\">B_s</span> для набора <span class=\"m\">S</span> несвязанных с <span class=\"m\">\\{e,f\\}</span> пар, то доля расстановок с ладьями на <span class=\"m\">e=(1,1)</span>, <span class=\"m\">f=(2,2)</span> в <span class=\"m\">U</span> не больше <span class=\"m\">\\frac1{n(n-1)}</span>. Для этого при любых <span class=\"m\">a\\ne b</span> возьмём перестановку столбцов <span class=\"m\">\\tau</span>, меняющую только столбцы <span class=\"m\">1,2,a,b</span>, с <span class=\"m\">\\tau(1)=a</span>, <span class=\"m\">\\tau(2)=b</span>; отображение <span class=\"m\">\\sigma\\mapsto\\tau\\circ\\sigma</span> инъективно переводит расстановки из <span class=\"m\">U</span> с ладьями на <span class=\"m\">e,f</span> в расстановки из <span class=\"m\">U</span> с ладьями на <span class=\"m\">(1,a)</span>, <span class=\"m\">(2,b)</span>: сдвинутые ладьи стоят в строках 1, 2 или попадают в столбцы 1, 2, а такие клетки не входят в пары из <span class=\"m\">S</span>. Суммируя по <span class=\"m\">n(n-1)</span> парам <span class=\"m\">(a,b)</span>, получаем нужное, и доказательство симметричной леммы проходит дословно: <span class=\"m\">4d\\cdot\\frac1{n(n-1)}\\le1</span>.</p>",
+                "note": "<p>Это «лемма Ловаса с ослабленной независимостью» (Эрдёш–Спенсер, латинские трансверсали).</p>",
+                "ans": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.2.20",
+              "src": "",
+              "st": "<p>КНФ-формула — конъюнкция набора дизъюнкций нескольких из переменных <span class=\"m\">x_1,\\dots,x_n</span> или их отрицаний. Если в каждом «сомножителе» КНФ-формулы ровно <span class=\"m\">k</span> «слагаемых» и у каждого «сомножителя» есть общие переменные не более чем с <span class=\"m\">2^{k-2}</span> другими, то булева функция, определяемая формулой, не является тождественным нулём.</p>",
+              "d": 2,
+              "sol": {
+                "idea": "<p>Случайные значения переменных и симметричная лемма Ловаса.</p>",
+                "plan": "<p>Можно считать, что переменные в каждом сомножителе различны (если <span class=\"m\">x</span> и <span class=\"m\">\\overline x</span> входят вместе, сомножитель всегда равен 1). Сомножитель ложен с вероятностью <span class=\"m\">2^{-k}</span>, и это событие не зависит от событий для сомножителей без общих переменных. <span class=\"m\">d=2^{k-2}</span>: <span class=\"m\">4\\cdot2^{k-2}\\cdot2^{-k}=1</span>.</p>",
+                "note": "<p>Задача <span class=\"m\">k</span>-выполнимости (<span class=\"m\">k</span>-SAT): по КНФ-формуле с <span class=\"m\">k</span> переменными в каждой дизъюнкции узнать, тождественный ли это нуль. При <span class=\"m\">k=2</span> есть полиномиальный алгоритм, при <span class=\"m\">k\\ge3</span> быстрый алгоритм неизвестен; это равносильно проблеме <span class=\"m\">P\\ne NP</span>.</p>",
+                "ans": ""
+              },
+              "ggb": null
+            },
+            {
+              "id": "12.2.21",
+              "src": "",
+              "st": "<p>Докажите, что существует такое <span class=\"m\">c&gt;0</span>, что <span class=\"m\">R(3,n)&gt;cn\\sqrt n</span> для любого <span class=\"m\">n</span>.</p>",
+              "d": 6,
+              "sol": {
+                "idea": "<p>Случайный граф на <span class=\"m\">N</span> вершинах с вероятностью ребра <span class=\"m\">p=\\frac1{10\\sqrt N}</span> и общая форма леммы Ловаса для двух типов плохих событий: треугольники и независимые <span class=\"m\">n</span>-множества.</p>",
+                "plan": "<p><span class=\"m\">A_T</span> (треугольник <span class=\"m\">T</span>): <span class=\"m\">P=p^3</span>; зависит от <span class=\"m\">\\le3N</span> треугольников и от <span class=\"m\">n</span>-множеств. <span class=\"m\">B_S</span> (<span class=\"m\">n</span>-множество <span class=\"m\">S</span> независимо): <span class=\"m\">P=(1-p)^{\\binom n2}\\le e^{-pn(n-1)/2}</span>; зависит от <span class=\"m\">\\le\\frac{n^2}2N</span> треугольников и от <span class=\"m\">n</span>-множеств. Берём <span class=\"m\">x=\\frac{5}{1000}N^{-3/2}</span> для треугольников и <span class=\"m\">y=\\binom Nn^{-1}</span> для <span class=\"m\">n</span>-множеств; <span class=\"m\">(1-y)^{\\binom Nn}\\ge\\frac14</span>, <span class=\"m\">(1-x)^{3N}\\to1</span>, <span class=\"m\">(1-x)^{n^2N/2}\\ge e^{-xn^2N}</span>. Условие для <span class=\"m\">A_T</span>: <span class=\"m\">p^3\\le\\frac x4(1-x)^{3N}</span> — верно. Условие для <span class=\"m\">B_S</span> после логарифмирования: <span class=\"m\">\\frac{pn^2}2(1-o(1))\\ge n\\ln N+xn^2N+\\ln4</span>, т.е. <span class=\"m\">n^2N^{-1/2}\\left(\\frac1{20}-\\frac5{1000}\\right)\\gtrsim n\\ln N</span>, что верно при <span class=\"m\">n\\ge C\\sqrt N\\ln N</span>, в частности при <span class=\"m\">N=cn^{3/2}</span> и больших <span class=\"m\">n</span>. Малые <span class=\"m\">n</span> покрываются оценкой <span class=\"m\">R(3,n)\\ge n</span> (выбором малого <span class=\"m\">c</span>).</p>",
+                "note": "<p>Аккуратнее те же вычисления дают <span class=\"m\">R(3,n)&gt;c_1\\frac{n^2}{\\ln^2n}</span> — это лучшее, что даёт лемма Ловаса. Верно и <span class=\"m\">R(3,n)&gt;c_2\\frac{n^2}{\\ln n}</span> (теорема Кима); её доказательство использует квазислучайные графы и неравенства концентрации.</p>",
+                "ans": ""
+              },
+              "ggb": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
