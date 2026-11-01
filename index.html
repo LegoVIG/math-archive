@@ -2808,7 +2808,13 @@ var I = {
   cat_olympiad: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>',
   cat_mathball: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" y1="19" x2="19" y2="13"/><line x1="16" y1="16" x2="20" y2="20"/><line x1="19" y1="21" x2="21" y2="19"/></svg>',
   cat_author: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><line x1="2" y1="2" x2="9.586" y2="9.586"/></svg>',
-  ggb: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/></svg>'
+  ggb: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/></svg>',
+  map: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>',
+  sheet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+  note: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+  pdf: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M10 12v6"/><path d="M10 12h2.5a1.5 1.5 0 0 1 0 3H10"/></svg>',
+  latex: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="20" x2="20" y2="20"/><polyline points="7 4 12 16 17 4"/></svg>',
+  upload: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>'
 };
 function ring(frac, size, cls) {
   var r = 15.5, C = 2 * Math.PI * r;
@@ -2977,6 +2983,15 @@ function switchSubject(targetSubj, clickedBtn) {
   });
 }
 
+function viewNavHtml(r) {
+  var v = (r && r.v) || 'map';
+  return '<nav class="view-nav" aria-label="Разделы архива">' +
+    '<button type="button" class="view-nav-btn' + (v === 'map' || v === 'topic' ? ' active' : '') + '" data-act="view-map" title="Карта курса">' + I.map + '<span>Карта</span></button>' +
+    '<button type="button" class="view-nav-btn' + (v === 'sheets' ? ' active' : '') + '" data-act="view-sheets" title="Листочки и архивы задач">' + I.sheet + '<span>Листочки</span></button>' +
+    '<button type="button" class="view-nav-btn' + (v === 'notes' ? ' active' : '') + '" data-act="view-notes" title="Конспекты по теории">' + I.note + '<span>Конспекты</span></button>' +
+    '</nav>';
+}
+
 function barHtml(r) {
   var s = totalSolved(), fr = META.total ? (s / META.total) : 0;
   var left;
@@ -2984,17 +2999,22 @@ function barHtml(r) {
     var c = getTopic(r.ch) || { n: r.ch, t: '' };
     left = '<button class="brand" type="button" data-act="home" aria-label="Карта курса">' + I.back + '<span class="brand-t">Карта</span></button>' +
       '<div class="crumb"><span class="sep">/</span><b>' + c.n + '. ' + c.t + '</b></div>';
-  } else if (r.v === 'sheets' && r.sheetId) {
-    var shTitle = 'Листочек';
-    if (typeof SHEETS_DATA !== 'undefined' && SHEETS_DATA && SHEETS_DATA.sheets && SHEETS_DATA.sheets[r.sheetId]) {
-      shTitle = SHEETS_DATA.sheets[r.sheetId].title || shTitle;
-    } else if (typeof SHEETS_DATA !== 'undefined' && SHEETS_DATA && SHEETS_DATA.index) {
-      for (var si = 0; si < SHEETS_DATA.index.length; si++) {
-        if (SHEETS_DATA.index[si].id === r.sheetId) { shTitle = SHEETS_DATA.index[si].title; break; }
-      }
+  } else if (r.v === 'sheets') {
+    var shTitle = '';
+    if (r.sheetId && window.SheetsStore) {
+      var curSh = window.SheetsStore.get().sheets[r.sheetId];
+      if (curSh) shTitle = curSh.title;
     }
-    left = '<button class="brand" type="button" data-act="sheets-home" aria-label="Листочки">' + I.back + '<span class="brand-t">Листочки</span></button>' +
-      '<div class="crumb"><span class="sep">/</span><b>' + esc(shTitle) + '</b></div>';
+    left = '<button class="brand" type="button" data-act="view-sheets" aria-label="Листочки">' + I.sheet + '<span class="brand-t">Листочки</span></button>' +
+      (shTitle ? '<div class="crumb"><span class="sep">/</span><b>' + esc(shTitle) + '</b></div>' : '');
+  } else if (r.v === 'notes') {
+    var ntTitle = '';
+    if (r.noteId && window.NotesStore) {
+      var curNt = window.NotesStore.get().notes[r.noteId];
+      if (curNt) ntTitle = curNt.title;
+    }
+    left = '<button class="brand" type="button" data-act="view-notes" aria-label="Конспекты">' + I.note + '<span class="brand-t">Конспекты</span></button>' +
+      (ntTitle ? '<div class="crumb"><span class="sep">/</span><b>' + esc(ntTitle) + '</b></div>' : '');
   } else {
     var subName = (SUBJECTS[curSubject] && SUBJECTS[curSubject].title) || 'Комбинаторика';
     left = '<button class="brand" type="button" data-act="home" aria-label="Математический архив — ' + esc(subName) + '">' + I.logo + '<span class="brand-t">Математический <em>архив</em></span></button>';
