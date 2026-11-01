@@ -1,0 +1,14 @@
+{
+  "id": "note_3",
+  "domain": "geometry",
+  "type": "pdf",
+  "title": "Проективная геометрия: Чева и Менелай",
+  "desc": "Скан лекции с подробными чертежами конфигураций Чевы, Менелая и Дезарга",
+  "description": "Скан лекции с подробными чертежами конфигураций Чевы, Менелая и Дезарга",
+  "file": "ceva_menelaus.pdf",
+  "filename": "ceva_menelaus.pdf",
+  "file_path": "data/scans/ceva_menelaus.pdf",
+  "date": "2026-11-01",
+  "created_at": "2026-11-01",
+  "updated_at": "2026-11-01"
+}

@@ -1,0 +1,14 @@
+{
+  "id": "note_4",
+  "domain": "analysis",
+  "type": "pdf",
+  "title": "Числовые ряды и признаки сходимости",
+  "desc": "Конспект лекции: ряды Лейбница, признаки Коши, Даламбера и интегральный признак",
+  "description": "Конспект лекции: ряды Лейбница, признаки Коши, Даламбера и интегральный признак",
+  "file": "sample_lecture.pdf",
+  "filename": "sample_lecture.pdf",
+  "file_path": "data/scans/sample_lecture.pdf",
+  "date": "2026-11-01",
+  "created_at": "2026-11-01",
+  "updated_at": "2026-11-01"
+}

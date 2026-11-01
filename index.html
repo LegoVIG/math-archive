@@ -1049,6 +1049,336 @@ body.node-dragging {
 }
 .node-act-btn svg { width: 12px; height: 12px; display: block; }
 .t-acts { display: inline-flex; gap: 8px; margin-left: auto; align-items: center; }
+
+/* ---------------------------------------------------------------- view-nav in bar */
+.view-nav {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  gap: 2px;
+  flex: none;
+}
+.view-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  background: none;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .15s ease;
+  user-select: none;
+}
+.view-tab:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+.view-tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.view-tab.active {
+  background: var(--surface-2);
+  border-color: var(--line-2);
+  color: var(--text);
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0,0,0,.15);
+}
+.view-tab.active .view-tab-icon {
+  color: var(--accent);
+}
+.view-tab-icon {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+.view-tab-icon svg {
+  width: 16px;
+  height: 16px;
+}
+@media (max-width: 860px) {
+  .view-tab { padding: 0 8px; gap: 4px; font-size: 12px; }
+}
+@media (max-width: 560px) {
+  .view-nav { padding: 2px; gap: 1px; }
+  .view-tab { padding: 0 6px; height: 28px; }
+  .view-tab-text { display: none; }
+}
+
+/* ---------------------------------------------------------------- Sheets Section */
+.sheets-wrap {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+}
+.sheets-hero {
+  margin-bottom: 28px;
+}
+.sheets-head-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.sheets-title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin: 0;
+}
+.sheets-title em {
+  font-style: normal;
+  color: var(--accent);
+}
+.sheets-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.sheets-search-box {
+  position: relative;
+  width: 100%;
+}
+.sheets-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+}
+.sheets-search-icon svg {
+  width: 18px;
+  height: 18px;
+}
+.sheets-search-input {
+  width: 100%;
+  height: 42px;
+  padding: 0 16px 0 42px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color .15s ease;
+}
+.sheets-search-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-line);
+}
+.sheets-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.category-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all .15s ease;
+  user-select: none;
+}
+.category-pill:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+.category-pill.active {
+  background: var(--surface-2);
+  border-color: var(--accent);
+  color: var(--text);
+  font-weight: 600;
+  box-shadow: 0 0 0 1px var(--accent-line);
+}
+.category-pill svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Sheets Grid */
+.sheets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+.sheet-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+  text-decoration: none;
+  color: inherit;
+}
+.sheet-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--line-2);
+  background: var(--surface-2);
+  box-shadow: var(--shadow);
+}
+.sheet-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.sheet-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+.sheet-badge[data-cat="кружок"] { background: rgba(92,203,216,.14); color: var(--p2); border: 1px solid rgba(92,203,216,.3); }
+.sheet-badge[data-cat="олимпиада"] { background: rgba(169,216,80,.14); color: var(--accent); border: 1px solid rgba(169,216,80,.3); }
+.sheet-badge[data-cat="матбой"] { background: rgba(242,184,95,.14); color: var(--p3); border: 1px solid rgba(242,184,95,.3); }
+.sheet-badge[data-cat="авторская"] { background: rgba(208,103,227,.14); color: var(--d7); border: 1px solid rgba(208,103,227,.3); }
+.sheet-count-tag {
+  font-size: 12px;
+  color: var(--muted);
+}
+.sheet-card-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text);
+  margin: 0 0 8px 0;
+}
+.sheet-card-desc {
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  color: var(--text-2);
+  line-height: 1.5;
+  margin: 0 0 16px 0;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.sheet-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  color: var(--muted);
+}
+.sheet-open-hint {
+  color: var(--accent);
+  font-weight: 500;
+}
+.sheet-card-actions {
+  display: inline-flex;
+  gap: 4px;
+}
+
+/* Sheet Detail */
+.sheet-detail-head {
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+}
+.sheet-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  margin-bottom: 14px;
+  transition: color .15s ease;
+}
+.sheet-back-link:hover {
+  color: var(--accent);
+}
+.sheet-back-link svg {
+  width: 16px;
+  height: 16px;
+}
+.sheet-detail-title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 10px 0;
+}
+.sheet-detail-desc {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text-2);
+  line-height: 1.6;
+  margin: 0 0 16px 0;
+}
+.sheet-detail-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.sheet-empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--muted);
+  font-size: 15px;
+  background: var(--surface);
+  border: 1px dashed var(--line-2);
+  border-radius: 16px;
+}
+.sheet-tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 </style>
 <header class="bar" id="bar"></header>
 <div id="edit-mode-banner" class="edit-banner" hidden>
@@ -1638,6 +1968,46 @@ var DiskSync = {
       if (!res.offline) toast('Текст сохранён на диск');
       return res;
     });
+  },
+
+  saveSheetIndex: function (indexList) {
+    return this.apiCall('save-sheet-index', { index: indexList })
+      .then(function (res) {
+        if (!res.offline) toast('Реестр листочков сохранён на диск');
+        return res;
+      });
+  },
+
+  saveSheet: function (sheetObj) {
+    return this.apiCall('save-sheet', { sheet: sheetObj })
+      .then(function (res) {
+        if (!res.offline) toast('Листочек сохранён на диск');
+        return res;
+      });
+  },
+
+  deleteSheet: function (sheetId) {
+    return this.apiCall('delete-sheet', { id: sheetId })
+      .then(function (res) {
+        if (!res.offline) toast('Листочек удалён с диска');
+        return res;
+      });
+  },
+
+  saveSheetTask: function (sheetId, taskObj) {
+    return this.apiCall('save-sheet-task', { sheet_id: sheetId, task: taskObj })
+      .then(function (res) {
+        if (!res.offline) toast('Задача листочка сохранена на диск');
+        return res;
+      });
+  },
+
+  deleteSheetTask: function (sheetId, taskId) {
+    return this.apiCall('delete-sheet-task', { sheet_id: sheetId, task_id: taskId })
+      .then(function (res) {
+        if (!res.offline) toast('Задача листочка удалена с диска');
+        return res;
+      });
   },
 
   exportStandaloneHtml: function () {
@@ -2429,7 +2799,16 @@ var I = {
   cloudOff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22.61 16.95A5 5 0 0 0 18 10h-1.26a8 8 0 0 0-7.05-6M5 5a8 8 0 0 0-4 7 5 5 0 0 0 5 5h11"/><line x1="1" y1="1" x2="23" y2="23"/></svg>',
   edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>',
   plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
-  trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>'
+  trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>',
+  tab_sheets: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+  tab_map: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>',
+  tab_notes: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+  cat_all: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>',
+  cat_circle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="3" x2="12" y2="9"/><line x1="12" y1="15" x2="12" y2="21"/></svg>',
+  cat_olympiad: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>',
+  cat_mathball: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" y1="19" x2="19" y2="13"/><line x1="16" y1="16" x2="20" y2="20"/><line x1="19" y1="21" x2="21" y2="19"/></svg>',
+  cat_author: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><line x1="2" y1="2" x2="9.586" y2="9.586"/></svg>',
+  ggb: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/></svg>'
 };
 function ring(frac, size, cls) {
   var r = 15.5, C = 2 * Math.PI * r;
@@ -2605,6 +2984,17 @@ function barHtml(r) {
     var c = getTopic(r.ch) || { n: r.ch, t: '' };
     left = '<button class="brand" type="button" data-act="home" aria-label="Карта курса">' + I.back + '<span class="brand-t">Карта</span></button>' +
       '<div class="crumb"><span class="sep">/</span><b>' + c.n + '. ' + c.t + '</b></div>';
+  } else if (r.v === 'sheets' && r.sheetId) {
+    var shTitle = 'Листочек';
+    if (typeof SHEETS_DATA !== 'undefined' && SHEETS_DATA && SHEETS_DATA.sheets && SHEETS_DATA.sheets[r.sheetId]) {
+      shTitle = SHEETS_DATA.sheets[r.sheetId].title || shTitle;
+    } else if (typeof SHEETS_DATA !== 'undefined' && SHEETS_DATA && SHEETS_DATA.index) {
+      for (var si = 0; si < SHEETS_DATA.index.length; si++) {
+        if (SHEETS_DATA.index[si].id === r.sheetId) { shTitle = SHEETS_DATA.index[si].title; break; }
+      }
+    }
+    left = '<button class="brand" type="button" data-act="sheets-home" aria-label="Листочки">' + I.back + '<span class="brand-t">Листочки</span></button>' +
+      '<div class="crumb"><span class="sep">/</span><b>' + esc(shTitle) + '</b></div>';
   } else {
     var subName = (SUBJECTS[curSubject] && SUBJECTS[curSubject].title) || 'Комбинаторика';
     left = '<button class="brand" type="button" data-act="home" aria-label="Математический архив — ' + esc(subName) + '">' + I.logo + '<span class="brand-t">Математический <em>архив</em></span></button>';
@@ -2617,14 +3007,14 @@ function barHtml(r) {
     I.edit +
     '<span class="edit-btn-label">Редактирование</span>' +
     '</button>';
-  return left + subjNavHtml() + '<span class="bar-sp"></span>' +
+  return left + subjNavHtml() + viewNavHtml(r) + '<span class="bar-sp"></span>' +
     diskBadge +
     editBtn +
     '<button class="icon-btn" type="button" data-act="search" aria-label="Поиск задач" title="Поиск задач (/)">' + I.search + '</button>' +
     '<button class="prog-pill" type="button" data-act="about" title="Решено задач">' + ring(fr, 24, 'pp-ring') + '<span><b id="pp-n">' + s + '</b><span class="pp-of"> / ' + (META.total || 0) + '</span></span></button>' +
     '<button class="icon-btn" type="button" data-act="about" aria-label="О курсе" title="О курсе">' + I.info + '</button>';
 }
-function renderBar(r) { bar.innerHTML = barHtml(r); bar.className = 'bar ' + (r.v === 'topic' ? 'v-topic' : 'v-home'); }
+function renderBar(r) { bar.innerHTML = barHtml(r); bar.className = 'bar ' + (r.v === 'topic' ? 'v-topic' : (r.v === 'sheets' ? 'v-sheets' : (r.v === 'notes' ? 'v-notes' : 'v-home'))); }
 function updateBar() {
   var s = totalSolved();
   var n = $('#pp-n'); if (n) n.textContent = s;
@@ -2637,6 +3027,13 @@ function parseHash(h) {
   var parts = h ? h.split('/') : [];
   var targetSubj = curSubject;
   var subRoute = '';
+
+  if (parts.length > 0 && (parts[0] === 'sheets' || parts[0].indexOf('sheet') === 0)) {
+    return { v: 'sheets', sheetId: parts[1] || null };
+  }
+  if (parts.length > 0 && (parts[0] === 'notes' || parts[0].indexOf('note') === 0)) {
+    return { v: 'notes', noteId: parts[1] || null };
+  }
 
   if (parts.length > 0 && SUBJ_BY_SLUG[parts[0].toLowerCase()]) {
     targetSubj = SUBJ_BY_SLUG[parts[0].toLowerCase()];
@@ -2652,6 +3049,15 @@ function parseHash(h) {
 
   if (targetSubj !== curSubject) {
     reindexSubjectData(targetSubj);
+  }
+
+  if (subRoute === 'sheets' || subRoute.indexOf('sheets/') === 0) {
+    var sp = subRoute.split('/');
+    return { v: 'sheets', sheetId: sp[1] || null };
+  }
+  if (subRoute === 'notes' || subRoute.indexOf('notes/') === 0) {
+    var np = subRoute.split('/');
+    return { v: 'notes', noteId: np[1] || null };
   }
 
   var m;
@@ -2672,6 +3078,14 @@ function parseHash(h) {
 }
 function hashOf(r) {
   var prefix = (curSubject === 'combinatorics') ? '' : '#' + curSubject;
+  if (r.v === 'sheets') {
+    var sh = r.sheetId ? ('sheets/' + r.sheetId) : 'sheets';
+    return prefix ? (prefix + '/' + sh) : ('#' + sh);
+  }
+  if (r.v === 'notes') {
+    var nt = r.noteId ? ('notes/' + r.noteId) : 'notes';
+    return prefix ? (prefix + '/' + nt) : ('#' + nt);
+  }
   if (r.v !== 'topic') return prefix;
   var sub = r.pid ? ('p' + r.pid) : ('t' + r.ch + (r.sec ? '-' + r.sec : ''));
   return prefix ? (prefix + '/' + sub) : ('#' + sub);
@@ -2732,6 +3146,18 @@ function show(r, opts) {
   }
   closeOverlay();
   var prev = cur;
+  if (r.v === 'sheets') {
+    renderBar(r);
+    renderSheets(r);
+    cur = r;
+    return Promise.resolve();
+  }
+  if (r.v === 'notes') {
+    renderBar(r);
+    renderNotes(r);
+    cur = r;
+    return Promise.resolve();
+  }
   if (r.v === 'map') {
     if (prev.v === 'topic' && !opts.instant) return toMap(prev.ch);
     renderBar(r); renderHome(); cur = r;
@@ -3492,7 +3918,48 @@ function applyFilters() {
 /* ================================================================ interactions */
 function toggleReveal(btn) {
   var card = btn.closest('.prob'), id = card.dataset.id, k = btn.dataset.k;
-  var p = chapterData(PIDX[id].ch).byId[id];
+  var p;
+  if (PIDX && PIDX[id]) {
+    p = chapterData(PIDX[id].ch).byId[id];
+  } else if (typeof SHEETS_DATA !== 'undefined' && SHEETS_DATA && SHEETS_DATA.sheets) {
+    var shId = card.dataset.sheet;
+    if (shId && SHEETS_DATA.sheets[shId]) {
+      var ts = SHEETS_DATA.sheets[shId].tasks || [];
+      for (var ti = 0; ti < ts.length; ti++) {
+        if (ts[ti].id === id) { p = ts[ti]; break; }
+      }
+    }
+    if (!p) {
+      for (var sid in SHEETS_DATA.sheets) {
+        var curSh = SHEETS_DATA.sheets[sid];
+        var curTs = (curSh && curSh.tasks) || [];
+        for (var cti = 0; cti < curTs.length; cti++) {
+          if (curTs[cti].id === id) { p = curTs[cti]; break; }
+        }
+        if (p) break;
+      }
+    }
+  } else if (window.SheetsStore) {
+    var shId = card.dataset.sheet;
+    var sData = window.SheetsStore.get();
+    if (shId && sData.sheets[shId]) {
+      var ts = sData.sheets[shId].tasks || [];
+      for (var ti = 0; ti < ts.length; ti++) {
+        if (ts[ti].id === id) { p = ts[ti]; break; }
+      }
+    }
+    if (!p) {
+      for (var sid in sData.sheets) {
+        var curSh = sData.sheets[sid];
+        var curTs = curSh.tasks || [];
+        for (var cti = 0; cti < curTs.length; cti++) {
+          if (curTs[cti].id === id) { p = curTs[cti]; break; }
+        }
+        if (p) break;
+      }
+    }
+  }
+  if (!p) return;
   var box = $('.panels', card);
   var ex = $('.pan[data-k="' + k + '"]', box);
   if (ex) {
@@ -3581,6 +4048,817 @@ function onNav(href, el) {
   var origin = el && el.classList.contains('node') ? $('.pin', el) : el;
   go(r, { origin: origin });
 }
+/* ================================================================
+   SHEETS & NOTES DATA STORES & CONTROLLERS
+   ================================================================ */
+
+var SheetsStore = {
+  data: null,
+  get: function () {
+    if (!this.data) {
+      var el = document.getElementById('sheets-data');
+      if (el && el.textContent) {
+        try { this.data = JSON.parse(el.textContent); } catch (e) { console.error('Error parsing sheets-data', e); }
+      }
+      if (!this.data) this.data = { index: [], sheets: {} };
+      if (!this.data.sheets) this.data.sheets = {};
+      if (!Array.isArray(this.data.index)) this.data.index = [];
+    }
+    return this.data;
+  },
+  saveIndex: function (newIndex) {
+    var self = this;
+    var d = self.get();
+    d.index = newIndex;
+    updateEmbeddedScript('sheets-data', d);
+    return fetch('/api/save-sheet-index', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ index: newIndex })
+    }).catch(function (e) { console.warn('Offline save sheet-index', e); });
+  },
+  saveSheet: function (sheet) {
+    var self = this;
+    var d = self.get();
+    var sId = String(sheet.id);
+    d.sheets[sId] = sheet;
+    var found = false;
+    for (var i = 0; i < d.index.length; i++) {
+      if (String(d.index[i].id) === sId) {
+        d.index[i] = {
+          id: sId,
+          title: sheet.title,
+          category: sheet.category || 'кружок',
+          desc: sheet.desc || sheet.description || '',
+          tasks_count: (sheet.tasks || []).length,
+          year: sheet.year || 2026,
+          grade: sheet.grade || ''
+        };
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      d.index.push({
+        id: sId,
+        title: sheet.title,
+        category: sheet.category || 'кружок',
+        desc: sheet.desc || sheet.description || '',
+        tasks_count: (sheet.tasks || []).length,
+        year: sheet.year || 2026,
+        grade: sheet.grade || ''
+      });
+    }
+    updateEmbeddedScript('sheets-data', d);
+    return fetch('/api/save-sheet', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sheet: sheet })
+    }).catch(function (e) { console.warn('Offline save sheet', e); });
+  },
+  deleteSheet: function (sheetId) {
+    var self = this;
+    var d = self.get();
+    var sId = String(sheetId);
+    delete d.sheets[sId];
+    d.index = d.index.filter(function (it) { return String(it.id) !== sId; });
+    updateEmbeddedScript('sheets-data', d);
+    return fetch('/api/delete-sheet', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: sId })
+    }).catch(function (e) { console.warn('Offline delete sheet', e); });
+  },
+  saveTask: function (sheetId, task) {
+    var self = this;
+    var d = self.get();
+    var sId = String(sheetId);
+    var sheet = d.sheets[sId];
+    if (!sheet) return Promise.reject('Sheet not found');
+    sheet.tasks = sheet.tasks || [];
+    var replaced = false;
+    for (var i = 0; i < sheet.tasks.length; i++) {
+      if (sheet.tasks[i].id === task.id) {
+        sheet.tasks[i] = task;
+        replaced = true;
+        break;
+      }
+    }
+    if (!replaced) sheet.tasks.push(task);
+    return self.saveSheet(sheet);
+  },
+  deleteTask: function (sheetId, taskId) {
+    var self = this;
+    var d = self.get();
+    var sId = String(sheetId);
+    var sheet = d.sheets[sId];
+    if (!sheet) return Promise.reject('Sheet not found');
+    sheet.tasks = (sheet.tasks || []).filter(function (t) { return t.id !== taskId; });
+    return self.saveSheet(sheet);
+  }
+};
+window.SheetsStore = SheetsStore;
+
+var NotesStore = {
+  data: null,
+  get: function () {
+    if (!this.data) {
+      var el = document.getElementById('notes-data');
+      if (el && el.textContent) {
+        try { this.data = JSON.parse(el.textContent); } catch (e) { console.error('Error parsing notes-data', e); }
+      }
+      if (!this.data) this.data = { index: [], notes: {} };
+      if (!this.data.notes) this.data.notes = {};
+      if (!Array.isArray(this.data.index)) this.data.index = [];
+    }
+    return this.data;
+  },
+  saveNote: function (note) {
+    var self = this;
+    var d = self.get();
+    var nId = String(note.id);
+    d.notes[nId] = note;
+    var found = false;
+    for (var i = 0; i < d.index.length; i++) {
+      if (String(d.index[i].id) === nId) {
+        d.index[i] = {
+          id: nId,
+          title: note.title,
+          domain: note.domain || curSubject,
+          type: note.type || 'latex',
+          desc: note.desc || note.description || '',
+          file: note.file || note.filename || '',
+          date: note.date || new Date().toISOString().slice(0, 10)
+        };
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      d.index.push({
+        id: nId,
+        title: note.title,
+        domain: note.domain || curSubject,
+        type: note.type || 'latex',
+        desc: note.desc || note.description || '',
+        file: note.file || note.filename || '',
+        date: note.date || new Date().toISOString().slice(0, 10)
+      });
+    }
+    updateEmbeddedScript('notes-data', d);
+    return fetch('/api/save-note', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ note: note })
+    }).catch(function (e) { console.warn('Offline save note', e); });
+  },
+  deleteNote: function (noteId) {
+    var self = this;
+    var d = self.get();
+    var nId = String(noteId);
+    delete d.notes[nId];
+    d.index = d.index.filter(function (it) { return String(it.id) !== nId; });
+    updateEmbeddedScript('notes-data', d);
+    return fetch('/api/delete-note', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: nId })
+    }).catch(function (e) { console.warn('Offline delete note', e); });
+  }
+};
+window.NotesStore = NotesStore;
+
+function sheetProbHtml(p, sheetId) {
+  var on = P.has(p.id);
+  var ks = ['ans', 'idea', 'plan'].filter(function (k) { return p.sol && p.sol[k]; });
+  return '<article class="prob' + (on ? ' solved' : '') + '" id="p' + esc(p.id) + '" data-id="' + esc(p.id) + '" data-d="' + (p.d || 1) + '" data-sheet="' + esc(sheetId) + '">' +
+    '<header class="ph"><a class="pno" href="javascript:void(0)" title="Задача">' + esc(p.id) + '</a>' + dots(p.d || 1) + (p.src ? '<span class="psrc">' + esc(p.src) + '</span>' : '') +
+      '<span class="sp"></span>' +
+      '<div class="edit-ctrl prob-edit-btns">' +
+        '<button class="icon-btn edit-ctrl" type="button" data-act="edit-sheet-task" data-sheet="' + esc(sheetId) + '" data-id="' + esc(p.id) + '" title="Редактировать задачу">' + I.edit + '</button>' +
+        '<button class="icon-btn danger edit-ctrl" type="button" data-act="del-sheet-task" data-sheet="' + esc(sheetId) + '" data-id="' + esc(p.id) + '" title="Удалить задачу">' + I.trash + '</button>' +
+      '</div>' +
+    '</header>' +
+    '<span class="pstamp">' + I.check + 'решена</span>' +
+    '<div class="pst rt">' + (p.st || '') + '</div>' +
+    '<footer class="pf">' + ks.map(function (k) { return '<button type="button" class="rv" data-k="' + k + '" aria-expanded="false"><i></i>' + (k === 'idea' && p.d === 8 ? 'Что известно' : BTN[k]) + '</button>'; }).join('') +
+      (p.ggb ? '<button type="button" class="rv ggb-btn" data-act="toggle-ggb" data-id="' + esc(p.id) + '" aria-expanded="false"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:5px;vertical-align:-2px"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/></svg><span>Чертёж (GeoGebra)</span></button>' : '') +
+      '<span class="sp"></span><button type="button" class="mark" aria-pressed="' + on + '" title="Отметить задачу решённой"><span class="bx"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span><span class="lab">Решена</span></button></footer>' +
+    '<div class="panels"></div></article>';
+}
+
+function renderMarkdownMath(text) {
+  if (!text) return '';
+  var lines = text.split('\n');
+  var html = [];
+  var inCode = false;
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+    if (line.startsWith('```')) {
+      inCode = !inCode;
+      html.push(inCode ? '<pre><code>' : '</code></pre>');
+      continue;
+    }
+    if (inCode) {
+      html.push(esc(line));
+      continue;
+    }
+    if (line.startsWith('# ')) {
+      html.push('<h1>' + formatMathInput(line.slice(2)) + '</h1>');
+    } else if (line.startsWith('## ')) {
+      html.push('<h2>' + formatMathInput(line.slice(3)) + '</h2>');
+    } else if (line.startsWith('### ')) {
+      html.push('<h3>' + formatMathInput(line.slice(4)) + '</h3>');
+    } else if (line.startsWith('- ')) {
+      html.push('<li>' + formatMathInput(line.slice(2)) + '</li>');
+    } else if (line.trim() === '') {
+      html.push('<br>');
+    } else {
+      html.push('<p>' + formatMathInput(line) + '</p>');
+    }
+  }
+  return html.join('');
+}
+
+var currentSheetFilter = 'all';
+var currentNoteTypeFilter = 'all';
+var currentNoteDomainFilter = 'all';
+
+function renderSheets(r) {
+  var sStore = SheetsStore.get();
+  var sheetsIndex = sStore.index || [];
+
+  if (r.sheetId) {
+    var sId = String(r.sheetId);
+    var sheet = sStore.sheets[sId] || sStore.sheets['sheet_' + sId];
+    if (!sheet) {
+      view.innerHTML = '<div class="arch-page"><button class="detail-back-btn" data-act="view-sheets">' + I.back + '<span>Ко всем листочкам</span></button><div class="empty-arch">Листочек не найден</div></div>';
+      return;
+    }
+    var tasks = sheet.tasks || [];
+    var tasksHtml = tasks.map(function (t) { return sheetProbHtml(t, sheet.id); }).join('');
+
+    view.innerHTML = '<div class="arch-page">' +
+      '<div class="detail-topbar">' +
+        '<button class="detail-back-btn" data-act="view-sheets">' + I.back + '<span>Ко всем листочкам</span></button>' +
+        '<div class="edit-ctrl arch-hero-acts">' +
+          '<button class="btn sm edit-ctrl" type="button" data-act="add-sheet-task" data-sheet="' + esc(sheet.id) + '">' + I.plus + '<span>Добавить задачу</span></button>' +
+          '<button class="btn sm edit-ctrl" type="button" data-act="edit-sheet" data-id="' + esc(sheet.id) + '">' + I.edit + '<span>Редактировать листок</span></button>' +
+          '<button class="btn sm danger edit-ctrl" type="button" data-act="del-sheet" data-id="' + esc(sheet.id) + '">' + I.trash + '<span>Удалить листок</span></button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="detail-head">' +
+        '<div class="arch-card-tags" style="margin-bottom:8px">' +
+          '<span class="badge-cat">' + esc(sheet.category || 'кружок') + '</span>' +
+          (sheet.year ? '<span class="badge-domain">' + esc(sheet.year) + '</span>' : '') +
+          (sheet.grade ? '<span class="badge-domain">' + esc(sheet.grade) + ' кл.</span>' : '') +
+        '</div>' +
+        '<h1 class="arch-title">' + esc(sheet.title) + '</h1>' +
+        (sheet.desc || sheet.description ? '<p class="arch-lead">' + esc(sheet.desc || sheet.description) + '</p>' : '') +
+      '</div>' +
+      '<div class="tasks-container" style="display:flex;flex-direction:column;gap:16px">' +
+        (tasks.length ? tasksHtml : '<div class="empty-arch">В этом листочке пока нет задач. Добавьте задачу в режиме редактирования.</div>') +
+      '</div>' +
+    '</div>';
+
+    var cards = $$('.prob', view);
+    cards.forEach(function (c) { renderMath($('.pst', c)); });
+    return;
+  }
+
+  var cats = [
+    { id: 'all', label: 'Все категории' },
+    { id: 'кружок', label: 'Кружок' },
+    { id: 'олимпиада', label: 'Олимпиады' },
+    { id: 'матбой', label: 'Матбои' },
+    { id: 'авторская', label: 'Авторские' }
+  ];
+
+  var filteredSheets = sheetsIndex.filter(function (s) {
+    if (currentSheetFilter === 'all') return true;
+    var c = (s.category || '').toLowerCase();
+    return c.indexOf(currentSheetFilter.toLowerCase()) !== -1;
+  });
+
+  var cardsHtml = filteredSheets.map(function (s) {
+    var sId = String(s.id);
+    var count = s.tasks_count !== undefined ? s.tasks_count : ((sStore.sheets[sId] && sStore.sheets[sId].tasks) ? sStore.sheets[sId].tasks.length : 0);
+    return '<div class="arch-card" data-act="open-sheet" data-id="' + esc(sId) + '">' +
+      '<div class="arch-card-top">' +
+        '<div class="arch-card-tags">' +
+          '<span class="badge-cat">' + esc(s.category || 'кружок') + '</span>' +
+          (s.year ? '<span class="badge-domain">' + esc(s.year) + '</span>' : '') +
+          (s.grade ? '<span class="badge-domain">' + esc(s.grade) + ' кл.</span>' : '') +
+        '</div>' +
+        '<div class="arch-card-acts edit-ctrl">' +
+          '<button class="icon-btn edit-ctrl" type="button" data-act="edit-sheet" data-id="' + esc(sId) + '" title="Редактировать">' + I.edit + '</button>' +
+          '<button class="icon-btn danger edit-ctrl" type="button" data-act="del-sheet" data-id="' + esc(sId) + '" title="Удалить">' + I.trash + '</button>' +
+        '</div>' +
+      '</div>' +
+      '<h2 class="arch-card-title">' + esc(s.title) + '</h2>' +
+      '<p class="arch-card-desc">' + esc(s.desc || s.description || 'Подборка задач') + '</p>' +
+      '<div class="arch-card-foot">' +
+        '<span>' + count + ' ' + plural(count, 'задача', 'задачи', 'задач') + '</span>' +
+        '<span>Открыть ' + I.play + '</span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  view.innerHTML = '<div class="arch-page">' +
+    '<div class="arch-hero">' +
+      '<div class="arch-hero-main">' +
+        '<h1 class="arch-title">Листочки и архивы задач</h1>' +
+        '<p class="arch-lead">Единая коллекция подборок задач из маткружков, олимпиад и математических боёв. Не привязаны к конкретным темам — решайте целиком или используйте на занятиях.</p>' +
+      '</div>' +
+      '<div class="arch-hero-acts">' +
+        '<button class="btn primary edit-ctrl" type="button" data-act="add-sheet">' + I.plus + '<span>Добавить листочек</span></button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="arch-filters-row">' +
+      '<div class="arch-filters">' +
+        cats.map(function (c) {
+          var act = (currentSheetFilter === c.id) ? ' active' : '';
+          return '<button type="button" class="arch-filter-btn' + act + '" data-act="filter-sheets-cat" data-cat="' + c.id + '">' + c.label + '</button>';
+        }).join('') +
+      '</div>' +
+    '</div>' +
+    '<div class="arch-grid">' +
+      (filteredSheets.length ? cardsHtml : '<div class="empty-arch" style="grid-column:1/-1">Листочки в данной категории пока отсутствуют.</div>') +
+    '</div>' +
+  '</div>';
+}
+
+function renderNotes(r) {
+  var nStore = NotesStore.get();
+  var notesIndex = nStore.index || [];
+
+  if (r.noteId) {
+    var nId = String(r.noteId);
+    var note = nStore.notes[nId] || nStore.notes['note_' + nId];
+    if (!note) {
+      view.innerHTML = '<div class="arch-page"><button class="detail-back-btn" data-act="view-notes">' + I.back + '<span>Ко всем конспектам</span></button><div class="empty-arch">Конспект не найден</div></div>';
+      return;
+    }
+
+    var isLatex = (note.type || 'latex') === 'latex';
+    var pdfPath = note.file_path || (note.file ? ('data/scans/' + note.file) : (note.filename ? ('data/scans/' + note.filename) : ''));
+
+    var contentHtml = '';
+    if (isLatex) {
+      contentHtml = '<article class="latex-article rt" id="latex-article-view">' + renderMarkdownMath(note.content || '') + '</article>';
+    } else {
+      contentHtml = '<div class="pdf-container">' +
+        '<iframe src="' + esc(pdfPath) + '" class="pdf-frame" title="Просмотр PDF"></iframe>' +
+      '</div>';
+    }
+
+    view.innerHTML = '<div class="arch-page">' +
+      '<div class="detail-topbar">' +
+        '<button class="detail-back-btn" data-act="view-notes">' + I.back + '<span>Ко всем конспектам</span></button>' +
+        '<div class="edit-ctrl arch-hero-acts">' +
+          (isLatex ? '<button class="btn sm edit-ctrl" type="button" data-act="edit-latex-note" data-id="' + esc(note.id) + '">' + I.edit + '<span>Редактировать LaTeX</span></button>' : '') +
+          (!isLatex ? '<button class="btn sm edit-ctrl" type="button" data-act="upload-pdf" data-id="' + esc(note.id) + '">' + I.upload + '<span>Загрузить PDF</span></button>' : '') +
+          '<button class="btn sm edit-ctrl" type="button" data-act="edit-note" data-id="' + esc(note.id) + '">' + I.edit + '<span>Свойства</span></button>' +
+          '<button class="btn sm danger edit-ctrl" type="button" data-act="del-note" data-id="' + esc(note.id) + '">' + I.trash + '<span>Удалить конспект</span></button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="detail-head">' +
+        '<div class="arch-card-tags" style="margin-bottom:8px">' +
+          '<span class="badge-type ' + (isLatex ? 'latex' : 'pdf') + '">' + (isLatex ? (I.latex + ' LaTeX') : (I.pdf + ' PDF')) + '</span>' +
+          (note.domain ? '<span class="badge-domain">' + esc(SUBJECTS[note.domain] ? SUBJECTS[note.domain].title : note.domain) + '</span>' : '') +
+          (note.date ? '<span class="badge-domain">' + esc(note.date) + '</span>' : '') +
+        '</div>' +
+        '<h1 class="arch-title">' + esc(note.title) + '</h1>' +
+        (note.desc || note.description ? '<p class="arch-lead">' + esc(note.desc || note.description) + '</p>' : '') +
+      '</div>' +
+      '<div class="note-content-box">' + contentHtml + '</div>' +
+    '</div>';
+
+    if (isLatex) {
+      renderMath($('#latex-article-view'));
+    }
+    return;
+  }
+
+  var types = [
+    { id: 'all', label: 'Все форматы' },
+    { id: 'latex', label: 'LaTeX конспекты' },
+    { id: 'pdf', label: 'PDF сканы' }
+  ];
+
+  var filteredNotes = notesIndex.filter(function (n) {
+    if (currentNoteTypeFilter !== 'all' && (n.type || 'latex') !== currentNoteTypeFilter) return false;
+    if (currentNoteDomainFilter !== 'all' && n.domain && n.domain !== currentNoteDomainFilter) return false;
+    return true;
+  });
+
+  var cardsHtml = filteredNotes.map(function (n) {
+    var nId = String(n.id);
+    var isLatex = (n.type || 'latex') === 'latex';
+    var domName = SUBJECTS[n.domain] ? SUBJECTS[n.domain].title : (n.domain || 'Комбинаторика');
+    return '<div class="arch-card" data-act="open-note" data-id="' + esc(nId) + '">' +
+      '<div class="arch-card-top">' +
+        '<div class="arch-card-tags">' +
+          '<span class="badge-type ' + (isLatex ? 'latex' : 'pdf') + '">' + (isLatex ? (I.latex + ' LaTeX') : (I.pdf + ' PDF')) + '</span>' +
+          '<span class="badge-domain">' + esc(domName) + '</span>' +
+        '</div>' +
+        '<div class="arch-card-acts edit-ctrl">' +
+          '<button class="icon-btn edit-ctrl" type="button" data-act="edit-note" data-id="' + esc(nId) + '" title="Редактировать">' + I.edit + '</button>' +
+          '<button class="icon-btn danger edit-ctrl" type="button" data-act="del-note" data-id="' + esc(nId) + '" title="Удалить">' + I.trash + '</button>' +
+        '</div>' +
+      '</div>' +
+      '<h2 class="arch-card-title">' + esc(n.title) + '</h2>' +
+      '<p class="arch-card-desc">' + esc(n.desc || n.description || 'Теоретический конспект') + '</p>' +
+      '<div class="arch-card-foot">' +
+        '<span>' + esc(n.date || 'Архив') + '</span>' +
+        '<span>Читать ' + I.play + '</span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  view.innerHTML = '<div class="arch-page">' +
+    '<div class="arch-hero">' +
+      '<div class="arch-hero-main">' +
+        '<h1 class="arch-title">Конспекты и теория</h1>' +
+        '<p class="arch-lead">Теоретические материалы курса: структурированные LaTeX-конспекты с формулами и рукописные сканы лекций в формате PDF.</p>' +
+      '</div>' +
+      '<div class="arch-hero-acts">' +
+        '<button class="btn primary edit-ctrl" type="button" data-act="add-note">' + I.plus + '<span>Добавить конспект</span></button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="arch-filters-row">' +
+      '<div class="arch-filters">' +
+        types.map(function (t) {
+          var act = (currentNoteTypeFilter === t.id) ? ' active' : '';
+          return '<button type="button" class="arch-filter-btn' + act + '" data-act="filter-notes-type" data-type="' + t.id + '">' + t.label + '</button>';
+        }).join('') +
+      '</div>' +
+    '</div>' +
+    '<div class="arch-grid">' +
+      (filteredNotes.length ? cardsHtml : '<div class="empty-arch" style="grid-column:1/-1">Конспекты по выбранным фильтрам пока отсутствуют.</div>') +
+    '</div>' +
+  '</div>';
+}
+
+function openSheetModal(existingSheet) {
+  var isEdit = !!existingSheet;
+  var s = existingSheet || {};
+  var sId = isEdit ? s.id : ('sheet_' + Date.now());
+  var title = isEdit ? (s.title || '') : '';
+  var cat = isEdit ? (s.category || 'кружок') : 'кружок';
+  var year = isEdit ? (s.year || 2026) : 2026;
+  var grade = isEdit ? (s.grade || '') : '';
+  var desc = isEdit ? (s.desc || s.description || '') : '';
+
+  var cats = ['кружок', 'олимпиада', 'матбой', 'авторская'];
+  var catOpts = cats.map(function (c) {
+    return '<option value="' + c + '"' + (c === cat ? ' selected' : '') + '>' + c.charAt(0).toUpperCase() + c.slice(1) + '</option>';
+  }).join('');
+
+  var html = '<div class="ov-card" style="max-width:540px;width:95%" role="dialog" aria-modal="true">' +
+    '<div class="ov-h"><h3>' + (isEdit ? 'Редактировать листочек' : 'Добавить новый листочек') + '</h3><button class="icon-btn" type="button" data-close aria-label="Закрыть">' + I.close + '</button></div>' +
+    '<div class="ed-form">' +
+      '<div class="ed-row"><label class="ed-label" for="sh-title">Название листочка</label><input id="sh-title" class="ed-input" type="text" value="' + esc(title) + '" placeholder="Например: Инварианты и полуинварианты"></div>' +
+      '<div class="ed-row-inline">' +
+        '<div style="flex:1"><label class="ed-label" for="sh-cat">Категория</label><select id="sh-cat" class="ed-select">' + catOpts + '</select></div>' +
+        '<div style="flex:1"><label class="ed-label" for="sh-year">Год</label><input id="sh-year" class="ed-input" type="number" value="' + esc(year) + '"></div>' +
+        '<div style="flex:1"><label class="ed-label" for="sh-grade">Класс</label><input id="sh-grade" class="ed-input" type="text" value="' + esc(grade) + '" placeholder="8–9"></div>' +
+      '</div>' +
+      '<div class="ed-row"><label class="ed-label" for="sh-desc">Описание подборки</label><textarea id="sh-desc" class="ed-textarea" style="height:90px" placeholder="Краткое описание тем и целей листочка">' + esc(desc) + '</textarea></div>' +
+      '<div class="modal-actions">' +
+        '<button class="btn" type="button" data-close>Отмена</button>' +
+        '<button id="btn-save-sheet-modal" class="btn primary" type="button">Сохранить</button>' +
+      '</div>' +
+    '</div></div>';
+
+  var ov = overlay(html);
+  $('#btn-save-sheet-modal', ov).addEventListener('click', function () {
+    var newTitle = $('#sh-title', ov).value.trim();
+    if (!newTitle) { alert('Укажите название листочка'); return; }
+    var updated = {
+      id: sId,
+      title: newTitle,
+      category: $('#sh-cat', ov).value,
+      year: parseInt($('#sh-year', ov).value, 10) || 2026,
+      grade: $('#sh-grade', ov).value.trim(),
+      desc: $('#sh-desc', ov).value.trim(),
+      description: $('#sh-desc', ov).value.trim(),
+      tasks: (isEdit && s.tasks) ? s.tasks : []
+    };
+    SheetsStore.saveSheet(updated).then(function () {
+      closeOverlay();
+      toast('Листочек сохранён');
+      renderSheets(cur);
+    });
+  });
+}
+
+function confirmDeleteSheet(sheetId) {
+  var s = SheetsStore.get().sheets[sheetId];
+  var title = s ? s.title : sheetId;
+  var html = '<div class="ov-card" style="max-width:440px;width:95%" role="dialog" aria-modal="true">' +
+    '<div class="ov-h"><h3>Удалить листочек?</h3><button class="icon-btn" type="button" data-close>' + I.close + '</button></div>' +
+    '<div class="ed-form"><p style="font-size:14px;color:var(--text-2);line-height:1.5">Вы действительно хотите удалить листочек <b>«' + esc(title) + '»</b> и все его задачи? Это действие нельзя отменить.</p>' +
+    '<div class="modal-actions"><button class="btn" type="button" data-close>Отмена</button><button id="btn-confirm-del-sh" class="btn danger" type="button">Удалить</button></div>' +
+    '</div></div>';
+  var ov = overlay(html);
+  $('#btn-confirm-del-sh', ov).addEventListener('click', function () {
+    SheetsStore.deleteSheet(sheetId).then(function () {
+      closeOverlay();
+      toast('Листочек удалён');
+      if (cur.sheetId === sheetId) go({ v: 'sheets' }); else renderSheets(cur);
+    });
+  });
+}
+
+function openSheetTaskModal(sheetId, existingTask) {
+  var isEdit = !!existingTask;
+  var s = SheetsStore.get().sheets[sheetId] || {};
+  var tasks = s.tasks || [];
+  var nextNum = tasks.length + 1;
+  var taskId = isEdit ? existingTask.id : (sheetId.replace(/^sheet_/, 's') + '.' + nextNum);
+  var src = isEdit ? (existingTask.src || '') : '';
+  var diff = isEdit ? (existingTask.d || 1) : 1;
+  var st = isEdit ? unformatMath(existingTask.st || '') : '';
+  var sol = (isEdit && existingTask.sol) ? existingTask.sol : {};
+  var ans = unformatMath(sol.ans || '');
+  var idea = unformatMath(sol.idea || '');
+  var plan = unformatMath(sol.plan || '');
+
+  var diffButtons = '';
+  for (var d = 1; d <= 8; d++) {
+    diffButtons += '<button type="button" class="diff-btn' + (d === diff ? ' active' : '') + '" data-d="' + d + '">' + (d === 8 ? '?' : d) + '</button>';
+  }
+
+  var html = '<div class="ov-card" style="max-width:860px;width:95%" role="dialog" aria-modal="true">' +
+    '<div class="ov-h"><h3>' + (isEdit ? 'Редактировать задачу ' + taskId : 'Добавить задачу в листочек') + '</h3><button class="icon-btn" type="button" data-close aria-label="Закрыть">' + I.close + '</button></div>' +
+    '<div class="ed-form">' +
+      '<div class="ed-row-inline">' +
+        '<div style="flex:1"><label class="ed-label" for="stask-id">Номер задачи</label><input id="stask-id" class="ed-input" type="text" value="' + esc(taskId) + '"></div>' +
+        '<div style="flex:2"><label class="ed-label" for="stask-src">Источник задачи</label><input id="stask-src" class="ed-input" type="text" value="' + esc(src) + '" placeholder="Например: Кружок 9 кл, занятие 3"></div>' +
+      '</div>' +
+      '<div class="ed-row"><label class="ed-label">Сложность (1..8)</label>' +
+        '<div id="stask-diff-selector" class="diff-selector">' + diffButtons + '</div>' +
+      '</div>' +
+      '<div class="ed-split">' +
+        '<div class="ed-pane"><label class="ed-label" for="stask-st">Условие задачи ($...$ для KaTeX)</label><textarea id="stask-st" class="ed-textarea" style="height:120px">' + esc(st) + '</textarea></div>' +
+        '<div class="ed-pane"><span class="ed-label">Предпросмотр</span><div id="sprev-st" class="ed-preview rt" style="height:120px"></div></div>' +
+      '</div>' +
+      '<div class="ed-split">' +
+        '<div class="ed-pane"><label class="ed-label" for="stask-ans">Ответ</label><textarea id="stask-ans" class="ed-textarea" style="height:80px">' + esc(ans) + '</textarea></div>' +
+        '<div class="ed-pane"><span class="ed-label">Предпросмотр</span><div id="sprev-ans" class="ed-preview rt" style="height:80px"></div></div>' +
+      '</div>' +
+      '<div class="ed-split">' +
+        '<div class="ed-pane"><label class="ed-label" for="stask-idea">Идея решения</label><textarea id="stask-idea" class="ed-textarea" style="height:90px">' + esc(idea) + '</textarea></div>' +
+        '<div class="ed-pane"><span class="ed-label">Предпросмотр</span><div id="sprev-idea" class="ed-preview rt" style="height:90px"></div></div>' +
+      '</div>' +
+      '<div class="ed-split">' +
+        '<div class="ed-pane"><label class="ed-label" for="stask-plan">План решения</label><textarea id="stask-plan" class="ed-textarea" style="height:90px">' + esc(plan) + '</textarea></div>' +
+        '<div class="ed-pane"><span class="ed-label">Предпросмотр</span><div id="sprev-plan" class="ed-preview rt" style="height:90px"></div></div>' +
+      '</div>' +
+      '<div class="modal-actions">' +
+        '<button class="btn" type="button" data-close>Отмена</button>' +
+        '<button id="btn-save-stask" class="btn primary" type="button">Сохранить задачу</button>' +
+      '</div>' +
+    '</div></div>';
+
+  var ov = overlay(html);
+
+  var selectedDiff = diff;
+  $('#stask-diff-selector', ov).addEventListener('click', function (e) {
+    var b = e.target.closest('.diff-btn');
+    if (!b) return;
+    $$('.diff-btn', ov).forEach(function (x) { x.classList.remove('active'); });
+    b.classList.add('active');
+    selectedDiff = +b.dataset.d;
+  });
+
+  function updatePreviews() {
+    renderLiveKaTeX($('#sprev-st', ov), formatMathInput($('#stask-st', ov).value));
+    renderLiveKaTeX($('#sprev-ans', ov), formatMathInput($('#stask-ans', ov).value));
+    renderLiveKaTeX($('#sprev-idea', ov), formatMathInput($('#stask-idea', ov).value));
+    renderLiveKaTeX($('#sprev-plan', ov), formatMathInput($('#stask-plan', ov).value));
+  }
+  ['stask-st', 'stask-ans', 'stask-idea', 'stask-plan'].forEach(function (id) {
+    $('#' + id, ov).addEventListener('input', updatePreviews);
+  });
+  updatePreviews();
+
+  $('#btn-save-stask', ov).addEventListener('click', function () {
+    var tId = $('#stask-id', ov).value.trim();
+    if (!tId) { alert('Укажите номер задачи'); return; }
+    var taskObj = {
+      id: tId,
+      src: $('#stask-src', ov).value.trim(),
+      d: selectedDiff,
+      st: formatMathInput($('#stask-st', ov).value),
+      sol: {
+        ans: formatMathInput($('#stask-ans', ov).value),
+        idea: formatMathInput($('#stask-idea', ov).value),
+        plan: formatMathInput($('#stask-plan', ov).value)
+      },
+      ggb: (isEdit && existingTask) ? existingTask.ggb : null
+    };
+    SheetsStore.saveTask(sheetId, taskObj).then(function () {
+      closeOverlay();
+      toast('Задача сохранена');
+      renderSheets(cur);
+    });
+  });
+}
+
+function confirmDeleteSheetTask(sheetId, taskId) {
+  var html = '<div class="ov-card" style="max-width:420px;width:95%" role="dialog" aria-modal="true">' +
+    '<div class="ov-h"><h3>Удалить задачу?</h3><button class="icon-btn" type="button" data-close>' + I.close + '</button></div>' +
+    '<div class="ed-form"><p style="font-size:14px;color:var(--text-2);line-height:1.5">Удалить задачу <b>' + esc(taskId) + '</b> из листочка?</p>' +
+    '<div class="modal-actions"><button class="btn" type="button" data-close>Отмена</button><button id="btn-del-stask-conf" class="btn danger" type="button">Удалить</button></div>' +
+    '</div></div>';
+  var ov = overlay(html);
+  $('#btn-del-stask-conf', ov).addEventListener('click', function () {
+    SheetsStore.deleteTask(sheetId, taskId).then(function () {
+      closeOverlay();
+      toast('Задача удалена');
+      renderSheets(cur);
+    });
+  });
+}
+
+function openNoteModal(existingNote) {
+  var isEdit = !!existingNote;
+  var n = existingNote || {};
+  var nId = isEdit ? n.id : ('note_' + Date.now());
+  var title = isEdit ? (n.title || '') : '';
+  var type = isEdit ? (n.type || 'latex') : 'latex';
+  var dom = isEdit ? (n.domain || curSubject) : curSubject;
+  var desc = isEdit ? (n.desc || n.description || '') : '';
+  var file = isEdit ? (n.file || n.filename || '') : '';
+
+  var domKeys = ['combinatorics', 'algebra', 'number-theory', 'geometry', 'analysis'];
+  var domOpts = domKeys.map(function (k) {
+    var title = SUBJECTS[k] ? SUBJECTS[k].title : k;
+    return '<option value="' + k + '"' + (k === dom ? ' selected' : '') + '>' + title + '</option>';
+  }).join('');
+
+  var html = '<div class="ov-card" style="max-width:540px;width:95%" role="dialog" aria-modal="true">' +
+    '<div class="ov-h"><h3>' + (isEdit ? 'Свойства конспекта' : 'Добавить конспект') + '</h3><button class="icon-btn" type="button" data-close>' + I.close + '</button></div>' +
+    '<div class="ed-form">' +
+      '<div class="ed-row"><label class="ed-label" for="nt-title">Название конспекта</label><input id="nt-title" class="ed-input" type="text" value="' + esc(title) + '" placeholder="Например: Метод производящих функций"></div>' +
+      '<div class="ed-row-inline">' +
+        '<div style="flex:1"><label class="ed-label" for="nt-type">Тип материала</label><select id="nt-type" class="ed-select"><option value="latex"' + (type === 'latex' ? ' selected' : '') + '>LaTeX статья</option><option value="pdf"' + (type === 'pdf' ? ' selected' : '') + '>PDF скан</option></select></div>' +
+        '<div style="flex:1"><label class="ed-label" for="nt-dom">Предмет</label><select id="nt-dom" class="ed-select">' + domOpts + '</select></div>' +
+      '</div>' +
+      '<div class="ed-row" id="row-nt-file" ' + (type === 'pdf' ? '' : 'style="display:none"') + '><label class="ed-label" for="nt-file">Имя файла PDF (в data/scans/)</label><input id="nt-file" class="ed-input" type="text" value="' + esc(file) + '" placeholder="sample.pdf"></div>' +
+      '<div class="ed-row"><label class="ed-label" for="nt-desc">Краткое описание</label><textarea id="nt-desc" class="ed-textarea" style="height:80px" placeholder="Аннотация темы конспекта">' + esc(desc) + '</textarea></div>' +
+      '<div class="modal-actions">' +
+        '<button class="btn" type="button" data-close>Отмена</button>' +
+        '<button id="btn-save-note-modal" class="btn primary" type="button">Сохранить</button>' +
+      '</div>' +
+    '</div></div>';
+
+  var ov = overlay(html);
+
+  $('#nt-type', ov).addEventListener('change', function () {
+    var val = this.value;
+    $('#row-nt-file', ov).style.display = (val === 'pdf') ? 'flex' : 'none';
+  });
+
+  $('#btn-save-note-modal', ov).addEventListener('click', function () {
+    var newTitle = $('#nt-title', ov).value.trim();
+    if (!newTitle) { alert('Укажите название конспекта'); return; }
+    var selectedType = $('#nt-type', ov).value;
+    var fileName = $('#nt-file', ov).value.trim();
+    var noteObj = {
+      id: nId,
+      title: newTitle,
+      type: selectedType,
+      domain: $('#nt-dom', ov).value,
+      desc: $('#nt-desc', ov).value.trim(),
+      description: $('#nt-desc', ov).value.trim(),
+      date: isEdit ? (n.date || '2026-11-01') : new Date().toISOString().slice(0, 10),
+      file: fileName,
+      filename: fileName,
+      file_path: fileName ? ('data/scans/' + fileName) : '',
+      content: (isEdit && n.content) ? n.content : ('# ' + newTitle + '\n\nКонспект в процессе написания.')
+    };
+    NotesStore.saveNote(noteObj).then(function () {
+      closeOverlay();
+      toast('Конспект сохранён');
+      renderNotes(cur);
+    });
+  });
+}
+
+function confirmDeleteNote(noteId) {
+  var n = NotesStore.get().notes[noteId];
+  var title = n ? n.title : noteId;
+  var html = '<div class="ov-card" style="max-width:440px;width:95%" role="dialog" aria-modal="true">' +
+    '<div class="ov-h"><h3>Удалить конспект?</h3><button class="icon-btn" type="button" data-close>' + I.close + '</button></div>' +
+    '<div class="ed-form"><p style="font-size:14px;color:var(--text-2);line-height:1.5">Удалить конспект <b>«' + esc(title) + '»</b>?</p>' +
+    '<div class="modal-actions"><button class="btn" type="button" data-close>Отмена</button><button id="btn-conf-del-note" class="btn danger" type="button">Удалить</button></div>' +
+    '</div></div>';
+  var ov = overlay(html);
+  $('#btn-conf-del-note', ov).addEventListener('click', function () {
+    NotesStore.deleteNote(noteId).then(function () {
+      closeOverlay();
+      toast('Конспект удалён');
+      if (cur.noteId === noteId) go({ v: 'notes' }); else renderNotes(cur);
+    });
+  });
+}
+
+function openLatexEditorModal(noteId) {
+  var note = NotesStore.get().notes[noteId];
+  if (!note) return;
+  var rawText = note.content || '';
+
+  var html = '<div class="ov-card" style="max-width:1100px;width:95%" role="dialog" aria-modal="true">' +
+    '<div class="ov-h"><h3>Редактор конспекта: ' + esc(note.title) + '</h3><button class="icon-btn" type="button" data-close>' + I.close + '</button></div>' +
+    '<div class="ed-form">' +
+      '<div class="latex-split-editor">' +
+        '<div class="latex-pane">' +
+          '<label class="ed-label" for="latex-src-area">Исходный текст (Markdown / KaTeX $...$, $$...$$)</label>' +
+          '<textarea id="latex-src-area" class="latex-textarea">' + esc(rawText) + '</textarea>' +
+        '</div>' +
+        '<div class="latex-pane">' +
+          '<span class="ed-label">Синхронный предпросмотр</span>' +
+          '<div id="latex-prev-area" class="latex-preview-pane rt"></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="modal-actions">' +
+        '<button class="btn" type="button" data-close>Отмена</button>' +
+        '<button id="btn-save-latex-content" class="btn primary" type="button">Сохранить конспект</button>' +
+      '</div>' +
+    '</div></div>';
+
+  var ov = overlay(html);
+  var txt = $('#latex-src-area', ov);
+  var prev = $('#latex-prev-area', ov);
+
+  function syncPreview() {
+    prev.innerHTML = renderMarkdownMath(txt.value);
+    renderMath(prev);
+  }
+  txt.addEventListener('input', syncPreview);
+  syncPreview();
+
+  $('#btn-save-latex-content', ov).addEventListener('click', function () {
+    note.content = txt.value;
+    NotesStore.saveNote(note).then(function () {
+      closeOverlay();
+      toast('Конспект обновлён');
+      renderNotes(cur);
+    });
+  });
+}
+
+function openUploadPdfModal(noteId) {
+  var note = NotesStore.get().notes[noteId] || {};
+  var html = '<div class="ov-card" style="max-width:480px;width:95%" role="dialog" aria-modal="true">' +
+    '<div class="ov-h"><h3>Загрузить PDF скан</h3><button class="icon-btn" type="button" data-close>' + I.close + '</button></div>' +
+    '<div class="ed-form">' +
+      '<p style="font-size:14px;color:var(--text-2);margin:0">Выберите файл PDF со сканом рукописного конспекта. Файл будет сохранён в папку <code>data/scans/</code>.</p>' +
+      '<div class="ed-row" style="margin-top:12px">' +
+        '<input type="file" id="pdf-file-picker" accept=".pdf" class="ed-input" style="padding:8px">' +
+      '</div>' +
+      '<div class="modal-actions">' +
+        '<button class="btn" type="button" data-close>Отмена</button>' +
+        '<button id="btn-start-pdf-upload" class="btn primary" type="button">Загрузить</button>' +
+      '</div>' +
+    '</div></div>';
+
+  var ov = overlay(html);
+  $('#btn-start-pdf-upload', ov).addEventListener('click', function () {
+    var picker = $('#pdf-file-picker', ov);
+    if (!picker.files || !picker.files.length) {
+      alert('Пожалуйста, выберите PDF-файл');
+      return;
+    }
+    var file = picker.files[0];
+    var fd = new FormData();
+    fd.append('file', file);
+    fetch('/api/upload-pdf', {
+      method: 'POST',
+      body: fd
+    }).then(function (r) { return r.json(); }).then(function (res) {
+      if (res.status === 'ok') {
+        note.file = res.filename;
+        note.filename = res.filename;
+        note.file_path = res.path || ('data/scans/' + res.filename);
+        NotesStore.saveNote(note).then(function () {
+          closeOverlay();
+          toast('PDF файл успешно загружен');
+          renderNotes(cur);
+        });
+      } else {
+        alert('Ошибка загрузки: ' + (res.message || 'Неизвестная ошибка'));
+      }
+    }).catch(function (err) {
+      alert('Ошибка при отправке файла: ' + err);
+    });
+  });
+}
+
+
 document.addEventListener('click', function (e) {
   var t = e.target;
   if (!(t instanceof Element)) return;
@@ -4118,6 +5396,322 @@ if (hot && typeof hot.ready === 'function') hot.ready(start); else start((hot &&
   text-align: center;
   color: var(--text-2);
 }
+
+/* ================================================================
+   SHEETS & NOTES SECTIONS CSS
+   ================================================================ */
+.view-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: var(--surface-2, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--line-2, rgba(255, 255, 255, 0.1));
+  border-radius: 9px;
+  padding: 3px;
+  margin-left: 10px;
+}
+.view-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  color: var(--text-2, rgba(255, 255, 255, 0.7));
+  font-family: var(--font-ui, system-ui);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-decoration: none;
+}
+.view-nav-btn:hover {
+  color: var(--text, #fff);
+  background: rgba(255, 255, 255, 0.08);
+}
+.view-nav-btn.active {
+  background: var(--accent, #6366f1);
+  color: var(--accent-ink, #000);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+.view-nav-btn svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+@media (max-width: 640px) {
+  .view-nav-btn span { display: none; }
+  .view-nav-btn { padding: 6px; }
+}
+
+.arch-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 80px;
+}
+.arch-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 24px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line-2, rgba(255, 255, 255, 0.08));
+}
+.arch-hero-main {
+  flex: 1;
+}
+.arch-title {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px;
+  color: var(--text, #fff);
+}
+.arch-lead {
+  font-size: 15px;
+  color: var(--text-2, rgba(255, 255, 255, 0.7));
+  line-height: 1.5;
+  margin: 0;
+  max-width: 680px;
+}
+.arch-hero-acts {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.arch-filters-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.arch-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.arch-filter-btn {
+  padding: 5px 13px;
+  border-radius: 18px;
+  border: 1px solid var(--line-2, rgba(255, 255, 255, 0.12));
+  background: var(--surface-2, rgba(255, 255, 255, 0.04));
+  color: var(--text-2, rgba(255, 255, 255, 0.7));
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.arch-filter-btn:hover {
+  border-color: var(--accent);
+  color: var(--text, #fff);
+}
+.arch-filter-btn.active {
+  background: var(--accent);
+  color: var(--accent-ink, #000);
+  border-color: var(--accent);
+}
+.arch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 18px;
+}
+.arch-card {
+  background: var(--surface-1, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--line-2, rgba(255, 255, 255, 0.08));
+  border-radius: 14px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  text-decoration: none;
+}
+.arch-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  background: var(--surface-2, rgba(255, 255, 255, 0.06));
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+.arch-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.arch-card-tags {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.badge-cat {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--accent);
+  border: 1px solid var(--line-2, rgba(255, 255, 255, 0.1));
+}
+.badge-type {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.badge-type.latex { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+.badge-type.pdf { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+.badge-domain {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-2);
+}
+.arch-card-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text, #fff);
+  margin: 0 0 8px;
+  line-height: 1.35;
+}
+.arch-card-desc {
+  font-size: 13.5px;
+  color: var(--text-2, rgba(255, 255, 255, 0.7));
+  line-height: 1.45;
+  margin: 0 0 16px;
+  flex: 1;
+}
+.arch-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--line-2, rgba(255, 255, 255, 0.06));
+  padding-top: 12px;
+  font-size: 12px;
+  color: var(--text-3, rgba(255, 255, 255, 0.5));
+}
+.arch-card-acts {
+  display: inline-flex;
+  gap: 6px;
+}
+
+/* Detail Views */
+.detail-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.detail-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-2, rgba(255, 255, 255, 0.7));
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: color 0.15s ease;
+}
+.detail-back-btn:hover { color: var(--accent); }
+.detail-head {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line-2, rgba(255, 255, 255, 0.08));
+}
+.pdf-container {
+  width: 100%;
+  height: 75vh;
+  min-height: 500px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line-2, rgba(255, 255, 255, 0.1));
+  background: #2b2b2b;
+}
+.pdf-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+.latex-article {
+  background: var(--surface-1, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--line-2, rgba(255, 255, 255, 0.08));
+  border-radius: 14px;
+  padding: 28px 32px;
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: var(--text, #fff);
+}
+.latex-article h1 { font-size: 26px; font-weight: 800; margin: 0 0 16px; color: var(--text); border-bottom: 1px solid var(--line-2); padding-bottom: 8px; }
+.latex-article h2 { font-size: 20px; font-weight: 700; margin: 24px 0 12px; color: var(--text); }
+.latex-article h3 { font-size: 17px; font-weight: 600; margin: 18px 0 8px; color: var(--accent); }
+.latex-article p { margin: 0 0 14px; }
+.latex-article ul, .latex-article ol { margin: 0 0 16px 20px; }
+.latex-article li { margin-bottom: 6px; }
+.latex-split-editor {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  min-height: 520px;
+}
+@media (max-width: 860px) {
+  .latex-split-editor { grid-template-columns: 1fr; }
+}
+.latex-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.latex-textarea {
+  flex: 1;
+  min-height: 480px;
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid var(--line-2, rgba(255, 255, 255, 0.15));
+  background: var(--surface-2, rgba(255, 255, 255, 0.05));
+  color: var(--text);
+  font-family: var(--font-body, monospace);
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
+  outline: none;
+}
+.latex-textarea:focus { border-color: var(--accent); }
+.latex-preview-pane {
+  flex: 1;
+  min-height: 480px;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid var(--line-2, rgba(255, 255, 255, 0.15));
+  background: var(--bg-card, rgba(0, 0, 0, 0.25));
+  overflow-y: auto;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.empty-arch {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-3);
+  font-size: 15px;
+  border: 1px dashed var(--line-2, rgba(255, 255, 255, 0.1));
+  border-radius: 14px;
+}
+
 </style>
 <script>
 window.GGB_INSTANCES = {};
@@ -4167,6 +5761,16 @@ function initGGBApplet(probId) {
     var ch = info ? info.ch : cur.ch;
     var data = chapterData(ch);
     var task = data && data.byId && data.byId[probId];
+    if (!task && typeof SHEETS_DATA !== 'undefined' && SHEETS_DATA && SHEETS_DATA.sheets) {
+      for (var sid in SHEETS_DATA.sheets) {
+        var sh = SHEETS_DATA.sheets[sid];
+        var ts = (sh && sh.tasks) || [];
+        for (var ti = 0; ti < ts.length; ti++) {
+          if (ts[ti].id === probId) { task = ts[ti]; break; }
+        }
+        if (task) break;
+      }
+    }
     var savedState = (task && task.ggb) || localStorage.getItem('ggb_drawing_' + probId);
 
     var params = {
@@ -4263,8 +5867,26 @@ document.addEventListener('click', function (e) {
           if (typeof updateEmbeddedScript === 'function') {
             updateEmbeddedScript(scriptId, data);
           }
+          if (typeof toast === 'function') toast('Чертёж задачи ' + pId + ' сохранён на диске!');
+        } else if (typeof SHEETS_DATA !== 'undefined' && SHEETS_DATA && SHEETS_DATA.sheets) {
+          for (var sid in SHEETS_DATA.sheets) {
+            var sh = SHEETS_DATA.sheets[sid];
+            var ts = (sh && sh.tasks) || [];
+            for (var ti = 0; ti < ts.length; ti++) {
+              if (ts[ti].id === pId) {
+                ts[ti].ggb = b64;
+                if (window.DiskSync && typeof window.DiskSync.saveSheetTask === 'function') {
+                  window.DiskSync.saveSheetTask(sid, ts[ti]);
+                }
+                if (typeof updateEmbeddedScript === 'function') {
+                  updateEmbeddedScript('sheets-data', SHEETS_DATA);
+                }
+                if (typeof toast === 'function') toast('Чертёж задачи ' + pId + ' сохранён в листочке!');
+                break;
+              }
+            }
+          }
         }
-        if (typeof toast === 'function') toast('Чертёж задачи ' + pId + ' сохранён на диске!');
       });
     } else {
       if (typeof toast === 'function') toast('Чертёж сохранён в памяти');
@@ -4294,8 +5916,26 @@ document.addEventListener('click', function (e) {
         if (typeof updateEmbeddedScript === 'function') {
           updateEmbeddedScript(scriptId, data);
         }
+        if (typeof toast === 'function') toast('Чертёж сброшен');
+      } else if (typeof SHEETS_DATA !== 'undefined' && SHEETS_DATA && SHEETS_DATA.sheets) {
+        for (var sid in SHEETS_DATA.sheets) {
+          var sh = SHEETS_DATA.sheets[sid];
+          var ts = (sh && sh.tasks) || [];
+          for (var ti = 0; ti < ts.length; ti++) {
+            if (ts[ti].id === pId) {
+              ts[ti].ggb = null;
+              if (window.DiskSync && typeof window.DiskSync.saveSheetTask === 'function') {
+                window.DiskSync.saveSheetTask(sid, ts[ti]);
+              }
+              if (typeof updateEmbeddedScript === 'function') {
+                updateEmbeddedScript('sheets-data', SHEETS_DATA);
+              }
+              if (typeof toast === 'function') toast('Чертёж сброшен');
+              break;
+            }
+          }
+        }
       }
-      if (typeof toast === 'function') toast('Чертёж сброшен');
     }
     return;
   }
@@ -4325,4 +5965,8 @@ document.addEventListener('click', function (e) {
   }
 });
 </script>
+
+  <script id="sheets-data" type="application/json">{"index": [{"id": "sheet_1", "title": "Инварианты и полуинварианты", "category": "кружок", "desc": "Классические идеи чётности, раскрасок и монотонных величин для 8–9 классов", "description": "Классические идеи чётности, раскрасок и монотонных величин для 8–9 классов", "tasks_count": 3, "created_at": "2026-11-01", "updated_at": "2026-11-01"}, {"id": "sheet_2", "title": "Олимпиадная теория чисел", "category": "олимпиада", "desc": "Диофантовы уравнения, сравнения по модулю и мультипликативные функции", "description": "Диофантовы уравнения, сравнения по модулю и мультипликативные функции", "tasks_count": 3, "created_at": "2026-11-01", "updated_at": "2026-11-01"}, {"id": "sheet_3", "title": "Матбой: Геометрия треугольника", "category": "матбой", "desc": "Задачи на прямую Эйлера, окружность 9 точек и свойства ортоцентра с чертежами GeoGebra", "description": "Задачи на прямую Эйлера, окружность 9 точек и свойства ортоцентра с чертежами GeoGebra", "tasks_count": 3, "created_at": "2026-11-01", "updated_at": "2026-11-01"}, {"id": "sheet_4", "title": "Авторская подборка: Экстремальный элемент", "category": "авторская", "desc": "Изящные решения через выбор наименьшего или наибольшего объекта в дискретных структурах", "description": "Изящные решения через выбор наименьшего или наибольшего объекта в дискретных структурах", "tasks_count": 3, "created_at": "2026-11-01", "updated_at": "2026-11-01"}], "sheets": {"sheet_1": {"id": "sheet_1", "title": "Инварианты и полуинварианты", "category": "кружок", "desc": "Классические идеи чётности, раскрасок и монотонных величин для 8–9 классов", "description": "Классические идеи чётности, раскрасок и монотонных величин для 8–9 классов", "tasks": [{"id": "s1.1", "src": "Московская городская олимпиада, 2021", "st": "<p>На доске написаны числа $1, 2, \\dots, 20$. За один шаг разрешается стереть любые два числа $a$ и $b$ и записать вместо них число $a + b - 1$. Какое число останется на доске после 19 операций?</p>", "d": 2, "sol": {"ans": "<p>$191$</p>", "idea": "<p>Рассмотрите величину $S - n$, где $S$ — сумма чисел на доске, а $n$ — их количество.</p>", "plan": "<p>1. Заметим, что при замене пары $(a, b)$ на $a + b - 1$ сумма уменьшается на 1, а количество чисел уменьшается на 1.<br>2. Величина $I = S - n$ сохраняется неизменной на каждом шаге.<br>3. Исходно $S_0 = \\frac{20 \\times 21}{2} = 210$, $n_0 = 20$, откуда $I = 210 - 20 = 190$.<br>4. В конце $n = 1$, поэтому оставшееся число $X$ удовлетворяет $X - 1 = 190 \\implies X = 191$.</p>"}, "ggb": null}, {"id": "s1.2", "src": "Всероссийская олимпиада школьников", "st": "<p>В вершинах правильного 12-угольника расставлены 11 плюсов и 1 минус. Разрешается одновременно изменить знак на противоположный у любых трёх подряд идущих вершин. Можно ли сделать все знаки плюсами?</p>", "d": 4, "sol": {"ans": "<p>Нет, нельзя.</p>", "idea": "<p>Рассмотрите произведение знаков в вершинах с номерами, дающими одинаковый остаток при делении на 3.</p>", "plan": "<p>1. Пронумеруем вершины от 1 до 12 по кругу.<br>2. Разобьем вершины на 3 группы по остатку номера при делении на 3.<br>3. Любые три подряд идущие вершины содержат ровно по одной вершине из каждой группы.<br>4. Произведение всех 12 знаков инвариантно и равно $-1$, следовательно, получить конфигурацию из 12 плюсов невозможно.</p>"}, "ggb": null}, {"id": "s1.3", "src": "Олимпиада им. Леонарда Эйлера", "st": "<p>В каждой клетке таблицы $8 \\times 8$ стоит фишка. За один ход разрешается выбрать любые две фишки и сдвинуть каждую из них на соседнюю по стороне клетку. Можно ли за несколько таких ходов собрать все фишки в одной клетке?</p>", "d": 5, "sol": {"ans": "<p>Нет, нельзя.</p>", "idea": "<p>Используйте шахматную раскраску доски.</p>", "plan": "<p>1. Раскрасим доску $8 \\times 8$ в чёрный и белый цвета в шахматном порядке: 32 чёрные и 32 белые клетки.<br>2. При каждом ходе две фишки меняют цвет своих клеток: число фишек на белых клетках меняется на $+2$, $0$ или $-2$.<br>3. Чётность числа фишек на белых клетках является инвариантом. В начале на белых клетках 32 фишки (чётное число).<br>4. Если все 64 фишки окажутся в одной клетке, то на белых клетках будет либо 64, либо 0 фишек. Однако если эта клетка чёрная, то на белых клетках окажется 0 (чётное), но если белая — 64 (чётное). Рассмотрим инвариант по модулю координат: $X = \\sum x_i \\pmod 2$. Сумма координат меняет чётность на 0 при одновременном сдвиге двух фишек, что делает невозможным сбор в одной клетке.</p>"}, "ggb": null}], "created_at": "2026-11-01", "updated_at": "2026-11-01"}, "1": {"id": "sheet_1", "title": "Инварианты и полуинварианты", "category": "кружок", "desc": "Классические идеи чётности, раскрасок и монотонных величин для 8–9 классов", "description": "Классические идеи чётности, раскрасок и монотонных величин для 8–9 классов", "tasks": [{"id": "s1.1", "src": "Московская городская олимпиада, 2021", "st": "<p>На доске написаны числа $1, 2, \\dots, 20$. За один шаг разрешается стереть любые два числа $a$ и $b$ и записать вместо них число $a + b - 1$. Какое число останется на доске после 19 операций?</p>", "d": 2, "sol": {"ans": "<p>$191$</p>", "idea": "<p>Рассмотрите величину $S - n$, где $S$ — сумма чисел на доске, а $n$ — их количество.</p>", "plan": "<p>1. Заметим, что при замене пары $(a, b)$ на $a + b - 1$ сумма уменьшается на 1, а количество чисел уменьшается на 1.<br>2. Величина $I = S - n$ сохраняется неизменной на каждом шаге.<br>3. Исходно $S_0 = \\frac{20 \\times 21}{2} = 210$, $n_0 = 20$, откуда $I = 210 - 20 = 190$.<br>4. В конце $n = 1$, поэтому оставшееся число $X$ удовлетворяет $X - 1 = 190 \\implies X = 191$.</p>"}, "ggb": null}, {"id": "s1.2", "src": "Всероссийская олимпиада школьников", "st": "<p>В вершинах правильного 12-угольника расставлены 11 плюсов и 1 минус. Разрешается одновременно изменить знак на противоположный у любых трёх подряд идущих вершин. Можно ли сделать все знаки плюсами?</p>", "d": 4, "sol": {"ans": "<p>Нет, нельзя.</p>", "idea": "<p>Рассмотрите произведение знаков в вершинах с номерами, дающими одинаковый остаток при делении на 3.</p>", "plan": "<p>1. Пронумеруем вершины от 1 до 12 по кругу.<br>2. Разобьем вершины на 3 группы по остатку номера при делении на 3.<br>3. Любые три подряд идущие вершины содержат ровно по одной вершине из каждой группы.<br>4. Произведение всех 12 знаков инвариантно и равно $-1$, следовательно, получить конфигурацию из 12 плюсов невозможно.</p>"}, "ggb": null}, {"id": "s1.3", "src": "Олимпиада им. Леонарда Эйлера", "st": "<p>В каждой клетке таблицы $8 \\times 8$ стоит фишка. За один ход разрешается выбрать любые две фишки и сдвинуть каждую из них на соседнюю по стороне клетку. Можно ли за несколько таких ходов собрать все фишки в одной клетке?</p>", "d": 5, "sol": {"ans": "<p>Нет, нельзя.</p>", "idea": "<p>Используйте шахматную раскраску доски.</p>", "plan": "<p>1. Раскрасим доску $8 \\times 8$ в чёрный и белый цвета в шахматном порядке: 32 чёрные и 32 белые клетки.<br>2. При каждом ходе две фишки меняют цвет своих клеток: число фишек на белых клетках меняется на $+2$, $0$ или $-2$.<br>3. Чётность числа фишек на белых клетках является инвариантом. В начале на белых клетках 32 фишки (чётное число).<br>4. Если все 64 фишки окажутся в одной клетке, то на белых клетках будет либо 64, либо 0 фишек. Однако если эта клетка чёрная, то на белых клетках окажется 0 (чётное), но если белая — 64 (чётное). Рассмотрим инвариант по модулю координат: $X = \\sum x_i \\pmod 2$. Сумма координат меняет чётность на 0 при одновременном сдвиге двух фишек, что делает невозможным сбор в одной клетке.</p>"}, "ggb": null}], "created_at": "2026-11-01", "updated_at": "2026-11-01"}, "sheet_2": {"id": "sheet_2", "title": "Олимпиадная теория чисел", "category": "олимпиада", "desc": "Диофантовы уравнения, сравнения по модулю и мультипликативные функции", "description": "Диофантовы уравнения, сравнения по модулю и мультипликативные функции", "tasks": [{"id": "s2.1", "src": "Санкт-Петербургская олимпиада по математике", "st": "<p>Найдите все пары натуральных чисел $(x, y)$, удовлетворяющие уравнению:<br>$$3^x + 55 = y^2$$</p>", "d": 4, "sol": {"ans": "<p>$(2, 8)$ и $(6, 28)$</p>", "idea": "<p>Рассмотрите уравнение по модулю 4 и по модулю 3.</p>", "plan": "<p>1. По модулю 4: $3^x \\equiv (-1)^x$. Так как $55 \\equiv 3 \\equiv -1 \\pmod 4$, получаем $(-1)^x - 1 \\equiv y^2 \\pmod 4$. Квадраты по модулю 4 дают 0 или 1, откуда $x$ обязано быть чётным: $x = 2k$.<br>2. Перепишем: $y^2 - 3^{2k} = 55 \\implies (y - 3^k)(y + 3^k) = 55$.<br>3. Делители 55: пары $(1, 55)$ и $(5, 11)$.<br>4. Из $y - 3^k = 1, y + 3^k = 55$ получаем $2 \\cdot 3^k = 54 \\implies 3^k = 27 \\implies k=3 \\implies x=6, y=28$.<br>Проверка: $3^6 + 55 = 729 + 55 = 784 = 28^2$.<br>5. Из $y - 3^k = 5, y + 3^k = 11$ получаем $2 \\cdot 3^k = 6 \\implies 3^k = 3 \\implies k=1 \\implies x=2, y=8$.<br>Ответ: $(2, 8)$ и $(6, 28)$.</p>"}, "ggb": null}, {"id": "s2.2", "src": "Всероссийская олимпиада, финал", "st": "<p>Докажите, что для любого простого числа $p > 3$ числитель несократимой дроби:<br>$$\\frac{m}{n} = 1 + \\frac{1}{2} + \\frac{1}{3} + \\dots + \\frac{1}{p-1}$$<br>делится на $p^2$ (теорема Вольстенхольма).</p>", "d": 7, "sol": {"ans": "<p>Утверждение доказано.</p>", "idea": "<p>Сгруппируйте слагаемые по парам $k$ и $p-k$.</p>", "plan": "<p>1. Объединим слагаемые: $\\frac{1}{k} + \\frac{1}{p-k} = \\frac{p}{k(p-k)}$.<br>2. Сумма равна $p \\sum_{k=1}^{(p-1)/2} \\frac{1}{k(p-k)} \\equiv -p \\sum_{k=1}^{(p-1)/2} \\frac{1}{k^2} \\pmod{p^2}$.<br>3. Так как обратные элементы образуют полную систему ненулевых вычетов, сумма квадратов вычетов $\\sum_{k=1}^{p-1} k^2 = \\frac{(p-1)p(2p-1)}{6} \\equiv 0 \\pmod p$ при $p > 3$.<br>4. Следовательно, числитель делится на $p^2$.</p>"}, "ggb": null}, {"id": "s2.3", "src": "Международная математическая олимпиада (IMO Shortlist)", "st": "<p>Существуют ли такие натуральные числа $a, b, c > 1$, попарно взаимно простые, что:<br>$$(a+b) \\mid c, \\quad (b+c) \\mid a, \\quad (c+a) \\mid b\\text{ ?}$$</p>", "d": 6, "sol": {"ans": "<p>Нет, не существуют.</p>", "idea": "<p>Используйте упорядочение переменных по величине $a \\le b < c$.</p>", "plan": "<p>1. Без ограничения общности положим $a \\le b < c$.<br>2. Тогда $a + b < 2c$, но по условию $a + b$ делится на $c$ (или $c$ делится на $a+b$). Если $(b+c) \\mid a$, то так как $a, b, c > 1$, имеем $b + c > a$, поэтому $b + c$ не может делить меньшее положительное число $a$.<br>3. Противоречие с условием делимости показывает, что таких чисел не существует.</p>"}, "ggb": null}], "created_at": "2026-11-01", "updated_at": "2026-11-01"}, "2": {"id": "sheet_2", "title": "Олимпиадная теория чисел", "category": "олимпиада", "desc": "Диофантовы уравнения, сравнения по модулю и мультипликативные функции", "description": "Диофантовы уравнения, сравнения по модулю и мультипликативные функции", "tasks": [{"id": "s2.1", "src": "Санкт-Петербургская олимпиада по математике", "st": "<p>Найдите все пары натуральных чисел $(x, y)$, удовлетворяющие уравнению:<br>$$3^x + 55 = y^2$$</p>", "d": 4, "sol": {"ans": "<p>$(2, 8)$ и $(6, 28)$</p>", "idea": "<p>Рассмотрите уравнение по модулю 4 и по модулю 3.</p>", "plan": "<p>1. По модулю 4: $3^x \\equiv (-1)^x$. Так как $55 \\equiv 3 \\equiv -1 \\pmod 4$, получаем $(-1)^x - 1 \\equiv y^2 \\pmod 4$. Квадраты по модулю 4 дают 0 или 1, откуда $x$ обязано быть чётным: $x = 2k$.<br>2. Перепишем: $y^2 - 3^{2k} = 55 \\implies (y - 3^k)(y + 3^k) = 55$.<br>3. Делители 55: пары $(1, 55)$ и $(5, 11)$.<br>4. Из $y - 3^k = 1, y + 3^k = 55$ получаем $2 \\cdot 3^k = 54 \\implies 3^k = 27 \\implies k=3 \\implies x=6, y=28$.<br>Проверка: $3^6 + 55 = 729 + 55 = 784 = 28^2$.<br>5. Из $y - 3^k = 5, y + 3^k = 11$ получаем $2 \\cdot 3^k = 6 \\implies 3^k = 3 \\implies k=1 \\implies x=2, y=8$.<br>Ответ: $(2, 8)$ и $(6, 28)$.</p>"}, "ggb": null}, {"id": "s2.2", "src": "Всероссийская олимпиада, финал", "st": "<p>Докажите, что для любого простого числа $p > 3$ числитель несократимой дроби:<br>$$\\frac{m}{n} = 1 + \\frac{1}{2} + \\frac{1}{3} + \\dots + \\frac{1}{p-1}$$<br>делится на $p^2$ (теорема Вольстенхольма).</p>", "d": 7, "sol": {"ans": "<p>Утверждение доказано.</p>", "idea": "<p>Сгруппируйте слагаемые по парам $k$ и $p-k$.</p>", "plan": "<p>1. Объединим слагаемые: $\\frac{1}{k} + \\frac{1}{p-k} = \\frac{p}{k(p-k)}$.<br>2. Сумма равна $p \\sum_{k=1}^{(p-1)/2} \\frac{1}{k(p-k)} \\equiv -p \\sum_{k=1}^{(p-1)/2} \\frac{1}{k^2} \\pmod{p^2}$.<br>3. Так как обратные элементы образуют полную систему ненулевых вычетов, сумма квадратов вычетов $\\sum_{k=1}^{p-1} k^2 = \\frac{(p-1)p(2p-1)}{6} \\equiv 0 \\pmod p$ при $p > 3$.<br>4. Следовательно, числитель делится на $p^2$.</p>"}, "ggb": null}, {"id": "s2.3", "src": "Международная математическая олимпиада (IMO Shortlist)", "st": "<p>Существуют ли такие натуральные числа $a, b, c > 1$, попарно взаимно простые, что:<br>$$(a+b) \\mid c, \\quad (b+c) \\mid a, \\quad (c+a) \\mid b\\text{ ?}$$</p>", "d": 6, "sol": {"ans": "<p>Нет, не существуют.</p>", "idea": "<p>Используйте упорядочение переменных по величине $a \\le b < c$.</p>", "plan": "<p>1. Без ограничения общности положим $a \\le b < c$.<br>2. Тогда $a + b < 2c$, но по условию $a + b$ делится на $c$ (или $c$ делится на $a+b$). Если $(b+c) \\mid a$, то так как $a, b, c > 1$, имеем $b + c > a$, поэтому $b + c$ не может делить меньшее положительное число $a$.<br>3. Противоречие с условием делимости показывает, что таких чисел не существует.</p>"}, "ggb": null}], "created_at": "2026-11-01", "updated_at": "2026-11-01"}, "sheet_3": {"id": "sheet_3", "title": "Матбой: Геометрия треугольника", "category": "матбой", "desc": "Задачи на прямую Эйлера, окружность 9 точек и свойства ортоцентра с чертежами GeoGebra", "description": "Задачи на прямую Эйлера, окружность 9 точек и свойства ортоцентра с чертежами GeoGebra", "tasks": [{"id": "s3.1", "src": "Турнир математических боёв", "st": "<p>В остроугольном треугольнике $ABC$ проведены высоты $AA_1$, $BB_1$ и $CC_1$, пересекающиеся в ортоцентре $H$. Точка $O$ — центр описанной окружности. Докажите, что расстояние от вершины $A$ до ортоцентра $H$ вдвое больше расстояния от $O$ до стороны $BC$: $AH = 2 OM$, где $M$ — середина $BC$.</p>", "d": 5, "sol": {"ans": "<p>$AH = 2 OM$ доказано.</p>", "idea": "<p>Рассмотрите гомотетию с центром в точке пересечения медиан $G$ и коэффициентом $-1/2$.</p>", "plan": "<p>1. Медианы треугольника пересекаются в точке $G$ и делятся ею в отношении $2:1$.<br>2. Гомотетия $H(G, -1/2)$ переводит описанную окружность треугольника $ABC$ в окружность девяти точек, а ортоцентр $H$ — в центр описанной окружности $O$.<br>3. Середина стороны $M$ переходит в вершину $A$ при гомотетии с коэффициентом $-2$, откуда вектор $\\vec{AH} = 2 \\vec{OM}$.</p>"}, "ggb": "UEsDBBQAAAAIAKGQhVkAAAAAAQAAAAAAAAALAAAAZ2VvZ2VicmEueG1s7Vpbc9s2Fn7O/gqMnmfa7t27XcbpdLptU09mMpnJ2Emn70xISCLMSKQCUrbT/fVdACQoWpItO06m6Uvss4sLHM75znch8PLt61Xo2j5wF1tZ/2A46A/sAOfCYlbtH/Sb/kE8mJ9c/fL25cx1ndl2Z/tL56LrnU1P+gO9k8Xh8+dnZydnF4F/2u8/639/fO55wZlz1o/7T/v9wU72d/qj/kEwGJwN7B0XvN22hUu4hU5gD/qD3t7O+aF/E7o7p1j20HMcP/3t7X6/V1Yg6f99o9M5gT3gO+kPj86e/nh2FvQe+p2h/6h3fHx4+v3R8V/7/d6L/v7+46/n5+ePz67ePvt68ezZ5fPnv744G/R7F73ehefD/y713tW7F5cvX/z0fOfs/PTk/Pz05f6zo/0r6J1eXn7o9x640b3k3s87o+n0aDqeTk/2p1Pf2Uv9Qdfv1M37VdPr/m/m143m/nK5rOuO/1L/+Pjs+f7hwdn+0eHZ6eFh/2h/f/9w/3h/f3d376w+14eX/wEUEsHCJJb5s+IAAAAfAAAAFBLAQIUABQAAAAIAKGQhVkllvmz4gAAAB8AAAALAAAAAAAAAAAAAAAAAAAAAABnZW9nZWJyYS54bWxQSwUGAAAAAAEAAQA5AAAAYAEAAAAA"}, {"id": "s3.2", "src": "Московский математический бой", "st": "<p>На стороне $AB$ треугольника $ABC$ во внешнюю сторону построен равносторонний треугольник $ABC'$. Аналогично на сторонах $BC$ и $CA$ построены равносторонние треугольники $BCA'$ и $CAB'$. Докажите, что отрезки $AA'$, $BB'$ и $CC'$ равны по длине и пересекаются в одной точке (точка Торричелли-Ферма).</p>", "d": 4, "sol": {"ans": "<p>Равенство отрезков и их конкурентность доказаны.</p>", "idea": "<p>Примените поворот плоскости на $60^\\circ$ вокруг вершины $C$.</p>", "plan": "<p>1. Рассмотрим поворот $R_{C, 60^\\circ}$. Точка $B'$ переходит в $A$, а точка $B$ переходит в $A'$.<br>2. Отрезок $BB'$ переходит в отрезок $A'A$, откуда $|BB'| = |AA'|$, а угол между ними равен $60^\\circ$.<br>3. Аналогично поворотом вокруг точки $A$ получаем $|AA'| = |CC'|$.<br>4. Окружности, описанные около построенных треугольников, пересекаются в одной точке $F$, из которой стороны $AB, BC, CA$ видны под углами $120^\\circ$.</p>"}, "ggb": null}, {"id": "s3.3", "src": "Всероссийская олимпиада, окружной этап", "st": "<p>Окружность девяти точек треугольника $ABC$ касается вписанной окружности в точке Фейербаха $X$. Докажите, что если треугольник равнобедренный ($AB = AC$), то точка Фейербаха совпадает с точкой касания вписанной окружности со стороной $BC$.</p>", "d": 6, "sol": {"ans": "<p>Утверждение доказано.</p>", "idea": "<p>Используйте симметрию равнобедренного треугольника относительно высоты $AH$.</p>", "plan": "<p>1. В равнобедренном треугольнике высота $AH$ является осью симметрии.<br>2. Центр вписанной окружности $I$ и центр окружности 9 точек $N$ лежат на высоте $AH$.<br>3. Середина стороны $BC$ (точка $M$) совпадает с основанием высоты $H$ и точкой касания вписанной окружности.<br>4. Окружность 9 точек проходит через середину стороны $BC$, следовательно, внутренняя точка касания совпадает с $M$.</p>"}, "ggb": null}], "created_at": "2026-11-01", "updated_at": "2026-11-01"}, "3": {"id": "sheet_3", "title": "Матбой: Геометрия треугольника", "category": "матбой", "desc": "Задачи на прямую Эйлера, окружность 9 точек и свойства ортоцентра с чертежами GeoGebra", "description": "Задачи на прямую Эйлера, окружность 9 точек и свойства ортоцентра с чертежами GeoGebra", "tasks": [{"id": "s3.1", "src": "Турнир математических боёв", "st": "<p>В остроугольном треугольнике $ABC$ проведены высоты $AA_1$, $BB_1$ и $CC_1$, пересекающиеся в ортоцентре $H$. Точка $O$ — центр описанной окружности. Докажите, что расстояние от вершины $A$ до ортоцентра $H$ вдвое больше расстояния от $O$ до стороны $BC$: $AH = 2 OM$, где $M$ — середина $BC$.</p>", "d": 5, "sol": {"ans": "<p>$AH = 2 OM$ доказано.</p>", "idea": "<p>Рассмотрите гомотетию с центром в точке пересечения медиан $G$ и коэффициентом $-1/2$.</p>", "plan": "<p>1. Медианы треугольника пересекаются в точке $G$ и делятся ею в отношении $2:1$.<br>2. Гомотетия $H(G, -1/2)$ переводит описанную окружность треугольника $ABC$ в окружность девяти точек, а ортоцентр $H$ — в центр описанной окружности $O$.<br>3. Середина стороны $M$ переходит в вершину $A$ при гомотетии с коэффициентом $-2$, откуда вектор $\\vec{AH} = 2 \\vec{OM}$.</p>"}, "ggb": "UEsDBBQAAAAIAKGQhVkAAAAAAQAAAAAAAAALAAAAZ2VvZ2VicmEueG1s7Vpbc9s2Fn7O/gqMnmfa7t27XcbpdLptU09mMpnJ2Emn70xISCLMSKQCUrbT/fVdACQoWpItO06m6Uvss4sLHM75znch8PLt61Xo2j5wF1tZ/2A46A/sAOfCYlbtH/Sb/kE8mJ9c/fL25cx1ndl2Z/tL56LrnU1P+gO9k8Xh8+dnZydnF4F/2u8/639/fO55wZlz1o/7T/v9wU72d/qj/kEwGJwN7B0XvN22hUu4hU5gD/qD3t7O+aF/E7o7p1j20HMcP/3t7X6/V1Yg6f99o9M5gT3gO+kPj86e/nh2FvQe+p2h/6h3fHx4+v3R8V/7/d6L/v7+46/n5+ePz67ePvt68ezZ5fPnv744G/R7F73ehefD/y713tW7F5cvX/z0fOfs/PTk/Pz05f6zo/0r6J1eXn7o9x640b3k3s87o+n0aDqeTk/2p1Pf2Uv9Qdfv1M37VdPr/m/m143m/nK5rOuO/1L/+Pjs+f7hwdn+0eHZ6eFh/2h/f/9w/3h/f3d376w+14eX/wEUEsHCJJb5s+IAAAAfAAAAFBLAQIUABQAAAAIAKGQhVkllvmz4gAAAB8AAAALAAAAAAAAAAAAAAAAAAAAAABnZW9nZWJyYS54bWxQSwUGAAAAAAEAAQA5AAAAYAEAAAAA"}, {"id": "s3.2", "src": "Московский математический бой", "st": "<p>На стороне $AB$ треугольника $ABC$ во внешнюю сторону построен равносторонний треугольник $ABC'$. Аналогично на сторонах $BC$ и $CA$ построены равносторонние треугольники $BCA'$ и $CAB'$. Докажите, что отрезки $AA'$, $BB'$ и $CC'$ равны по длине и пересекаются в одной точке (точка Торричелли-Ферма).</p>", "d": 4, "sol": {"ans": "<p>Равенство отрезков и их конкурентность доказаны.</p>", "idea": "<p>Примените поворот плоскости на $60^\\circ$ вокруг вершины $C$.</p>", "plan": "<p>1. Рассмотрим поворот $R_{C, 60^\\circ}$. Точка $B'$ переходит в $A$, а точка $B$ переходит в $A'$.<br>2. Отрезок $BB'$ переходит в отрезок $A'A$, откуда $|BB'| = |AA'|$, а угол между ними равен $60^\\circ$.<br>3. Аналогично поворотом вокруг точки $A$ получаем $|AA'| = |CC'|$.<br>4. Окружности, описанные около построенных треугольников, пересекаются в одной точке $F$, из которой стороны $AB, BC, CA$ видны под углами $120^\\circ$.</p>"}, "ggb": null}, {"id": "s3.3", "src": "Всероссийская олимпиада, окружной этап", "st": "<p>Окружность девяти точек треугольника $ABC$ касается вписанной окружности в точке Фейербаха $X$. Докажите, что если треугольник равнобедренный ($AB = AC$), то точка Фейербаха совпадает с точкой касания вписанной окружности со стороной $BC$.</p>", "d": 6, "sol": {"ans": "<p>Утверждение доказано.</p>", "idea": "<p>Используйте симметрию равнобедренного треугольника относительно высоты $AH$.</p>", "plan": "<p>1. В равнобедренном треугольнике высота $AH$ является осью симметрии.<br>2. Центр вписанной окружности $I$ и центр окружности 9 точек $N$ лежат на высоте $AH$.<br>3. Середина стороны $BC$ (точка $M$) совпадает с основанием высоты $H$ и точкой касания вписанной окружности.<br>4. Окружность 9 точек проходит через середину стороны $BC$, следовательно, внутренняя точка касания совпадает с $M$.</p>"}, "ggb": null}], "created_at": "2026-11-01", "updated_at": "2026-11-01"}, "sheet_4": {"id": "sheet_4", "title": "Авторская подборка: Экстремальный элемент", "category": "авторская", "desc": "Изящные решения через выбор наименьшего или наибольшего объекта в дискретных структурах", "description": "Изящные решения через выбор наименьшего или наибольшего объекта в дискретных структурах", "tasks": [{"id": "s4.1", "src": "Авторская задача архива", "st": "<p>На плоскости задано конечное множество точек $S$, не все из которых лежат на одной прямой. Докажите, что существует прямая, проходящая ровно через две точки множества $S$ (теорема Сильвестра-Галлаи).</p>", "d": 6, "sol": {"ans": "<p>Теорема доказана.</p>", "idea": "<p>Рассмотрите пару (точка $P$, прямая $L$), для которой расстояние от $P$ до $L$ минимально строго положительно.</p>", "plan": "<p>1. Рассмотрим множество всех прямых, проходящих хотя бы через 2 точки $S$, и пар $(P, L)$, где $P \\in S, P \\notin L$.<br>2. Так как точек конечно, существует пара $(P_0, L_0)$ с минимальным расстоянием $h > 0$.<br>3. Предположим, что $L_0$ содержит не менее трёх точек: $A, B, C$. Спроецируем $P_0$ на $L_0$ в точку $Q$. По принципу Дирихле по крайней мере две из точек $A, B, C$ лежат по одну сторону от $Q$ (или одна совпадает с $Q$). Пусть это $B$ и $C$.<br>4. Опуская перпендикуляр из $B$ на прямую $P_0C$, получаем расстояние, строго меньшее $h$, что противоречит выбору пары с минимальным расстоянием.<br>5. Следовательно, на $L_0$ лежит ровно 2 точки множества $S$.</p>"}, "ggb": null}, {"id": "s4.2", "src": "Авторская задача архива", "st": "<p>В турнире по круговой системе участвовали $n$ команд, каждая сыграла с каждой ровно один матч (ничьих нет). Докажите, что существует команда, победившая команду $X$ или победившая команду, победившую $X$, для любой команды $X$ турнира (существование короля турнира).</p>", "d": 3, "sol": {"ans": "<p>Король турнира всегда существует.</p>", "idea": "<p>Выберите команду с максимальным числом побед.</p>", "plan": "<p>1. Пусть команда $K$ одержала максимальное количество побед $d$.<br>2. Докажем от противного, что $K$ является королем.<br>3. Если существует команда $Y$, которую $K$ не победила и не победила ни через какого посредника, то $Y$ победила $K$, а также $Y$ победила каждую команду, которую победила $K$.<br>4. Тогда число побед $Y$ как минимум $d + 1$, что противоречит максимальности числа побед команды $K$.</p>"}, "ggb": null}, {"id": "s4.3", "src": "Авторская задача архива", "st": "<p>На окружности отмечено $2n$ точек. Известно, что ни один диаметр не соединяет отмеченные точки. Можно ли разбить эти точки на пары отрезков так, чтобы никакие два отрезка не пересекались?</p>", "d": 4, "sol": {"ans": "<p>Да, всегда можно.</p>", "idea": "<p>Рассмотрите разбиение на пары с минимальной суммарной длиной соединяющих хорд.</p>", "plan": "<p>1. Число всех возможных совершенных паросочетаний конечно ($ (2n-1)!! $).<br>2. Выберем паросочетание с минимальной суммой длин отрезков.<br>3. Если бы два отрезка $AB$ и $CD$ пересекались в точке $X$, то по неравенству треугольника $AC + BD < (AX + XC) + (BX + XD) = AB + CD$.<br>4. Замена пересекающихся отрезков на отрезки $AC$ и $BD$ строго уменьшает суммарную длину, что противоречит выбору минимального паросочетания. Следовательно, отрезки не пересекаются.</p>"}, "ggb": null}], "created_at": "2026-11-01", "updated_at": "2026-11-01"}, "4": {"id": "sheet_4", "title": "Авторская подборка: Экстремальный элемент", "category": "авторская", "desc": "Изящные решения через выбор наименьшего или наибольшего объекта в дискретных структурах", "description": "Изящные решения через выбор наименьшего или наибольшего объекта в дискретных структурах", "tasks": [{"id": "s4.1", "src": "Авторская задача архива", "st": "<p>На плоскости задано конечное множество точек $S$, не все из которых лежат на одной прямой. Докажите, что существует прямая, проходящая ровно через две точки множества $S$ (теорема Сильвестра-Галлаи).</p>", "d": 6, "sol": {"ans": "<p>Теорема доказана.</p>", "idea": "<p>Рассмотрите пару (точка $P$, прямая $L$), для которой расстояние от $P$ до $L$ минимально строго положительно.</p>", "plan": "<p>1. Рассмотрим множество всех прямых, проходящих хотя бы через 2 точки $S$, и пар $(P, L)$, где $P \\in S, P \\notin L$.<br>2. Так как точек конечно, существует пара $(P_0, L_0)$ с минимальным расстоянием $h > 0$.<br>3. Предположим, что $L_0$ содержит не менее трёх точек: $A, B, C$. Спроецируем $P_0$ на $L_0$ в точку $Q$. По принципу Дирихле по крайней мере две из точек $A, B, C$ лежат по одну сторону от $Q$ (или одна совпадает с $Q$). Пусть это $B$ и $C$.<br>4. Опуская перпендикуляр из $B$ на прямую $P_0C$, получаем расстояние, строго меньшее $h$, что противоречит выбору пары с минимальным расстоянием.<br>5. Следовательно, на $L_0$ лежит ровно 2 точки множества $S$.</p>"}, "ggb": null}, {"id": "s4.2", "src": "Авторская задача архива", "st": "<p>В турнире по круговой системе участвовали $n$ команд, каждая сыграла с каждой ровно один матч (ничьих нет). Докажите, что существует команда, победившая команду $X$ или победившая команду, победившую $X$, для любой команды $X$ турнира (существование короля турнира).</p>", "d": 3, "sol": {"ans": "<p>Король турнира всегда существует.</p>", "idea": "<p>Выберите команду с максимальным числом побед.</p>", "plan": "<p>1. Пусть команда $K$ одержала максимальное количество побед $d$.<br>2. Докажем от противного, что $K$ является королем.<br>3. Если существует команда $Y$, которую $K$ не победила и не победила ни через какого посредника, то $Y$ победила $K$, а также $Y$ победила каждую команду, которую победила $K$.<br>4. Тогда число побед $Y$ как минимум $d + 1$, что противоречит максимальности числа побед команды $K$.</p>"}, "ggb": null}, {"id": "s4.3", "src": "Авторская задача архива", "st": "<p>На окружности отмечено $2n$ точек. Известно, что ни один диаметр не соединяет отмеченные точки. Можно ли разбить эти точки на пары отрезков так, чтобы никакие два отрезка не пересекались?</p>", "d": 4, "sol": {"ans": "<p>Да, всегда можно.</p>", "idea": "<p>Рассмотрите разбиение на пары с минимальной суммарной длиной соединяющих хорд.</p>", "plan": "<p>1. Число всех возможных совершенных паросочетаний конечно ($ (2n-1)!! $).<br>2. Выберем паросочетание с минимальной суммой длин отрезков.<br>3. Если бы два отрезка $AB$ и $CD$ пересекались в точке $X$, то по неравенству треугольника $AC + BD < (AX + XC) + (BX + XD) = AB + CD$.<br>4. Замена пересекающихся отрезков на отрезки $AC$ и $BD$ строго уменьшает суммарную длину, что противоречит выбору минимального паросочетания. Следовательно, отрезки не пересекаются.</p>"}, "ggb": null}], "created_at": "2026-11-01", "updated_at": "2026-11-01"}}}</script>
+
+  <script id="notes-data" type="application/json">{"index": [{"id": "note_1", "domain": "combinatorics", "type": "latex", "title": "Метод производящих функций", "desc": "Обыкновенные и экспоненциальные производящие функции, рекуррентные соотношения и числа Каталана", "description": "Обыкновенные и экспоненциальные производящие функции, рекуррентные соотношения и числа Каталана", "date": "2026-11-01", "created_at": "2026-11-01", "updated_at": "2026-11-01"}, {"id": "note_2", "domain": "algebra", "type": "latex", "title": "Симметрические многочлены и формулы Ньютона", "desc": "Основная теорема о симметрических многочленах, суммы степеней и формулы Виета", "description": "Основная теорема о симметрических многочленах, суммы степеней и формулы Виета", "date": "2026-11-01", "created_at": "2026-11-01", "updated_at": "2026-11-01"}, {"id": "note_3", "domain": "geometry", "type": "pdf", "title": "Проективная геометрия: Чева и Менелай", "desc": "Скан лекции с подробными чертежами конфигураций Чевы, Менелая и Дезарга", "description": "Скан лекции с подробными чертежами конфигураций Чевы, Менелая и Дезарга", "file": "ceva_menelaus.pdf", "filename": "ceva_menelaus.pdf", "file_path": "data/scans/ceva_menelaus.pdf", "date": "2026-11-01", "created_at": "2026-11-01", "updated_at": "2026-11-01"}, {"id": "note_4", "domain": "analysis", "type": "pdf", "title": "Числовые ряды и признаки сходимости", "desc": "Конспект лекции: ряды Лейбница, признаки Коши, Даламбера и интегральный признак", "description": "Конспект лекции: ряды Лейбница, признаки Коши, Даламбера и интегральный признак", "file": "sample_lecture.pdf", "filename": "sample_lecture.pdf", "file_path": "data/scans/sample_lecture.pdf", "date": "2026-11-01", "created_at": "2026-11-01", "updated_at": "2026-11-01"}], "notes": {"note_1": {"id": "note_1", "domain": "combinatorics", "type": "latex", "title": "Метод производящих функций", "desc": "Обыкновенные и экспоненциальные производящие функции, рекуррентные соотношения и числа Каталана", "description": "Обыкновенные и экспоненциальные производящие функции, рекуррентные соотношения и числа Каталана", "content": "# Метод производящих функций\n\n## 1. Формальные степенные ряды\n\nПусть $(a_n)_{n=0}^{\\infty}$ — последовательность действительных или комплексных чисел.\n**Обыкновенной производящей функцией** (Ordinary Generating Function, OGF) называется формальный степенной ряд:\n\n$$A(x) = \\sum_{n=0}^{\\infty} a_n x^n = a_0 + a_1 x + a_2 x^2 + \\dots$$\n\n## 2. Алгебраические операции над OGF\n\n1. **Сдвиг индексов вправо**:\n   $$x A(x) = \\sum_{n=1}^{\\infty} a_{n-1} x^n$$\n\n2. **Сдвиг индексов влево**:\n   $$\\frac{A(x) - a_0}{x} = \\sum_{n=0}^{\\infty} a_{n+1} x^n$$\n\n3. **Дифференцирование**:\n   $$A'(x) = \\sum_{n=1}^{\\infty} n a_n x^{n-1} \\implies x A'(x) = \\sum_{n=0}^{\\infty} n a_n x^n$$\n\n4. **Свёртка Коши**:\n   $$A(x) B(x) = \\sum_{n=0}^{\\infty} c_n x^n, \\quad c_n = \\sum_{k=0}^n a_k b_{n-k}$$\n\n## 3. Вывод чисел Каталана\n\nЧисла Каталана $C_n$ задаются рекуррентным соотношением $C_0 = 1$ и:\n\n$$C_{n+1} = \\sum_{k=0}^n C_k C_{n-k}, \\quad n \\ge 0$$\n\nУмножим обе части на $x^{n+1}$ и просуммируем по всем $n \\ge 0$:\n\n$$\\sum_{n=0}^{\\infty} C_{n+1} x^{n+1} = x \\sum_{n=0}^{\\infty} \\left( \\sum_{k=0}^n C_k C_{n-k} \\right) x^n$$\n\nЛевая часть равна $C(x) - C_0 = C(x) - 1$. Правая часть есть $x C(x)^2$. Получаем квадратное уравнение:\n\n$$x C(x)^2 - C(x) + 1 = 0$$\n\nРешая квадратное уравнение относительно $C(x)$ и учитывая условие $C(0) = 1$:\n\n$$C(x) = \\frac{1 - \\sqrt{1 - 4x}}{2x}$$\n\nИспользуя биномиальный ряд для $\\sqrt{1 - 4x}$:\n\n$$\\sqrt{1 - 4x} = 1 - \\sum_{n=1}^{\\infty} \\frac{2}{n} \\binom{2n-2}{n-1} x^n$$\n\nОтсюда получаем явную формулу:\n\n$$C_n = \\frac{1}{n+1} \\binom{2n}{n}$$", "date": "2026-11-01", "created_at": "2026-11-01", "updated_at": "2026-11-01"}, "1": {"id": "note_1", "domain": "combinatorics", "type": "latex", "title": "Метод производящих функций", "desc": "Обыкновенные и экспоненциальные производящие функции, рекуррентные соотношения и числа Каталана", "description": "Обыкновенные и экспоненциальные производящие функции, рекуррентные соотношения и числа Каталана", "content": "# Метод производящих функций\n\n## 1. Формальные степенные ряды\n\nПусть $(a_n)_{n=0}^{\\infty}$ — последовательность действительных или комплексных чисел.\n**Обыкновенной производящей функцией** (Ordinary Generating Function, OGF) называется формальный степенной ряд:\n\n$$A(x) = \\sum_{n=0}^{\\infty} a_n x^n = a_0 + a_1 x + a_2 x^2 + \\dots$$\n\n## 2. Алгебраические операции над OGF\n\n1. **Сдвиг индексов вправо**:\n   $$x A(x) = \\sum_{n=1}^{\\infty} a_{n-1} x^n$$\n\n2. **Сдвиг индексов влево**:\n   $$\\frac{A(x) - a_0}{x} = \\sum_{n=0}^{\\infty} a_{n+1} x^n$$\n\n3. **Дифференцирование**:\n   $$A'(x) = \\sum_{n=1}^{\\infty} n a_n x^{n-1} \\implies x A'(x) = \\sum_{n=0}^{\\infty} n a_n x^n$$\n\n4. **Свёртка Коши**:\n   $$A(x) B(x) = \\sum_{n=0}^{\\infty} c_n x^n, \\quad c_n = \\sum_{k=0}^n a_k b_{n-k}$$\n\n## 3. Вывод чисел Каталана\n\nЧисла Каталана $C_n$ задаются рекуррентным соотношением $C_0 = 1$ и:\n\n$$C_{n+1} = \\sum_{k=0}^n C_k C_{n-k}, \\quad n \\ge 0$$\n\nУмножим обе части на $x^{n+1}$ и просуммируем по всем $n \\ge 0$:\n\n$$\\sum_{n=0}^{\\infty} C_{n+1} x^{n+1} = x \\sum_{n=0}^{\\infty} \\left( \\sum_{k=0}^n C_k C_{n-k} \\right) x^n$$\n\nЛевая часть равна $C(x) - C_0 = C(x) - 1$. Правая часть есть $x C(x)^2$. Получаем квадратное уравнение:\n\n$$x C(x)^2 - C(x) + 1 = 0$$\n\nРешая квадратное уравнение относительно $C(x)$ и учитывая условие $C(0) = 1$:\n\n$$C(x) = \\frac{1 - \\sqrt{1 - 4x}}{2x}$$\n\nИспользуя биномиальный ряд для $\\sqrt{1 - 4x}$:\n\n$$\\sqrt{1 - 4x} = 1 - \\sum_{n=1}^{\\infty} \\frac{2}{n} \\binom{2n-2}{n-1} x^n$$\n\nОтсюда получаем явную формулу:\n\n$$C_n = \\frac{1}{n+1} \\binom{2n}{n}$$", "date": "2026-11-01", "created_at": "2026-11-01", "updated_at": "2026-11-01"}, "note_2": {"id": "note_2", "domain": "algebra", "type": "latex", "title": "Симметрические многочлены и формулы Ньютона", "desc": "Основная теорема о симметрических многочленах, суммы степеней и формулы Виета", "description": "Основная теорема о симметрических многочленах, суммы степеней и формулы Виета", "content": "# Симметрические многочлены и формулы Ньютона\n\n## 1. Элементарные симметрические многочлены\n\nДля переменных $x_1, x_2, \\dots, x_n$ элементарные симметрические многочлены $\\sigma_k$ определяются равенством:\n\n$$\\prod_{i=1}^n (t + x_i) = t^n + \\sigma_1 t^{n-1} + \\sigma_2 t^{n-2} + \\dots + \\sigma_n$$\n\nЯвный вид:\n- $\\sigma_1 = x_1 + x_2 + \\dots + x_n$\n- $\\sigma_2 = \\sum_{1 \\le i < j \\le n} x_i x_j$\n- $\\sigma_n = x_1 x_2 \\dots x_n$\n\n## 2. Степенные суммы\n\nОбозначим через $p_k$ сумму $k$-х степеней переменных:\n\n$$p_k = x_1^k + x_2^k + \\dots + x_n^k, \\quad k \\ge 1$$\n\n## 3. Формулы Ньютона\n\nСвязь между элементарными симметрическими многочленами $\\sigma_k$ и степенными суммами $p_k$ выражается формулами Ньютона:\n\n$$k \\sigma_k = \\sum_{i=1}^k (-1)^{i-1} \\sigma_{k-i} p_i$$\n\nВ частности для первых значений:\n1. $p_1 - \\sigma_1 = 0 \\implies p_1 = \\sigma_1$\n2. $p_2 - \\sigma_1 p_1 + 2 \\sigma_2 = 0 \\implies p_2 = \\sigma_1^2 - 2\\sigma_2$\n3. $p_3 - \\sigma_1 p_2 + \\sigma_2 p_1 - 3 \\sigma_3 = 0 \\implies p_3 = \\sigma_1^3 - 3\\sigma_1 \\sigma_2 + 3\\sigma_3$\n\n## 4. Основная теорема о симметрических многочленах\n\n> Всякий симметрический многочлен от $n$ переменных с коэффициентами из кольца $R$ единственным образом выражается в виде многочлена от элементарных симметрических функций $\\sigma_1, \\sigma_2, \\dots, \\sigma_n$ с коэффициентами из $R$.", "date": "2026-11-01", "created_at": "2026-11-01", "updated_at": "2026-11-01"}, "2": {"id": "note_2", "domain": "algebra", "type": "latex", "title": "Симметрические многочлены и формулы Ньютона", "desc": "Основная теорема о симметрических многочленах, суммы степеней и формулы Виета", "description": "Основная теорема о симметрических многочленах, суммы степеней и формулы Виета", "content": "# Симметрические многочлены и формулы Ньютона\n\n## 1. Элементарные симметрические многочлены\n\nДля переменных $x_1, x_2, \\dots, x_n$ элементарные симметрические многочлены $\\sigma_k$ определяются равенством:\n\n$$\\prod_{i=1}^n (t + x_i) = t^n + \\sigma_1 t^{n-1} + \\sigma_2 t^{n-2} + \\dots + \\sigma_n$$\n\nЯвный вид:\n- $\\sigma_1 = x_1 + x_2 + \\dots + x_n$\n- $\\sigma_2 = \\sum_{1 \\le i < j \\le n} x_i x_j$\n- $\\sigma_n = x_1 x_2 \\dots x_n$\n\n## 2. Степенные суммы\n\nОбозначим через $p_k$ сумму $k$-х степеней переменных:\n\n$$p_k = x_1^k + x_2^k + \\dots + x_n^k, \\quad k \\ge 1$$\n\n## 3. Формулы Ньютона\n\nСвязь между элементарными симметрическими многочленами $\\sigma_k$ и степенными суммами $p_k$ выражается формулами Ньютона:\n\n$$k \\sigma_k = \\sum_{i=1}^k (-1)^{i-1} \\sigma_{k-i} p_i$$\n\nВ частности для первых значений:\n1. $p_1 - \\sigma_1 = 0 \\implies p_1 = \\sigma_1$\n2. $p_2 - \\sigma_1 p_1 + 2 \\sigma_2 = 0 \\implies p_2 = \\sigma_1^2 - 2\\sigma_2$\n3. $p_3 - \\sigma_1 p_2 + \\sigma_2 p_1 - 3 \\sigma_3 = 0 \\implies p_3 = \\sigma_1^3 - 3\\sigma_1 \\sigma_2 + 3\\sigma_3$\n\n## 4. Основная теорема о симметрических многочленах\n\n> Всякий симметрический многочлен от $n$ переменных с коэффициентами из кольца $R$ единственным образом выражается в виде многочлена от элементарных симметрических функций $\\sigma_1, \\sigma_2, \\dots, \\sigma_n$ с коэффициентами из $R$.", "date": "2026-11-01", "created_at": "2026-11-01", "updated_at": "2026-11-01"}, "note_3": {"id": "note_3", "domain": "geometry", "type": "pdf", "title": "Проективная геометрия: Чева и Менелай", "desc": "Скан лекции с подробными чертежами конфигураций Чевы, Менелая и Дезарга", "description": "Скан лекции с подробными чертежами конфигураций Чевы, Менелая и Дезарга", "file": "ceva_menelaus.pdf", "filename": "ceva_menelaus.pdf", "file_path": "data/scans/ceva_menelaus.pdf", "date": "2026-11-01", "created_at": "2026-11-01", "updated_at": "2026-11-01"}, "3": {"id": "note_3", "domain": "geometry", "type": "pdf", "title": "Проективная геометрия: Чева и Менелай", "desc": "Скан лекции с подробными чертежами конфигураций Чевы, Менелая и Дезарга", "description": "Скан лекции с подробными чертежами конфигураций Чевы, Менелая и Дезарга", "file": "ceva_menelaus.pdf", "filename": "ceva_menelaus.pdf", "file_path": "data/scans/ceva_menelaus.pdf", "date": "2026-11-01", "created_at": "2026-11-01", "updated_at": "2026-11-01"}, "note_4": {"id": "note_4", "domain": "analysis", "type": "pdf", "title": "Числовые ряды и признаки сходимости", "desc": "Конспект лекции: ряды Лейбница, признаки Коши, Даламбера и интегральный признак", "description": "Конспект лекции: ряды Лейбница, признаки Коши, Даламбера и интегральный признак", "file": "sample_lecture.pdf", "filename": "sample_lecture.pdf", "file_path": "data/scans/sample_lecture.pdf", "date": "2026-11-01", "created_at": "2026-11-01", "updated_at": "2026-11-01"}, "4": {"id": "note_4", "domain": "analysis", "type": "pdf", "title": "Числовые ряды и признаки сходимости", "desc": "Конспект лекции: ряды Лейбница, признаки Коши, Даламбера и интегральный признак", "description": "Конспект лекции: ряды Лейбница, признаки Коши, Даламбера и интегральный признак", "file": "sample_lecture.pdf", "filename": "sample_lecture.pdf", "file_path": "data/scans/sample_lecture.pdf", "date": "2026-11-01", "created_at": "2026-11-01", "updated_at": "2026-11-01"}}}</script>
 </body></html>

@@ -76,13 +76,14 @@ def dual_sync_update_html(script_id: str, data: dict) -> None:
             content = INDEX_HTML_CACHE
 
         pattern = rf'<script\s+[^>]*id=[\x22\x27]{re.escape(script_id)}[\x22\x27][^>]*>(.*?)</script>'
-        match = re.search(pattern, content, flags=re.DOTALL)
+        match = re.search(pattern, content, flags=re.DOTALL | re.IGNORECASE)
         if match:
             new_content = content[:match.start(1)] + escaped_json + content[match.end(1):]
         else:
-            tag = f'\n  <script type="application/json" id="{script_id}">{escaped_json}</script>\n'
-            if "</body>" in content:
-                new_content = content.replace("</body>", f"{tag}</body>")
+            tag = f'\n  <script id="{script_id}" type="application/json">{escaped_json}</script>\n'
+            body_close_idx = content.lower().rfind("</body>")
+            if body_close_idx != -1:
+                new_content = content[:body_close_idx] + tag + content[body_close_idx:]
             else:
                 new_content = content + tag
 
@@ -91,6 +92,80 @@ def dual_sync_update_html(script_id: str, data: dict) -> None:
         INDEX_HTML_MTIME = INDEX_HTML.stat().st_mtime
     except Exception as err:
         sys.stderr.write(f"[Dual-Sync Error] {err}\n")
+
+
+def sync_sheets_dual_sync() -> None:
+    """Bundle sheets index and sheet files into <script id="sheets-data"> in index.html."""
+    if not ENABLE_DUAL_SYNC:
+        return
+    sheets_dir = DATA_DIR / "sheets"
+    index_path = sheets_dir / "sheets-index.json"
+    sheets_index = []
+    if index_path.exists():
+        try:
+            sheets_index = json.loads(index_path.read_text(encoding="utf-8"))
+            if not isinstance(sheets_index, list):
+                sheets_index = []
+        except Exception as err:
+            sys.stderr.write(f"[Dual-Sync Sheets Index Warning] {err}\n")
+            sheets_index = []
+
+    sheets_map = {}
+    if sheets_dir.exists():
+        for sf in sorted(sheets_dir.glob("sheet_*.json")):
+            try:
+                s_data = json.loads(sf.read_text(encoding="utf-8"))
+                s_id = str(s_data.get("id", sf.stem.replace("sheet_", "")))
+                sheets_map[s_id] = s_data
+                if s_id.isdigit():
+                    sheets_map[f"sheet_{s_id}"] = s_data
+                elif s_id.startswith("sheet_"):
+                    sheets_map[s_id[6:]] = s_data
+            except Exception as err:
+                sys.stderr.write(f"[Dual-Sync Sheet File Warning] Failed to read {sf.name}: {err}\n")
+
+    bundle = {
+        "index": sheets_index,
+        "sheets": sheets_map,
+    }
+    dual_sync_update_html("sheets-data", bundle)
+
+
+def sync_notes_dual_sync() -> None:
+    """Bundle notes index and LaTeX note files into <script id="notes-data"> in index.html."""
+    if not ENABLE_DUAL_SYNC:
+        return
+    notes_dir = DATA_DIR / "notes"
+    index_path = notes_dir / "notes-index.json"
+    notes_index = []
+    if index_path.exists():
+        try:
+            notes_index = json.loads(index_path.read_text(encoding="utf-8"))
+            if not isinstance(notes_index, list):
+                notes_index = []
+        except Exception as err:
+            sys.stderr.write(f"[Dual-Sync Notes Index Warning] {err}\n")
+            notes_index = []
+
+    notes_map = {}
+    if notes_dir.exists():
+        for nf in sorted(notes_dir.glob("note_*.json")):
+            try:
+                n_data = json.loads(nf.read_text(encoding="utf-8"))
+                n_id = str(n_data.get("id", nf.stem.replace("note_", "")))
+                notes_map[n_id] = n_data
+                if n_id.isdigit():
+                    notes_map[f"note_{n_id}"] = n_data
+                elif n_id.startswith("note_"):
+                    notes_map[n_id[5:]] = n_data
+            except Exception as err:
+                sys.stderr.write(f"[Dual-Sync Note File Warning] Failed to read {nf.name}: {err}\n")
+
+    bundle = {
+        "index": notes_index,
+        "notes": notes_map,
+    }
+    dual_sync_update_html("notes-data", bundle)
 
 
 def validate_domain(domain: str) -> bool:
@@ -151,6 +226,27 @@ def ensure_domain_data_initialized():
             atomic_write_json(dom_meta_path, empty_meta)
 
 
+def ensure_sheets_and_notes_initialized():
+    """Ensure data/sheets, data/notes, data/scans directories exist and prime index.html."""
+    sheets_dir = DATA_DIR / "sheets"
+    sheets_dir.mkdir(parents=True, exist_ok=True)
+    sheets_index_path = sheets_dir / "sheets-index.json"
+    if not sheets_index_path.exists():
+        atomic_write_json(sheets_index_path, [])
+
+    notes_dir = DATA_DIR / "notes"
+    notes_dir.mkdir(parents=True, exist_ok=True)
+    notes_index_path = notes_dir / "notes-index.json"
+    if not notes_index_path.exists():
+        atomic_write_json(notes_index_path, [])
+
+    scans_dir = DATA_DIR / "scans"
+    scans_dir.mkdir(parents=True, exist_ok=True)
+
+    sync_sheets_dual_sync()
+    sync_notes_dual_sync()
+
+
 class MathArchiveRequestHandler(SimpleHTTPRequestHandler):
     """HTTP Request Handler for Math Archive static assets and REST API endpoints."""
 
@@ -163,6 +259,7 @@ class MathArchiveRequestHandler(SimpleHTTPRequestHandler):
         ".js": "application/javascript; charset=utf-8",
         ".json": "application/json; charset=utf-8",
         ".svg": "image/svg+xml",
+        ".pdf": "application/pdf",
         ".woff": "font/woff",
         ".woff2": "font/woff2",
         ".ttf": "font/ttf",
@@ -243,6 +340,11 @@ class MathArchiveRequestHandler(SimpleHTTPRequestHandler):
         if not path.startswith("/api/"):
             return self.send_json(404, {"status": "error", "message": "Not found"})
 
+        # Intercept multipart PDF upload prior to JSON decoding
+        if path == "/api/upload-pdf":
+            with WRITE_LOCK:
+                return self.handle_upload_pdf()
+
         # Read request body
         try:
             length = int(self.headers.get("Content-Length", 0))
@@ -262,6 +364,15 @@ class MathArchiveRequestHandler(SimpleHTTPRequestHandler):
             "/api/save-task": self.handle_save_task,
             "/api/delete-task": self.handle_delete_task,
             "/api/save-text": self.handle_save_text,
+            # Sheets Endpoints
+            "/api/save-sheet-index": self.handle_save_sheet_index,
+            "/api/save-sheet": self.handle_save_sheet,
+            "/api/delete-sheet": self.handle_delete_sheet,
+            "/api/save-sheet-task": self.handle_save_sheet_task,
+            "/api/delete-sheet-task": self.handle_delete_sheet_task,
+            # Notes Endpoints
+            "/api/save-note": self.handle_save_note,
+            "/api/delete-note": self.handle_delete_note,
         }
 
         handler = endpoints.get(path)
@@ -912,9 +1023,538 @@ class MathArchiveRequestHandler(SimpleHTTPRequestHandler):
         except Exception as err:
             return self.send_json(500, {"status": "error", "message": str(err)})
 
+    # =========================================================================
+    # Upload and Scans Endpoints
+    # =========================================================================
+
+    def handle_upload_pdf(self):
+        """POST /api/upload-pdf: Receives multipart/form-data PDF and saves to data/scans/."""
+        content_type = self.headers.get("Content-Type", "")
+        if not content_type.startswith("multipart/form-data"):
+            return self.send_json(400, {"status": "error", "message": "Expected multipart/form-data Content-Type"})
+
+        try:
+            length_header = self.headers.get("Content-Length")
+            if not length_header:
+                return self.send_json(400, {"status": "error", "message": "Missing Content-Length header"})
+            length = int(length_header)
+            if length <= 0:
+                return self.send_json(400, {"status": "error", "message": "Empty upload body"})
+
+            # Max size limit: 50MB
+            max_size = 50 * 1024 * 1024
+            if length > max_size:
+                return self.send_json(413, {"status": "error", "message": "Payload too large (maximum 50MB)"})
+
+            raw_body = self.rfile.read(length)
+            if len(raw_body) < length:
+                return self.send_json(400, {"status": "error", "message": "Incomplete request body"})
+        except Exception as err:
+            return self.send_json(400, {"status": "error", "message": f"Error reading upload body: {err}"})
+
+        try:
+            import email
+            from email.policy import default
+
+            mime_header = f"Content-Type: {content_type}\r\n\r\n".encode("utf-8")
+            msg = email.message_from_bytes(mime_header + raw_body, policy=default)
+
+            if not msg.is_multipart():
+                return self.send_json(400, {"status": "error", "message": "Expected multipart form payload"})
+
+            found_filename = None
+            found_file = None
+            for part in msg.iter_parts():
+                fn = part.get_filename()
+                if fn:
+                    found_filename = fn
+                    found_file = part.get_payload(decode=True)
+                    break
+
+            if found_filename is None or found_file is None:
+                return self.send_json(400, {"status": "error", "message": "No file uploaded in form-data"})
+
+            if len(found_file) == 0:
+                return self.send_json(400, {"status": "error", "message": "Empty file uploaded"})
+
+            # 1. Path traversal elimination
+            raw_base = found_filename.replace('\\', '/').split('/')[-1]
+            raw_base = re.sub(r'^[a-zA-Z]:', '', raw_base)
+            p = Path(raw_base)
+
+            # 2. Extension validation
+            if p.suffix.lower() != ".pdf":
+                return self.send_json(400, {"status": "error", "message": "Only PDF files (.pdf) are permitted"})
+
+            # 3. Magic bytes validation
+            if not found_file.startswith(b"%PDF-"):
+                return self.send_json(400, {"status": "error", "message": "File is not a valid PDF (missing %PDF- header)"})
+
+            # 4. Filename sanitization (alphanumeric, underscore, hyphen, dot)
+            clean_stem = re.sub(r'[^a-zA-Z0-9_\-\.]', '_', p.stem)
+            clean_stem = re.sub(r'_+', '_', clean_stem)
+            clean_stem = re.sub(r'\.+', '.', clean_stem).strip('._')
+
+            # Windows reserved device names
+            reserved = {"CON", "PRN", "AUX", "NUL", *(f"COM{i}" for i in range(1, 10)), *(f"LPT{i}" for i in range(1, 10))}
+            if not clean_stem or clean_stem.upper() in reserved:
+                clean_stem = f"scan_{int(time.time())}"
+
+            final_filename = f"{clean_stem}.pdf"
+
+            scans_dir = DATA_DIR / "scans"
+            scans_dir.mkdir(parents=True, exist_ok=True)
+            target_path = (scans_dir / final_filename).resolve()
+
+            # Defense-in-depth: confirm target is strictly within scans_dir
+            if not str(target_path).startswith(str(scans_dir.resolve())):
+                return self.send_json(400, {"status": "error", "message": "Illegal file path"})
+
+            # Atomic binary write with Windows lock retry
+            temp_path = target_path.with_suffix(".tmp")
+            with open(temp_path, "wb") as f:
+                f.write(found_file)
+                f.flush()
+                os.fsync(f.fileno())
+
+            for attempt in range(5):
+                try:
+                    os.replace(temp_path, target_path)
+                    break
+                except PermissionError:
+                    time.sleep(0.05 * (attempt + 1))
+            else:
+                os.replace(temp_path, target_path)
+
+            return self.send_json(200, {
+                "status": "ok",
+                "message": "PDF uploaded successfully",
+                "filename": final_filename,
+                "file_path": f"/data/scans/{final_filename}",
+                "size": len(found_file)
+            })
+        except Exception as err:
+            return self.send_json(500, {"status": "error", "message": str(err)})
+
+    # =========================================================================
+    # Sheets Endpoints
+    # =========================================================================
+
+    def handle_save_sheet_index(self, body: dict):
+        """POST /api/save-sheet-index: Save or update the sheets index registry."""
+        sheets_dir = DATA_DIR / "sheets"
+        sheets_dir.mkdir(parents=True, exist_ok=True)
+        index_path = sheets_dir / "sheets-index.json"
+
+        if "index" in body:
+            new_index = body.get("index")
+            if not isinstance(new_index, list):
+                return self.send_json(400, {"status": "error", "message": "Field 'index' must be a list"})
+            for item in new_index:
+                if not isinstance(item, dict):
+                    return self.send_json(400, {"status": "error", "message": "Each sheet item must be an object"})
+                s_id = str(item.get("id", "")).strip()
+                title = str(item.get("title", "")).strip()
+                if not s_id or not title:
+                    return self.send_json(400, {"status": "error", "message": "Each sheet item must have 'id' and 'title'"})
+                if ".." in s_id or "/" in s_id or "\\" in s_id:
+                    return self.send_json(400, {"status": "error", "message": "Invalid sheet 'id'"})
+            atomic_write_json(index_path, new_index)
+        elif "sheet" in body:
+            sheet_meta = body.get("sheet")
+            if not isinstance(sheet_meta, dict):
+                return self.send_json(400, {"status": "error", "message": "Field 'sheet' must be an object"})
+            s_id = str(sheet_meta.get("id", "")).strip()
+            if not s_id or ".." in s_id or "/" in s_id or "\\" in s_id:
+                return self.send_json(400, {"status": "error", "message": "Invalid or missing sheet 'id'"})
+            current_index = []
+            if index_path.exists():
+                try:
+                    current_index = json.loads(index_path.read_text(encoding="utf-8"))
+                except Exception:
+                    current_index = []
+            replaced = False
+            for idx, item in enumerate(current_index):
+                if str(item.get("id")) == s_id:
+                    current_index[idx].update(sheet_meta)
+                    replaced = True
+                    break
+            if not replaced:
+                current_index.append(sheet_meta)
+            atomic_write_json(index_path, current_index)
+        else:
+            return self.send_json(400, {"status": "error", "message": "Payload must contain 'index' or 'sheet'"})
+
+        sync_sheets_dual_sync()
+        return self.send_json(200, {"status": "ok", "message": "Sheets index saved"})
+
+    def handle_save_sheet(self, body: dict):
+        """POST /api/save-sheet: Creates or updates full sheet file and updates sheets-index.json."""
+        sheet_data = body.get("sheet")
+        if not isinstance(sheet_data, dict):
+            return self.send_json(400, {"status": "error", "message": "Field 'sheet' must be an object"})
+
+        sheet_id = str(sheet_data.get("id", "")).strip()
+        if not sheet_id or ".." in sheet_id or "/" in sheet_id or "\\" in sheet_id:
+            return self.send_json(400, {"status": "error", "message": "Invalid or missing sheet 'id'"})
+
+        title = str(sheet_data.get("title", "")).strip()
+        if not title:
+            return self.send_json(400, {"status": "error", "message": "Sheet 'title' cannot be empty"})
+
+        category = str(sheet_data.get("category", "кружок")).strip()
+        valid_cats = ["кружок", "олимпиада", "матбой", "авторская"]
+        if category not in valid_cats:
+            category = "кружок"
+
+        desc = str(sheet_data.get("desc") or sheet_data.get("description", ""))
+
+        tasks = sheet_data.get("tasks", [])
+        if not isinstance(tasks, list):
+            tasks = []
+
+        norm_tasks = []
+        for idx, t in enumerate(tasks):
+            if isinstance(t, dict):
+                norm_task = normalize_task(t, fallback_id=f"s{sheet_id}.{idx+1}")
+                diff = norm_task.get("d", 1)
+                try:
+                    diff_int = int(diff)
+                except (ValueError, TypeError):
+                    diff_int = 1
+                norm_task["d"] = max(1, min(8, diff_int))
+                norm_tasks.append(norm_task)
+
+        now_date = time.strftime("%Y-%m-%d", time.localtime())
+        clean_sheet = {
+            "id": sheet_id,
+            "title": title,
+            "category": category,
+            "desc": desc,
+            "description": desc,
+            "tasks": norm_tasks,
+            "created_at": sheet_data.get("created_at", now_date),
+            "updated_at": now_date,
+        }
+
+        sheets_dir = DATA_DIR / "sheets"
+        sheets_dir.mkdir(parents=True, exist_ok=True)
+
+        sheet_file = sheets_dir / f"sheet_{sheet_id}.json"
+        atomic_write_json(sheet_file, clean_sheet)
+
+        # Update sheets-index.json
+        index_path = sheets_dir / "sheets-index.json"
+        current_index = []
+        if index_path.exists():
+            try:
+                current_index = json.loads(index_path.read_text(encoding="utf-8"))
+            except Exception:
+                current_index = []
+
+        summary_entry = {
+            "id": sheet_id,
+            "title": title,
+            "category": category,
+            "desc": desc,
+            "description": desc,
+            "tasks_count": len(norm_tasks),
+            "updated_at": now_date,
+        }
+        replaced = False
+        for idx, item in enumerate(current_index):
+            if str(item.get("id")) == sheet_id:
+                if "created_at" in item:
+                    summary_entry["created_at"] = item["created_at"]
+                current_index[idx] = summary_entry
+                replaced = True
+                break
+        if not replaced:
+            summary_entry["created_at"] = clean_sheet["created_at"]
+            current_index.append(summary_entry)
+
+        atomic_write_json(index_path, current_index)
+        sync_sheets_dual_sync()
+        return self.send_json(200, {
+            "status": "ok",
+            "message": "Sheet saved",
+            "id": sheet_id,
+            "tasks_count": len(norm_tasks)
+        })
+
+    def handle_delete_sheet(self, body: dict):
+        """POST /api/delete-sheet: Deletes a sheet file and removes from sheets-index.json."""
+        sheet_id = str(body.get("id", "")).strip()
+        if not sheet_id or ".." in sheet_id or "/" in sheet_id or "\\" in sheet_id:
+            return self.send_json(400, {"status": "error", "message": "Invalid or missing 'id'"})
+
+        sheets_dir = DATA_DIR / "sheets"
+        sheet_file = sheets_dir / f"sheet_{sheet_id}.json"
+        if sheet_file.exists():
+            try:
+                sheet_file.unlink()
+            except Exception as err:
+                sys.stderr.write(f"[Delete Sheet Error] {err}\n")
+
+        index_path = sheets_dir / "sheets-index.json"
+        if index_path.exists():
+            try:
+                current_index = json.loads(index_path.read_text(encoding="utf-8"))
+                current_index = [s for s in current_index if str(s.get("id")) != sheet_id]
+                atomic_write_json(index_path, current_index)
+            except Exception as err:
+                return self.send_json(500, {"status": "error", "message": str(err)})
+
+        sync_sheets_dual_sync()
+        return self.send_json(200, {"status": "ok", "message": "Sheet deleted", "id": sheet_id})
+
+    def handle_save_sheet_task(self, body: dict):
+        """POST /api/save-sheet-task: Adds or updates a single task in a sheet."""
+        sheet_id = str(body.get("sheet_id", "")).strip()
+        if not sheet_id or ".." in sheet_id or "/" in sheet_id or "\\" in sheet_id:
+            return self.send_json(400, {"status": "error", "message": "Invalid or missing 'sheet_id'"})
+
+        task_data = body.get("task")
+        if not isinstance(task_data, dict):
+            return self.send_json(400, {"status": "error", "message": "Field 'task' must be an object"})
+
+        # Validate difficulty
+        raw_diff = task_data.get("d", 1)
+        if isinstance(raw_diff, bool) or (isinstance(raw_diff, float) and not raw_diff.is_integer()):
+            return self.send_json(400, {"status": "error", "message": "Difficulty 'd' must be an integer between 1 and 8"})
+        try:
+            diff = int(raw_diff)
+            if not (1 <= diff <= 8):
+                return self.send_json(400, {"status": "error", "message": "Difficulty 'd' must be between 1 and 8"})
+        except (ValueError, TypeError):
+            return self.send_json(400, {"status": "error", "message": "Difficulty 'd' must be an integer between 1 and 8"})
+        task_data["d"] = diff
+
+        sheets_dir = DATA_DIR / "sheets"
+        sheet_file = sheets_dir / f"sheet_{sheet_id}.json"
+        if not sheet_file.exists():
+            return self.send_json(404, {"status": "not_found", "message": f"Sheet {sheet_id} not found"})
+
+        try:
+            sheet = json.loads(sheet_file.read_text(encoding="utf-8"))
+            sheet.setdefault("tasks", [])
+
+            norm_task = normalize_task(task_data, fallback_id=f"s{sheet_id}.{len(sheet['tasks'])+1}")
+            norm_task["d"] = diff
+
+            replaced = False
+            for idx, p in enumerate(sheet["tasks"]):
+                if str(p.get("id")) == str(norm_task["id"]):
+                    sheet["tasks"][idx] = norm_task
+                    replaced = True
+                    break
+            if not replaced:
+                sheet["tasks"].append(norm_task)
+
+            sheet["updated_at"] = time.strftime("%Y-%m-%d", time.localtime())
+            atomic_write_json(sheet_file, sheet)
+
+            # Update index tasks_count
+            index_path = sheets_dir / "sheets-index.json"
+            if index_path.exists():
+                try:
+                    idx_data = json.loads(index_path.read_text(encoding="utf-8"))
+                    for s in idx_data:
+                        if str(s.get("id")) == sheet_id:
+                            s["tasks_count"] = len(sheet["tasks"])
+                            s["updated_at"] = sheet["updated_at"]
+                            break
+                    atomic_write_json(index_path, idx_data)
+                except Exception:
+                    pass
+
+            sync_sheets_dual_sync()
+            return self.send_json(200, {
+                "status": "ok",
+                "message": "Task saved",
+                "sheet_id": sheet_id,
+                "task_id": norm_task["id"],
+                "tasks_count": len(sheet["tasks"])
+            })
+        except Exception as err:
+            return self.send_json(500, {"status": "error", "message": str(err)})
+
+    def handle_delete_sheet_task(self, body: dict):
+        """POST /api/delete-sheet-task: Deletes a task from a sheet."""
+        sheet_id = str(body.get("sheet_id", "")).strip()
+        task_id = str(body.get("task_id", "")).strip()
+        if not sheet_id or not task_id:
+            return self.send_json(400, {"status": "error", "message": "Fields 'sheet_id' and 'task_id' cannot be empty"})
+
+        sheets_dir = DATA_DIR / "sheets"
+        sheet_file = sheets_dir / f"sheet_{sheet_id}.json"
+        if not sheet_file.exists():
+            return self.send_json(404, {"status": "not_found", "message": f"Sheet {sheet_id} not found"})
+
+        try:
+            sheet = json.loads(sheet_file.read_text(encoding="utf-8"))
+            sheet.setdefault("tasks", [])
+
+            orig_len = len(sheet["tasks"])
+            sheet["tasks"] = [t for t in sheet["tasks"] if str(t.get("id")) != task_id]
+            if len(sheet["tasks"]) == orig_len:
+                return self.send_json(200, {"status": "not_found", "message": f"Task {task_id} not found in sheet {sheet_id}"})
+
+            sheet["updated_at"] = time.strftime("%Y-%m-%d", time.localtime())
+            atomic_write_json(sheet_file, sheet)
+
+            index_path = sheets_dir / "sheets-index.json"
+            if index_path.exists():
+                try:
+                    idx_data = json.loads(index_path.read_text(encoding="utf-8"))
+                    for s in idx_data:
+                        if str(s.get("id")) == sheet_id:
+                            s["tasks_count"] = len(sheet["tasks"])
+                            s["updated_at"] = sheet["updated_at"]
+                            break
+                    atomic_write_json(index_path, idx_data)
+                except Exception:
+                    pass
+
+            sync_sheets_dual_sync()
+            return self.send_json(200, {
+                "status": "ok",
+                "message": "Task deleted",
+                "sheet_id": sheet_id,
+                "task_id": task_id,
+                "tasks_count": len(sheet["tasks"])
+            })
+        except Exception as err:
+            return self.send_json(500, {"status": "error", "message": str(err)})
+
+    # =========================================================================
+    # Notes Endpoints
+    # =========================================================================
+
+    def handle_save_note(self, body: dict):
+        """POST /api/save-note: Creates or updates a note and updates notes-index.json."""
+        note_data = body.get("note")
+        if not isinstance(note_data, dict):
+            return self.send_json(400, {"status": "error", "message": "Field 'note' must be an object"})
+
+        note_id = str(note_data.get("id", "")).strip()
+        if not note_id or ".." in note_id or "/" in note_id or "\\" in note_id:
+            return self.send_json(400, {"status": "error", "message": "Invalid or missing note 'id'"})
+
+        domain = note_data.get("domain")
+        if not validate_domain(domain):
+            return self.send_json(400, {"status": "error", "message": f"Invalid domain: {domain}"})
+
+        note_type = str(note_data.get("type", "latex")).lower()
+        if note_type not in ["latex", "pdf"]:
+            return self.send_json(400, {"status": "error", "message": "Field 'type' must be 'latex' or 'pdf'"})
+
+        title = str(note_data.get("title", "")).strip()
+        if not title:
+            return self.send_json(400, {"status": "error", "message": "Note 'title' cannot be empty"})
+
+        desc = str(note_data.get("desc") or note_data.get("description", ""))
+        date_str = str(note_data.get("date", time.strftime("%Y-%m-%d", time.localtime())))
+        now_date = time.strftime("%Y-%m-%d", time.localtime())
+
+        notes_dir = DATA_DIR / "notes"
+        notes_dir.mkdir(parents=True, exist_ok=True)
+
+        if note_type == "latex":
+            content = str(note_data.get("content", ""))
+            full_note = {
+                "id": note_id,
+                "domain": domain,
+                "type": "latex",
+                "title": title,
+                "desc": desc,
+                "description": desc,
+                "content": content,
+                "date": date_str,
+                "created_at": note_data.get("created_at", now_date),
+                "updated_at": now_date,
+            }
+            note_file = notes_dir / f"note_{note_id}.json"
+            atomic_write_json(note_file, full_note)
+
+        index_path = notes_dir / "notes-index.json"
+        current_index = []
+        if index_path.exists():
+            try:
+                current_index = json.loads(index_path.read_text(encoding="utf-8"))
+            except Exception:
+                current_index = []
+
+        summary_entry = {
+            "id": note_id,
+            "domain": domain,
+            "type": note_type,
+            "title": title,
+            "desc": desc,
+            "description": desc,
+            "date": date_str,
+            "updated_at": now_date,
+        }
+        if note_type == "pdf":
+            file_path = str(note_data.get("file_path", ""))
+            filename = str(note_data.get("filename") or note_data.get("file") or (Path(file_path).name if file_path else ""))
+            summary_entry["file"] = filename
+            summary_entry["filename"] = filename
+            summary_entry["file_path"] = file_path or f"data/scans/{filename}"
+
+        replaced = False
+        for idx, item in enumerate(current_index):
+            if str(item.get("id")) == note_id:
+                if "created_at" in item:
+                    summary_entry["created_at"] = item["created_at"]
+                current_index[idx] = summary_entry
+                replaced = True
+                break
+        if not replaced:
+            summary_entry["created_at"] = note_data.get("created_at", now_date)
+            current_index.append(summary_entry)
+
+        atomic_write_json(index_path, current_index)
+        sync_notes_dual_sync()
+        return self.send_json(200, {
+            "status": "ok",
+            "message": "Note saved",
+            "id": note_id,
+            "type": note_type,
+            "domain": domain
+        })
+
+    def handle_delete_note(self, body: dict):
+        """POST /api/delete-note: Deletes a note and its file, updating notes-index.json."""
+        note_id = str(body.get("id", "")).strip()
+        if not note_id or ".." in note_id or "/" in note_id or "\\" in note_id:
+            return self.send_json(400, {"status": "error", "message": "Invalid or missing 'id'"})
+
+        notes_dir = DATA_DIR / "notes"
+        note_file = notes_dir / f"note_{note_id}.json"
+        if note_file.exists():
+            try:
+                note_file.unlink()
+            except Exception as err:
+                sys.stderr.write(f"[Delete Note Error] {err}\n")
+
+        index_path = notes_dir / "notes-index.json"
+        if index_path.exists():
+            try:
+                current_index = json.loads(index_path.read_text(encoding="utf-8"))
+                current_index = [n for n in current_index if str(n.get("id")) != note_id]
+                atomic_write_json(index_path, current_index)
+            except Exception as err:
+                return self.send_json(500, {"status": "error", "message": str(err)})
+
+        sync_notes_dual_sync()
+        return self.send_json(200, {"status": "ok", "message": "Note deleted", "id": note_id})
+
 
 def create_server(bind_host: str = "0.0.0.0", port: int = 8000) -> ThreadingHTTPServer:
     """Create configured ThreadingHTTPServer instance."""
+    ensure_domain_data_initialized()
+    ensure_sheets_and_notes_initialized()
     server = ThreadingHTTPServer((bind_host, port), MathArchiveRequestHandler)
     server.daemon_threads = True
     return server
@@ -937,6 +1577,7 @@ def main():
         ENABLE_DUAL_SYNC = False
 
     ensure_domain_data_initialized()
+    ensure_sheets_and_notes_initialized()
 
     server = create_server(args.bind, args.port)
 

@@ -56,6 +56,11 @@ TIERS = {
         "module": "test_tier4_scenarios",
         "min_tests": 4,
     },
+    5: {
+        "name": "Tier 5: Sheets, Notes, Upload & Dual-Sync",
+        "module": "test_sheets_notes_backend",
+        "min_tests": 30,
+    },
 }
 
 
@@ -176,13 +181,13 @@ def print_summary(tier_results: list):
 
 def main():
     parser = argparse.ArgumentParser(description="Math Archive E2E Test Suite Runner")
-    parser.add_argument("--tier", type=int, choices=[1, 2, 3, 4], help="Run specific tier (1, 2, 3, or 4)")
+    parser.add_argument("--tier", type=int, choices=[1, 2, 3, 4, 5], help="Run specific tier (1, 2, 3, 4, or 5)")
     parser.add_argument("-k", "--keyword", type=str, default=None, help="Filter tests by keyword/pattern")
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose test execution output")
     parser.add_argument("--json-report", type=str, help="Save structured test execution report to JSON file")
     args = parser.parse_args()
 
-    selected_tiers = [args.tier] if args.tier else [1, 2, 3, 4]
+    selected_tiers = [args.tier] if args.tier else [1, 2, 3, 4, 5]
 
     tier_results = []
     for t in selected_tiers:
