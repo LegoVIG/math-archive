@@ -6,537 +6,626 @@
   "grade": "9–11",
   "years_range": "1972–2026",
   "years_count": 50,
-  "desc": "Задачи национальной математической олимпиады США (United States of America Mathematical Olympiad, 1972–2025) по годам.",
-  "description": "Задачи национальной математической олимпиады США (United States of America Mathematical Olympiad, 1972–2025) по годам.",
+  "series_count": 0,
+  "desc": "Задачи национальной математической олимпиады США (United States of America Mathematical Olympiad, 1972–2026) по годам.",
+  "description": "Задачи национальной математической олимпиады США (United States of America Mathematical Olympiad, 1972–2026) по годам.",
   "pdfs": [],
   "tasks": [
     {
       "id": "15.3.3",
       "d": 5,
       "src": "USAMO 2026/2",
-      "year": "2026"
+      "year": "2026",
+      "series": ""
     },
     {
       "id": "21.2.6",
       "d": 4,
       "src": "USAMO 2026/4",
-      "year": "2026"
+      "year": "2026",
+      "series": ""
     },
     {
       "id": "21.3.16",
       "d": 5,
       "src": "USAMO 2025/5",
-      "year": "2025"
+      "year": "2025",
+      "series": ""
     },
     {
       "id": "23.3.3",
       "d": 6,
       "src": "USAMO 2025/6",
-      "year": "2025"
+      "year": "2025",
+      "series": ""
     },
     {
       "id": "28.3.26",
       "d": 5,
       "src": "USAMO 2025/3",
-      "year": "2025"
+      "year": "2025",
+      "series": ""
     },
     {
       "id": "12.1.10",
       "d": 6,
       "src": "USAMO 2024/6",
-      "year": "2024"
+      "year": "2024",
+      "series": ""
     },
     {
       "id": "23.1.7",
       "d": 5,
       "src": "USAMO 2024/2",
-      "year": "2024"
+      "year": "2024",
+      "series": ""
     },
     {
       "id": "24.1.6",
       "d": 4,
       "src": "USAMO 2024/4",
-      "year": "2024"
+      "year": "2024",
+      "series": ""
     },
     {
       "id": "19.3.10",
       "d": 6,
       "src": "USAMO 2023/3",
-      "year": "2023"
+      "year": "2023",
+      "series": ""
     },
     {
       "id": "19.4.15",
       "d": 5,
       "src": "USAMO 2023/5",
-      "year": "2023"
+      "year": "2023",
+      "series": ""
     },
     {
       "id": "19.2.5",
       "d": 4,
       "src": "USAMO 2022/1",
-      "year": "2022"
+      "year": "2022",
+      "series": ""
     },
     {
       "id": "28.2.20",
       "d": 6,
       "src": "USAMO 2022/6",
-      "year": "2022"
+      "year": "2022",
+      "series": ""
     },
     {
       "id": "26.1.7",
       "d": 4,
       "src": "USAMO 2021/4",
-      "year": "2021"
+      "year": "2021",
+      "series": ""
     },
     {
       "id": "28.3.17",
       "d": 5,
       "src": "USAMO 2021/2",
-      "year": "2021"
+      "year": "2021",
+      "series": ""
     },
     {
       "id": "11.3.4",
       "d": 5,
       "src": "USAMO 2020/5",
-      "year": "2020"
+      "year": "2020",
+      "series": ""
     },
     {
       "id": "14.2.11",
       "d": 4,
       "src": "USAMO 2020/4",
-      "year": "2020"
+      "year": "2020",
+      "series": ""
     },
     {
       "id": "14.4.20",
       "d": 5,
       "src": "USAMO 2020/2",
-      "year": "2020"
+      "year": "2020",
+      "series": ""
     },
     {
       "id": "21.1.6",
       "d": 4,
       "src": "USAMO 2019/4",
-      "year": "2019"
+      "year": "2019",
+      "series": ""
     },
     {
       "id": "26.1.24",
       "d": 5,
       "src": "USAMO 2019/5",
-      "year": "2019"
+      "year": "2019",
+      "series": ""
     },
     {
       "id": "21.1.20",
       "d": 6,
       "src": "USAMO 2018/6",
-      "year": "2018"
+      "year": "2018",
+      "series": ""
     },
     {
       "id": "21.1.18",
       "d": 5,
       "src": "USAMO 2017/2",
-      "year": "2017"
+      "year": "2017",
+      "series": ""
     },
     {
       "id": "27.4.1",
       "d": 6,
       "src": "файл 7.43; USAMO 2017/5",
-      "year": "2017"
+      "year": "2017",
+      "series": ""
     },
     {
       "id": "17.2.23",
       "d": 5,
       "src": "USAMO 2016/6",
-      "year": "2016"
+      "year": "2016",
+      "series": ""
     },
     {
       "id": "23.1.2",
       "d": 4,
       "src": "USAMO 2016/1",
-      "year": "2016"
+      "year": "2016",
+      "series": ""
     },
     {
       "id": "21.2.35",
       "d": 5,
       "src": "USAMO 2015/3",
-      "year": "2015"
+      "year": "2015",
+      "series": ""
     },
     {
       "id": "25.1.32",
       "d": 6,
       "src": "USAMO 2015/6",
-      "year": "2015"
+      "year": "2015",
+      "series": ""
     },
     {
       "id": "13.4.14",
       "d": 5,
       "src": "USAMO 2014/3",
-      "year": "2014"
+      "year": "2014",
+      "series": ""
     },
     {
       "id": "16.3.5",
       "d": 4,
       "src": "USAMO 2014/4",
-      "year": "2014"
+      "year": "2014",
+      "series": ""
     },
     {
       "id": "11.2.19",
       "d": 6,
       "src": "USAMO 2013/3",
-      "year": "2013"
+      "year": "2013",
+      "series": ""
     },
     {
       "id": "21.2.33",
       "d": 5,
       "src": "USAMO 2013/2",
-      "year": "2013"
+      "year": "2013",
+      "series": ""
     },
     {
       "id": "12.1.9",
       "d": 5,
       "src": "USAMO 2012/6",
-      "year": "2012"
+      "year": "2012",
+      "series": ""
     },
     {
       "id": "14.4.4",
       "d": 3,
       "src": "USAMO 2012/1",
-      "year": "2012"
+      "year": "2012",
+      "series": ""
     },
     {
       "id": "12.1.8",
       "d": 6,
       "src": "USAMO 2010/6",
-      "year": "2010"
+      "year": "2010",
+      "series": ""
     },
     {
       "id": "20.2.8",
       "d": 6,
       "src": "USAMO 2009/3",
-      "year": "2009"
+      "year": "2009",
+      "series": ""
     },
     {
       "id": "25.1.27",
       "d": 5,
       "src": "USAMO 2009/2",
-      "year": "2009"
+      "year": "2009",
+      "series": ""
     },
     {
       "id": "11.2.18",
       "d": 6,
       "src": "USAMO 2008/6",
-      "year": "2008"
+      "year": "2008",
+      "series": ""
     },
     {
       "id": "19.3.9",
       "d": 6,
       "src": "USAMO 2008/3",
-      "year": "2008"
+      "year": "2008",
+      "series": ""
     },
     {
       "id": "27.2.7",
       "d": 4,
       "src": "USAMO 2008/4",
-      "year": "2008"
+      "year": "2008",
+      "series": ""
     },
     {
       "id": "14.4.3",
       "d": 4,
       "src": "USAMO 2007/4",
-      "year": "2007"
+      "year": "2007",
+      "series": ""
     },
     {
       "id": "27.4.18",
       "d": 5,
       "src": "USAMO 2007/2",
-      "year": "2007"
+      "year": "2007",
+      "series": ""
     },
     {
       "id": "26.2.18",
       "d": 5,
       "src": "USAMO 2006/5",
-      "year": "2006"
+      "year": "2006",
+      "series": ""
     },
     {
       "id": "21.2.5",
       "d": 3,
       "src": "USAMO 2005/4",
-      "year": "2005"
+      "year": "2005",
+      "series": ""
     },
     {
       "id": "26.1.6",
       "d": 3,
       "src": "USAMO 2005/1",
-      "year": "2005"
+      "year": "2005",
+      "series": ""
     },
     {
       "id": "26.2.21",
       "d": 6,
       "src": "USAMO 2005/6",
-      "year": "2005"
+      "year": "2005",
+      "series": ""
     },
     {
       "id": "27.1.16",
       "d": 5,
       "src": "USAMO 2005/5",
-      "year": "2005"
+      "year": "2005",
+      "series": ""
     },
     {
       "id": "16.4.1",
       "d": 4,
       "src": "USAMO 2004/4",
-      "year": "2004"
+      "year": "2004",
+      "series": ""
     },
     {
       "id": "20.3.6",
       "d": 5,
       "src": "USAMO 2004/3",
-      "year": "2004"
+      "year": "2004",
+      "series": ""
     },
     {
       "id": "15.1.19",
       "d": 6,
       "src": "USAMO 2003/6",
-      "year": "2003"
+      "year": "2003",
+      "series": ""
     },
     {
       "id": "14.2.31",
       "d": 5,
       "src": "USAMO 2002/6",
-      "year": "2002"
+      "year": "2002",
+      "series": ""
     },
     {
       "id": "26.1.23",
       "d": 5,
       "src": "USAMO 2002/5",
-      "year": "2002"
+      "year": "2002",
+      "series": ""
     },
     {
       "id": "23.2.4",
       "d": 4,
       "src": "USAMO 2001/1",
-      "year": "2001"
+      "year": "2001",
+      "series": ""
     },
     {
       "id": "14.1.6",
       "d": 4,
       "src": "USAMO 2000/4",
-      "year": "2000"
+      "year": "2000",
+      "series": ""
     },
     {
       "id": "16.1.25",
       "d": 4,
       "src": "USAMO 1999/5",
-      "year": "1999"
+      "year": "1999",
+      "series": ""
     },
     {
       "id": "14.3.6",
       "d": 4,
       "src": "USAMO 1998/4",
-      "year": "1998"
+      "year": "1998",
+      "series": ""
     },
     {
       "id": "26.2.20",
       "d": 5,
       "src": "USAMO 1997/6",
-      "year": "1997"
+      "year": "1997",
+      "series": ""
     },
     {
       "id": "21.1.5",
       "d": 3,
       "src": "USAMO 1996/4",
-      "year": "1996"
+      "year": "1996",
+      "series": ""
     },
     {
       "id": "25.1.26",
       "d": 4,
       "src": "USAMO 1996/2",
-      "year": "1996"
+      "year": "1996",
+      "series": ""
     },
     {
       "id": "25.1.31",
       "d": 5,
       "src": "USAMO 1996/6",
-      "year": "1996"
+      "year": "1996",
+      "series": ""
     },
     {
       "id": "25.1.3",
       "d": 4,
       "src": "USAMO 1995/1",
-      "year": "1995"
+      "year": "1995",
+      "series": ""
     },
     {
       "id": "28.2.17",
       "d": 4,
       "src": "USAMO 1995/5",
-      "year": "1995"
+      "year": "1995",
+      "series": ""
     },
     {
       "id": "21.4.10",
       "d": 4,
       "src": "USAMO 1994/5",
-      "year": "1994"
+      "year": "1994",
+      "series": ""
     },
     {
       "id": "25.1.30",
       "d": 3,
       "src": "USAMO 1992/3",
-      "year": "1992"
+      "year": "1992",
+      "series": ""
     },
     {
       "id": "21.4.9",
       "d": 3,
       "src": "USAMO 1991/2",
-      "year": "1991"
+      "year": "1991",
+      "series": ""
     },
     {
       "id": "13.1.14",
       "d": 3,
       "src": "USAMO 1990/3",
-      "year": "1990"
+      "year": "1990",
+      "series": ""
     },
     {
       "id": "21.2.4",
       "d": 3,
       "src": "USAMO 1990/4",
-      "year": "1990"
+      "year": "1990",
+      "series": ""
     },
     {
       "id": "23.2.3",
       "d": 2,
       "src": "USAMO 1990/1",
-      "year": "1990"
+      "year": "1990",
+      "series": ""
     },
     {
       "id": "28.2.18",
       "d": 3,
       "src": "USAMO 1989/2",
-      "year": "1989"
+      "year": "1989",
+      "series": ""
     },
     {
       "id": "23.2.11",
       "d": 3,
       "src": "USAMO 1988/3",
-      "year": "1988"
+      "year": "1988",
+      "series": ""
     },
     {
       "id": "21.1.17",
       "d": 3,
       "src": "USAMO 1986/5",
-      "year": "1986"
+      "year": "1986",
+      "series": ""
     },
     {
       "id": "26.2.5",
       "d": 3,
       "src": "USAMO 1986/1",
-      "year": "1986"
+      "year": "1986",
+      "series": ""
     },
     {
       "id": "27.4.17",
       "d": 4,
       "src": "USAMO 1986/2",
-      "year": "1986"
+      "year": "1986",
+      "series": ""
     },
     {
       "id": "10.2.4",
       "d": 3,
       "src": "USAMO 1985/5",
-      "year": "1985"
+      "year": "1985",
+      "series": ""
     },
     {
       "id": "27.4.21",
       "d": 4,
       "src": "USAMO 1985/3",
-      "year": "1985"
+      "year": "1985",
+      "series": ""
     },
     {
       "id": "28.2.12",
       "d": 4,
       "src": "USAMO 1985/4",
-      "year": "1985"
+      "year": "1985",
+      "series": ""
     },
     {
       "id": "13.1.17",
       "d": 3,
       "src": "USAMO 1984/2",
-      "year": "1984"
+      "year": "1984",
+      "series": ""
     },
     {
       "id": "22.1.2",
       "d": 2,
       "src": "USAMO 1983/1",
-      "year": "1983"
+      "year": "1983",
+      "series": ""
     },
     {
       "id": "26.2.17",
       "d": 3,
       "src": "USAMO 1983/5",
-      "year": "1983"
+      "year": "1983",
+      "series": ""
     },
     {
       "id": "27.4.20",
       "d": 4,
       "src": "USAMO 1983/3",
-      "year": "1983"
+      "year": "1983",
+      "series": ""
     },
     {
       "id": "28.2.11",
       "d": 3,
       "src": "USAMO 1982/1",
-      "year": "1982"
+      "year": "1982",
+      "series": ""
     },
     {
       "id": "28.1.14",
       "d": 3,
       "src": "USAMO 1981/2",
-      "year": "1981"
+      "year": "1981",
+      "series": ""
     },
     {
       "id": "14.2.29",
       "d": 2,
       "src": "USAMO 1980/2",
-      "year": "1980"
+      "year": "1980",
+      "series": ""
     },
     {
       "id": "11.2.8",
       "d": 4,
       "src": "файл 15.8; USAMO 1979/5",
-      "year": "1979"
+      "year": "1979",
+      "series": ""
     },
     {
       "id": "22.1.11",
       "d": 3,
       "src": "USAMO 1979/3",
-      "year": "1979"
+      "year": "1979",
+      "series": ""
     },
     {
       "id": "23.2.9",
       "d": 3,
       "src": "USAMO 1978/5",
-      "year": "1978"
+      "year": "1978",
+      "series": ""
     },
     {
       "id": "22.1.3",
       "d": 3,
       "src": "USAMO 1975/5",
-      "year": "1975"
+      "year": "1975",
+      "series": ""
     },
     {
       "id": "22.1.1",
       "d": 3,
       "src": "USAMO 1974/4",
-      "year": "1974"
+      "year": "1974",
+      "series": ""
     },
     {
       "id": "22.1.10",
       "d": 3,
       "src": "USAMO 1973/3",
-      "year": "1973"
+      "year": "1973",
+      "series": ""
     },
     {
       "id": "22.1.9",
       "d": 2,
       "src": "USAMO 1972/3",
-      "year": "1972"
+      "year": "1972",
+      "series": ""
     }
   ]
 }

@@ -1239,6 +1239,7 @@ class MathArchiveRequestHandler(SimpleHTTPRequestHandler):
                     "file": fname,
                     "path": fpath,
                     "year": str(pdf_item.get("year") or "").strip(),
+                    "series": str(pdf_item.get("series") or "").strip(),
                 })
 
         now_date = time.strftime("%Y-%m-%d", time.localtime())
@@ -1250,6 +1251,9 @@ class MathArchiveRequestHandler(SimpleHTTPRequestHandler):
             "grade": str(sheet_data.get("grade", "")),
             "years_range": str(sheet_data.get("years_range", "")),
             "years_count": int(sheet_data.get("years_count", 0) or 0),
+            "series_count": int(sheet_data.get("series_count", 0) or 0),
+            "custom_years": sheet_data.get("custom_years", []) if isinstance(sheet_data.get("custom_years"), list) else [],
+            "custom_series": sheet_data.get("custom_series", []) if isinstance(sheet_data.get("custom_series"), list) else [],
             "desc": desc,
             "description": desc,
             "pdfs": clean_pdfs,
