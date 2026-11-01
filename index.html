@@ -1981,7 +1981,7 @@ var DiskSync = {
   saveSheet: function (sheetObj) {
     return this.apiCall('save-sheet', { sheet: sheetObj })
       .then(function (res) {
-        if (!res.offline) toast('Листочек сохранён на диск');
+        if (!res.offline) toast('Источник сохранён на диск');
         return res;
       });
   },
@@ -1989,7 +1989,7 @@ var DiskSync = {
   deleteSheet: function (sheetId) {
     return this.apiCall('delete-sheet', { id: sheetId })
       .then(function (res) {
-        if (!res.offline) toast('Листочек удалён с диска');
+        if (!res.offline) toast('Источник удалён с диска');
         return res;
       });
   },
@@ -2542,6 +2542,12 @@ function openTaskModal(chNum, secNum, existingTask) {
       '<div class="ed-row"><label class="ed-label">Сложность (1 — разминка .. 7 — финал IMO, 8 / ? — открытая)</label>' +
         '<div id="task-diff-selector" class="diff-selector">' + diffButtons + '</div>' +
       '</div>' +
+      '<div class="ed-row" style="margin-top:10px">' +
+        '<label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:13.5px;color:var(--text);user-select:none">' +
+          '<input type="checkbox" id="task-ggb-toggle"' + ((isEdit && existingTask && existingTask.ggb !== null && existingTask.ggb !== undefined) ? ' checked' : '') + '>' +
+          '<span>Включить интерактивный чертёж GeoGebra</span>' +
+        '</label>' +
+      '</div>' +
       '<div class="ed-split">' +
         '<div class="ed-pane"><label class="ed-label" for="task-st">Условие задачи ($...$ для KaTeX)</label><textarea id="task-st" class="ed-textarea" style="height:140px">' + esc(st) + '</textarea></div>' +
         '<div class="ed-pane"><span class="ed-label">Предпросмотр условия</span><div id="prev-st" class="ed-preview rt" style="height:140px"></div></div>' +
@@ -2630,6 +2636,13 @@ function openTaskModal(chNum, secNum, existingTask) {
       secData.g = [{ t: '', p: [] }];
     }
 
+    var ggbToggle = $('#task-ggb-toggle', ov);
+    var isGgbOn = ggbToggle ? ggbToggle.checked : false;
+    var ggbVal = null;
+    if (isGgbOn) {
+      ggbVal = (isEdit && existingTask && existingTask.ggb) ? existingTask.ggb : "";
+    }
+
     var existingSol = (isEdit && existingTask.sol) ? existingTask.sol : {};
     var taskObj = {
       id: newId,
@@ -2637,7 +2650,7 @@ function openTaskModal(chNum, secNum, existingTask) {
       st: newSt,
       d: selectedDiff,
       sol: Object.assign({}, existingSol, { ans: newAns, idea: newIdea, plan: newPlan }),
-      ggb: isEdit ? (existingTask.ggb || null) : null
+      ggb: ggbVal
     };
 
     var foundGroup = null, foundIdx = -1;
@@ -2885,6 +2898,27 @@ function subjNavHtml() {
     '</nav>';
 }
 
+function viewNavHtml(r) {
+  var v = (r && r.v) || 'map';
+  var isMap = (v === 'map' || v === 'topic' || v === 'none');
+  var isSheets = (v === 'sheets');
+  var isNotes = (v === 'notes');
+  return '<nav class="view-nav" aria-label="Разделы архива">' +
+    '<button type="button" class="view-tab' + (isMap ? ' active' : '') + '" data-view="map" data-act="view-map" aria-label="Карта курса" title="Карта курса">' +
+      '<span class="view-tab-icon" aria-hidden="true">' + I.tab_map + '</span>' +
+      '<span class="view-tab-text">Карта курса</span>' +
+    '</button>' +
+    '<button type="button" class="view-tab' + (isSheets ? ' active' : '') + '" data-view="sheets" data-act="view-sheets" aria-label="Источники" title="Источники с задачами">' +
+      '<span class="view-tab-icon" aria-hidden="true">' + I.tab_sheets + '</span>' +
+      '<span class="view-tab-text">Источники</span>' +
+    '</button>' +
+    '<button type="button" class="view-tab' + (isNotes ? ' active' : '') + '" data-view="notes" data-act="view-notes" aria-label="Теория" title="Теория и конспекты">' +
+      '<span class="view-tab-icon" aria-hidden="true">' + I.tab_notes + '</span>' +
+      '<span class="view-tab-text">Теория</span>' +
+    '</button>' +
+  '</nav>';
+}
+
 var pendingSubject = null;
 var switchSeq = 0;
 
@@ -2983,14 +3017,6 @@ function switchSubject(targetSubj, clickedBtn) {
   });
 }
 
-function viewNavHtml(r) {
-  var v = (r && r.v) || 'map';
-  return '<nav class="view-nav" aria-label="Разделы архива">' +
-    '<button type="button" class="view-nav-btn' + (v === 'map' || v === 'topic' ? ' active' : '') + '" data-act="view-map" title="Карта курса">' + I.map + '<span>Карта</span></button>' +
-    '<button type="button" class="view-nav-btn' + (v === 'sheets' ? ' active' : '') + '" data-act="view-sheets" title="Листочки и архивы задач">' + I.sheet + '<span>Листочки</span></button>' +
-    '<button type="button" class="view-nav-btn' + (v === 'notes' ? ' active' : '') + '" data-act="view-notes" title="Конспекты по теории">' + I.note + '<span>Конспекты</span></button>' +
-    '</nav>';
-}
 
 function barHtml(r) {
   var s = totalSolved(), fr = META.total ? (s / META.total) : 0;
@@ -3002,18 +3028,22 @@ function barHtml(r) {
   } else if (r.v === 'sheets') {
     var shTitle = '';
     if (r.sheetId && window.SheetsStore) {
-      var curSh = window.SheetsStore.get().sheets[r.sheetId];
+      var sStore = window.SheetsStore.get();
+      var sId = String(r.sheetId);
+      var curSh = sStore.sheets[sId] || sStore.sheets['sheet_' + sId] || (sId.startsWith('sheet_') ? sStore.sheets[sId.slice(6)] : null);
       if (curSh) shTitle = curSh.title;
     }
-    left = '<button class="brand" type="button" data-act="view-sheets" aria-label="Листочки">' + I.sheet + '<span class="brand-t">Листочки</span></button>' +
+    left = '<button class="brand" type="button" data-act="view-sheets" aria-label="Источники">' + I.sheet + '<span class="brand-t">Источники</span></button>' +
       (shTitle ? '<div class="crumb"><span class="sep">/</span><b>' + esc(shTitle) + '</b></div>' : '');
   } else if (r.v === 'notes') {
     var ntTitle = '';
     if (r.noteId && window.NotesStore) {
-      var curNt = window.NotesStore.get().notes[r.noteId];
+      var nStore = window.NotesStore.get();
+      var nId = String(r.noteId);
+      var curNt = nStore.notes[nId] || nStore.notes['note_' + nId];
       if (curNt) ntTitle = curNt.title;
     }
-    left = '<button class="brand" type="button" data-act="view-notes" aria-label="Конспекты">' + I.note + '<span class="brand-t">Конспекты</span></button>' +
+    left = '<button class="brand" type="button" data-act="view-notes" aria-label="Теория">' + I.note + '<span class="brand-t">Теория</span></button>' +
       (ntTitle ? '<div class="crumb"><span class="sep">/</span><b>' + esc(ntTitle) + '</b></div>' : '');
   } else {
     var subName = (SUBJECTS[curSubject] && SUBJECTS[curSubject].title) || 'Комбинаторика';
@@ -4083,6 +4113,7 @@ var SheetsStore = {
       if (!this.data) this.data = { index: [], sheets: {} };
       if (!this.data.sheets) this.data.sheets = {};
       if (!Array.isArray(this.data.index)) this.data.index = [];
+      window.SHEETS_DATA = this.data;
     }
     return this.data;
   },
@@ -4090,7 +4121,11 @@ var SheetsStore = {
     var self = this;
     var d = self.get();
     d.index = newIndex;
+    window.SHEETS_DATA = d;
     updateEmbeddedScript('sheets-data', d);
+    if (window.DiskSync && typeof window.DiskSync.saveSheetIndex === 'function') {
+      return window.DiskSync.saveSheetIndex(newIndex);
+    }
     return fetch('/api/save-sheet-index', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -4102,14 +4137,19 @@ var SheetsStore = {
     var d = self.get();
     var sId = String(sheet.id);
     d.sheets[sId] = sheet;
+    if (sId.startsWith('sheet_')) d.sheets[sId.slice(6)] = sheet;
+    else d.sheets['sheet_' + sId] = sheet;
+    window.SHEETS_DATA = d;
+
     var found = false;
     for (var i = 0; i < d.index.length; i++) {
-      if (String(d.index[i].id) === sId) {
+      if (String(d.index[i].id) === sId || String(d.index[i].id) === ('sheet_' + sId) || String(d.index[i].id) === sId.replace(/^sheet_/, '')) {
         d.index[i] = {
           id: sId,
           title: sheet.title,
           category: sheet.category || 'кружок',
           desc: sheet.desc || sheet.description || '',
+          description: sheet.desc || sheet.description || '',
           tasks_count: (sheet.tasks || []).length,
           year: sheet.year || 2026,
           grade: sheet.grade || ''
@@ -4124,12 +4164,16 @@ var SheetsStore = {
         title: sheet.title,
         category: sheet.category || 'кружок',
         desc: sheet.desc || sheet.description || '',
+        description: sheet.desc || sheet.description || '',
         tasks_count: (sheet.tasks || []).length,
         year: sheet.year || 2026,
         grade: sheet.grade || ''
       });
     }
     updateEmbeddedScript('sheets-data', d);
+    if (window.DiskSync && typeof window.DiskSync.saveSheet === 'function') {
+      return window.DiskSync.saveSheet(sheet);
+    }
     return fetch('/api/save-sheet', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -4141,8 +4185,17 @@ var SheetsStore = {
     var d = self.get();
     var sId = String(sheetId);
     delete d.sheets[sId];
-    d.index = d.index.filter(function (it) { return String(it.id) !== sId; });
+    if (sId.startsWith('sheet_')) delete d.sheets[sId.slice(6)];
+    else delete d.sheets['sheet_' + sId];
+    d.index = d.index.filter(function (it) {
+      var itId = String(it.id);
+      return itId !== sId && itId !== ('sheet_' + sId) && itId !== sId.replace(/^sheet_/, '');
+    });
+    window.SHEETS_DATA = d;
     updateEmbeddedScript('sheets-data', d);
+    if (window.DiskSync && typeof window.DiskSync.deleteSheet === 'function') {
+      return window.DiskSync.deleteSheet(sId);
+    }
     return fetch('/api/delete-sheet', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -4153,31 +4206,68 @@ var SheetsStore = {
     var self = this;
     var d = self.get();
     var sId = String(sheetId);
-    var sheet = d.sheets[sId];
+    var sheet = d.sheets[sId] || d.sheets['sheet_' + sId] || (sId.startsWith('sheet_') ? d.sheets[sId.slice(6)] : null);
     if (!sheet) return Promise.reject('Sheet not found');
     sheet.tasks = sheet.tasks || [];
     var replaced = false;
     for (var i = 0; i < sheet.tasks.length; i++) {
-      if (sheet.tasks[i].id === task.id) {
+      if (String(sheet.tasks[i].id) === String(task.id)) {
         sheet.tasks[i] = task;
         replaced = true;
         break;
       }
     }
     if (!replaced) sheet.tasks.push(task);
-    return self.saveSheet(sheet);
+    for (var j = 0; j < d.index.length; j++) {
+      var curId = String(d.index[j].id);
+      if (curId === sId || curId === ('sheet_' + sId) || curId === sId.replace(/^sheet_/, '')) {
+        d.index[j].tasks_count = sheet.tasks.length;
+        break;
+      }
+    }
+    window.SHEETS_DATA = d;
+    updateEmbeddedScript('sheets-data', d);
+    if (window.DiskSync && typeof window.DiskSync.saveSheetTask === 'function') {
+      return window.DiskSync.saveSheetTask(sId, task);
+    }
+    return fetch('/api/save-sheet-task', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sheet_id: sId, task: task })
+    }).catch(function (e) { console.warn('Offline save sheet task', e); });
   },
   deleteTask: function (sheetId, taskId) {
     var self = this;
     var d = self.get();
     var sId = String(sheetId);
-    var sheet = d.sheets[sId];
+    var sheet = d.sheets[sId] || d.sheets['sheet_' + sId] || (sId.startsWith('sheet_') ? d.sheets[sId.slice(6)] : null);
     if (!sheet) return Promise.reject('Sheet not found');
-    sheet.tasks = (sheet.tasks || []).filter(function (t) { return t.id !== taskId; });
-    return self.saveSheet(sheet);
+    sheet.tasks = (sheet.tasks || []).filter(function (t) { return String(t.id) !== String(taskId); });
+    for (var j = 0; j < d.index.length; j++) {
+      var curId = String(d.index[j].id);
+      if (curId === sId || curId === ('sheet_' + sId) || curId === sId.replace(/^sheet_/, '')) {
+        d.index[j].tasks_count = sheet.tasks.length;
+        break;
+      }
+    }
+    window.SHEETS_DATA = d;
+    updateEmbeddedScript('sheets-data', d);
+    if (window.DiskSync && typeof window.DiskSync.deleteSheetTask === 'function') {
+      return window.DiskSync.deleteSheetTask(sId, taskId);
+    }
+    return fetch('/api/delete-sheet-task', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sheet_id: sId, task_id: taskId })
+    }).catch(function (e) { console.warn('Offline delete sheet task', e); });
   }
 };
+function initSheetsData() {
+  return SheetsStore.get();
+}
 window.SheetsStore = SheetsStore;
+window.initSheetsData = initSheetsData;
+initSheetsData();
 
 var NotesStore = {
   data: null,
@@ -4262,7 +4352,7 @@ function sheetProbHtml(p, sheetId) {
     '<span class="pstamp">' + I.check + 'решена</span>' +
     '<div class="pst rt">' + (p.st || '') + '</div>' +
     '<footer class="pf">' + ks.map(function (k) { return '<button type="button" class="rv" data-k="' + k + '" aria-expanded="false"><i></i>' + (k === 'idea' && p.d === 8 ? 'Что известно' : BTN[k]) + '</button>'; }).join('') +
-      (p.ggb ? '<button type="button" class="rv ggb-btn" data-act="toggle-ggb" data-id="' + esc(p.id) + '" aria-expanded="false"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:5px;vertical-align:-2px"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/></svg><span>Чертёж (GeoGebra)</span></button>' : '') +
+      ((p.ggb !== null && p.ggb !== undefined) ? '<button type="button" class="rv ggb-btn" data-act="toggle-ggb" data-id="' + esc(p.id) + '" aria-expanded="false">' + I.ggb + '<span>Чертёж (GeoGebra)</span></button>' : '') +
       '<span class="sp"></span><button type="button" class="mark" aria-pressed="' + on + '" title="Отметить задачу решённой"><span class="bx"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span><span class="lab">Решена</span></button></footer>' +
     '<div class="panels"></div></article>';
 }
@@ -4301,8 +4391,66 @@ function renderMarkdownMath(text) {
 }
 
 var currentSheetFilter = 'all';
+var currentSheetQuery = '';
 var currentNoteTypeFilter = 'all';
 var currentNoteDomainFilter = 'all';
+
+function renderSheetsGridOnly() {
+  var sStore = SheetsStore.get();
+  var sheetsIndex = sStore.index || [];
+  var q = (currentSheetQuery || '').trim().toLowerCase();
+  var filteredSheets = sheetsIndex.filter(function (s) {
+    if (currentSheetFilter !== 'all') {
+      var c = (s.category || '').toLowerCase();
+      if (c.indexOf(currentSheetFilter.toLowerCase()) === -1) return false;
+    }
+    if (q) {
+      var matchTitle = (s.title || '').toLowerCase().indexOf(q) !== -1;
+      var matchDesc = (s.desc || s.description || '').toLowerCase().indexOf(q) !== -1;
+      if (matchTitle || matchDesc) return true;
+      var sId = String(s.id);
+      var sObj = sStore.sheets[sId] || sStore.sheets['sheet_' + sId];
+      if (sObj && sObj.tasks) {
+        return sObj.tasks.some(function (t) {
+          return (t.st || '').toLowerCase().indexOf(q) !== -1 ||
+                 (t.src || '').toLowerCase().indexOf(q) !== -1 ||
+                 (t.id || '').toLowerCase().indexOf(q) !== -1;
+        });
+      }
+      return false;
+    }
+    return true;
+  });
+
+  var cardsHtml = filteredSheets.map(function (s) {
+    var sId = String(s.id);
+    var count = s.tasks_count !== undefined ? s.tasks_count : ((sStore.sheets[sId] && sStore.sheets[sId].tasks) ? sStore.sheets[sId].tasks.length : 0);
+    return '<div class="arch-card sheet-card" data-act="open-sheet" data-id="' + esc(sId) + '">' +
+      '<div class="arch-card-top sheet-card-top">' +
+        '<div class="arch-card-tags">' +
+          '<span class="badge-cat sheet-badge" data-cat="' + esc(s.category || 'кружок') + '">' + esc(s.category || 'кружок') + '</span>' +
+          (s.year ? '<span class="badge-domain">' + esc(s.year) + '</span>' : '') +
+          (s.grade ? '<span class="badge-domain">' + esc(s.grade) + ' кл.</span>' : '') +
+        '</div>' +
+        '<div class="arch-card-acts edit-ctrl">' +
+          '<button class="icon-btn edit-ctrl" type="button" data-act="edit-sheet" data-id="' + esc(sId) + '" title="Редактировать">' + I.edit + '</button>' +
+          '<button class="icon-btn danger edit-ctrl" type="button" data-act="del-sheet" data-id="' + esc(sId) + '" title="Удалить">' + I.trash + '</button>' +
+        '</div>' +
+      '</div>' +
+      '<h2 class="arch-card-title sheet-card-title">' + esc(s.title) + '</h2>' +
+      '<p class="arch-card-desc sheet-card-desc">' + esc(s.desc || s.description || 'Подборка задач') + '</p>' +
+      '<div class="arch-card-foot sheet-card-foot">' +
+        '<span class="sheet-count-tag">' + count + ' ' + plural(count, 'задача', 'задачи', 'задач') + '</span>' +
+        '<span>Открыть ' + I.play + '</span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  var grid = $('.sheets-grid', view) || $('.arch-grid', view);
+  if (grid) {
+    grid.innerHTML = filteredSheets.length ? cardsHtml : '<div class="empty-arch" style="grid-column:1/-1">Источники не найдены.</div>';
+  }
+}
 
 function renderSheets(r) {
   var sStore = SheetsStore.get();
@@ -4310,34 +4458,37 @@ function renderSheets(r) {
 
   if (r.sheetId) {
     var sId = String(r.sheetId);
-    var sheet = sStore.sheets[sId] || sStore.sheets['sheet_' + sId];
+    var sheet = sStore.sheets[sId] || sStore.sheets['sheet_' + sId] || (sId.startsWith('sheet_') ? sStore.sheets[sId.slice(6)] : null);
     if (!sheet) {
-      view.innerHTML = '<div class="arch-page"><button class="detail-back-btn" data-act="view-sheets">' + I.back + '<span>Ко всем листочкам</span></button><div class="empty-arch">Листочек не найден</div></div>';
+      view.innerHTML = '<div class="arch-page sheets-wrap"><button class="detail-back-btn" data-act="view-sheets">' + I.back + '<span>Ко всем источникам</span></button><div class="empty-arch">Источник не найден</div></div>';
       return;
     }
     var tasks = sheet.tasks || [];
     var tasksHtml = tasks.map(function (t) { return sheetProbHtml(t, sheet.id); }).join('');
 
-    view.innerHTML = '<div class="arch-page">' +
+    view.innerHTML = '<div class="arch-page sheets-wrap">' +
       '<div class="detail-topbar">' +
-        '<button class="detail-back-btn" data-act="view-sheets">' + I.back + '<span>Ко всем листочкам</span></button>' +
+        '<div style="display:flex;gap:12px;align-items:center">' +
+          '<button class="detail-back-btn" data-act="view-sheets">' + I.back + '<span>Ко всем источникам</span></button>' +
+          '<button class="detail-back-btn" data-act="home">' + I.tab_map + '<span>Карта курса</span></button>' +
+        '</div>' +
         '<div class="edit-ctrl arch-hero-acts">' +
           '<button class="btn sm edit-ctrl" type="button" data-act="add-sheet-task" data-sheet="' + esc(sheet.id) + '">' + I.plus + '<span>Добавить задачу</span></button>' +
-          '<button class="btn sm edit-ctrl" type="button" data-act="edit-sheet" data-id="' + esc(sheet.id) + '">' + I.edit + '<span>Редактировать листок</span></button>' +
-          '<button class="btn sm danger edit-ctrl" type="button" data-act="del-sheet" data-id="' + esc(sheet.id) + '">' + I.trash + '<span>Удалить листок</span></button>' +
+          '<button class="btn sm edit-ctrl" type="button" data-act="edit-sheet" data-id="' + esc(sheet.id) + '">' + I.edit + '<span>Редактировать источник</span></button>' +
+          '<button class="btn sm danger edit-ctrl" type="button" data-act="del-sheet" data-id="' + esc(sheet.id) + '">' + I.trash + '<span>Удалить источник</span></button>' +
         '</div>' +
       '</div>' +
       '<div class="detail-head">' +
         '<div class="arch-card-tags" style="margin-bottom:8px">' +
-          '<span class="badge-cat">' + esc(sheet.category || 'кружок') + '</span>' +
+          '<span class="badge-cat sheet-badge" data-cat="' + esc(sheet.category || 'кружок') + '">' + esc(sheet.category || 'кружок') + '</span>' +
           (sheet.year ? '<span class="badge-domain">' + esc(sheet.year) + '</span>' : '') +
           (sheet.grade ? '<span class="badge-domain">' + esc(sheet.grade) + ' кл.</span>' : '') +
         '</div>' +
-        '<h1 class="arch-title">' + esc(sheet.title) + '</h1>' +
-        (sheet.desc || sheet.description ? '<p class="arch-lead">' + esc(sheet.desc || sheet.description) + '</p>' : '') +
+        '<h1 class="arch-title sheets-detail-title">' + esc(sheet.title) + '</h1>' +
+        (sheet.desc || sheet.description ? '<p class="arch-lead sheets-detail-desc">' + esc(sheet.desc || sheet.description) + '</p>' : '') +
       '</div>' +
       '<div class="tasks-container" style="display:flex;flex-direction:column;gap:16px">' +
-        (tasks.length ? tasksHtml : '<div class="empty-arch">В этом листочке пока нет задач. Добавьте задачу в режиме редактирования.</div>') +
+        (tasks.length ? tasksHtml : '<div class="empty-arch">В этом источнике пока нет задач. Добавьте задачу в режиме редактирования.</div>') +
       '</div>' +
     '</div>';
 
@@ -4347,26 +4498,44 @@ function renderSheets(r) {
   }
 
   var cats = [
-    { id: 'all', label: 'Все категории' },
+    { id: 'all', label: 'Все' },
     { id: 'кружок', label: 'Кружок' },
-    { id: 'олимпиада', label: 'Олимпиады' },
-    { id: 'матбой', label: 'Матбои' },
-    { id: 'авторская', label: 'Авторские' }
+    { id: 'олимпиада', label: 'Олимпиада' },
+    { id: 'матбой', label: 'Матбой' },
+    { id: 'авторская', label: 'Авторская' }
   ];
 
+  var q = (currentSheetQuery || '').trim().toLowerCase();
   var filteredSheets = sheetsIndex.filter(function (s) {
-    if (currentSheetFilter === 'all') return true;
-    var c = (s.category || '').toLowerCase();
-    return c.indexOf(currentSheetFilter.toLowerCase()) !== -1;
+    if (currentSheetFilter !== 'all') {
+      var c = (s.category || '').toLowerCase();
+      if (c.indexOf(currentSheetFilter.toLowerCase()) === -1) return false;
+    }
+    if (q) {
+      var matchTitle = (s.title || '').toLowerCase().indexOf(q) !== -1;
+      var matchDesc = (s.desc || s.description || '').toLowerCase().indexOf(q) !== -1;
+      if (matchTitle || matchDesc) return true;
+      var sId = String(s.id);
+      var sObj = sStore.sheets[sId] || sStore.sheets['sheet_' + sId];
+      if (sObj && sObj.tasks) {
+        return sObj.tasks.some(function (t) {
+          return (t.st || '').toLowerCase().indexOf(q) !== -1 ||
+                 (t.src || '').toLowerCase().indexOf(q) !== -1 ||
+                 (t.id || '').toLowerCase().indexOf(q) !== -1;
+        });
+      }
+      return false;
+    }
+    return true;
   });
 
   var cardsHtml = filteredSheets.map(function (s) {
     var sId = String(s.id);
     var count = s.tasks_count !== undefined ? s.tasks_count : ((sStore.sheets[sId] && sStore.sheets[sId].tasks) ? sStore.sheets[sId].tasks.length : 0);
-    return '<div class="arch-card" data-act="open-sheet" data-id="' + esc(sId) + '">' +
-      '<div class="arch-card-top">' +
+    return '<div class="arch-card sheet-card" data-act="open-sheet" data-id="' + esc(sId) + '">' +
+      '<div class="arch-card-top sheet-card-top">' +
         '<div class="arch-card-tags">' +
-          '<span class="badge-cat">' + esc(s.category || 'кружок') + '</span>' +
+          '<span class="badge-cat sheet-badge" data-cat="' + esc(s.category || 'кружок') + '">' + esc(s.category || 'кружок') + '</span>' +
           (s.year ? '<span class="badge-domain">' + esc(s.year) + '</span>' : '') +
           (s.grade ? '<span class="badge-domain">' + esc(s.grade) + ' кл.</span>' : '') +
         '</div>' +
@@ -4375,37 +4544,49 @@ function renderSheets(r) {
           '<button class="icon-btn danger edit-ctrl" type="button" data-act="del-sheet" data-id="' + esc(sId) + '" title="Удалить">' + I.trash + '</button>' +
         '</div>' +
       '</div>' +
-      '<h2 class="arch-card-title">' + esc(s.title) + '</h2>' +
-      '<p class="arch-card-desc">' + esc(s.desc || s.description || 'Подборка задач') + '</p>' +
-      '<div class="arch-card-foot">' +
-        '<span>' + count + ' ' + plural(count, 'задача', 'задачи', 'задач') + '</span>' +
+      '<h2 class="arch-card-title sheet-card-title">' + esc(s.title) + '</h2>' +
+      '<p class="arch-card-desc sheet-card-desc">' + esc(s.desc || s.description || 'Подборка задач') + '</p>' +
+      '<div class="arch-card-foot sheet-card-foot">' +
+        '<span class="sheet-count-tag">' + count + ' ' + plural(count, 'задача', 'задачи', 'задач') + '</span>' +
         '<span>Открыть ' + I.play + '</span>' +
       '</div>' +
     '</div>';
   }).join('');
 
-  view.innerHTML = '<div class="arch-page">' +
-    '<div class="arch-hero">' +
+  view.innerHTML = '<div class="arch-page sheets-wrap">' +
+    '<div class="arch-hero sheets-hero">' +
       '<div class="arch-hero-main">' +
-        '<h1 class="arch-title">Листочки и архивы задач</h1>' +
+        '<h1 class="arch-title sheets-title">Источники и архивы задач</h1>' +
         '<p class="arch-lead">Единая коллекция подборок задач из маткружков, олимпиад и математических боёв. Не привязаны к конкретным темам — решайте целиком или используйте на занятиях.</p>' +
       '</div>' +
       '<div class="arch-hero-acts">' +
-        '<button class="btn primary edit-ctrl" type="button" data-act="add-sheet">' + I.plus + '<span>Добавить листочек</span></button>' +
+        '<button class="btn primary edit-ctrl" type="button" data-act="add-sheet">' + I.plus + '<span>Добавить источник</span></button>' +
       '</div>' +
     '</div>' +
-    '<div class="arch-filters-row">' +
-      '<div class="arch-filters">' +
+    '<div class="sheets-toolbar">' +
+      '<div class="sheets-search-box">' +
+        '<span class="sheets-search-icon" aria-hidden="true">' + I.search + '</span>' +
+        '<input type="search" class="sheets-search-input" id="sheets-search-input" placeholder="Поиск по названию или условиям задач..." value="' + esc(currentSheetQuery) + '">' +
+      '</div>' +
+      '<div class="sheets-pills arch-filters">' +
         cats.map(function (c) {
           var act = (currentSheetFilter === c.id) ? ' active' : '';
-          return '<button type="button" class="arch-filter-btn' + act + '" data-act="filter-sheets-cat" data-cat="' + c.id + '">' + c.label + '</button>';
+          return '<button type="button" class="category-pill arch-filter-btn' + act + '" data-act="filter-sheets-cat" data-cat="' + c.id + '">' + c.label + '</button>';
         }).join('') +
       '</div>' +
     '</div>' +
-    '<div class="arch-grid">' +
-      (filteredSheets.length ? cardsHtml : '<div class="empty-arch" style="grid-column:1/-1">Листочки в данной категории пока отсутствуют.</div>') +
+    '<div class="arch-grid sheets-grid">' +
+      (filteredSheets.length ? cardsHtml : '<div class="empty-arch" style="grid-column:1/-1">Источники не найдены.</div>') +
     '</div>' +
   '</div>';
+
+  var sInput = $('#sheets-search-input', view);
+  if (sInput) {
+    sInput.addEventListener('input', function () {
+      currentSheetQuery = sInput.value;
+      renderSheetsGridOnly();
+    });
+  }
 }
 
 function renderNotes(r) {
@@ -4416,7 +4597,7 @@ function renderNotes(r) {
     var nId = String(r.noteId);
     var note = nStore.notes[nId] || nStore.notes['note_' + nId];
     if (!note) {
-      view.innerHTML = '<div class="arch-page"><button class="detail-back-btn" data-act="view-notes">' + I.back + '<span>Ко всем конспектам</span></button><div class="empty-arch">Конспект не найден</div></div>';
+      view.innerHTML = '<div class="arch-page"><button class="detail-back-btn" data-act="view-notes">' + I.back + '<span>Ко всей теории</span></button><div class="empty-arch">Материал не найден</div></div>';
       return;
     }
 
@@ -4434,12 +4615,12 @@ function renderNotes(r) {
 
     view.innerHTML = '<div class="arch-page">' +
       '<div class="detail-topbar">' +
-        '<button class="detail-back-btn" data-act="view-notes">' + I.back + '<span>Ко всем конспектам</span></button>' +
+        '<button class="detail-back-btn" data-act="view-notes">' + I.back + '<span>Ко всей теории</span></button>' +
         '<div class="edit-ctrl arch-hero-acts">' +
           (isLatex ? '<button class="btn sm edit-ctrl" type="button" data-act="edit-latex-note" data-id="' + esc(note.id) + '">' + I.edit + '<span>Редактировать LaTeX</span></button>' : '') +
           (!isLatex ? '<button class="btn sm edit-ctrl" type="button" data-act="upload-pdf" data-id="' + esc(note.id) + '">' + I.upload + '<span>Загрузить PDF</span></button>' : '') +
           '<button class="btn sm edit-ctrl" type="button" data-act="edit-note" data-id="' + esc(note.id) + '">' + I.edit + '<span>Свойства</span></button>' +
-          '<button class="btn sm danger edit-ctrl" type="button" data-act="del-note" data-id="' + esc(note.id) + '">' + I.trash + '<span>Удалить конспект</span></button>' +
+          '<button class="btn sm danger edit-ctrl" type="button" data-act="del-note" data-id="' + esc(note.id) + '">' + I.trash + '<span>Удалить материал</span></button>' +
         '</div>' +
       '</div>' +
       '<div class="detail-head">' +
@@ -4499,11 +4680,11 @@ function renderNotes(r) {
   view.innerHTML = '<div class="arch-page">' +
     '<div class="arch-hero">' +
       '<div class="arch-hero-main">' +
-        '<h1 class="arch-title">Конспекты и теория</h1>' +
+        '<h1 class="arch-title">Теория и конспекты</h1>' +
         '<p class="arch-lead">Теоретические материалы курса: структурированные LaTeX-конспекты с формулами и рукописные сканы лекций в формате PDF.</p>' +
       '</div>' +
       '<div class="arch-hero-acts">' +
-        '<button class="btn primary edit-ctrl" type="button" data-act="add-note">' + I.plus + '<span>Добавить конспект</span></button>' +
+        '<button class="btn primary edit-ctrl" type="button" data-act="add-note">' + I.plus + '<span>Добавить материал</span></button>' +
       '</div>' +
     '</div>' +
     '<div class="arch-filters-row">' +
@@ -4515,7 +4696,7 @@ function renderNotes(r) {
       '</div>' +
     '</div>' +
     '<div class="arch-grid">' +
-      (filteredNotes.length ? cardsHtml : '<div class="empty-arch" style="grid-column:1/-1">Конспекты по выбранным фильтрам пока отсутствуют.</div>') +
+      (filteredNotes.length ? cardsHtml : '<div class="empty-arch" style="grid-column:1/-1">Материалы по выбранным фильтрам пока отсутствуют.</div>') +
     '</div>' +
   '</div>';
 }
@@ -4536,15 +4717,15 @@ function openSheetModal(existingSheet) {
   }).join('');
 
   var html = '<div class="ov-card" style="max-width:540px;width:95%" role="dialog" aria-modal="true">' +
-    '<div class="ov-h"><h3>' + (isEdit ? 'Редактировать листочек' : 'Добавить новый листочек') + '</h3><button class="icon-btn" type="button" data-close aria-label="Закрыть">' + I.close + '</button></div>' +
+    '<div class="ov-h"><h3>' + (isEdit ? 'Редактировать источник' : 'Добавить новый источник') + '</h3><button class="icon-btn" type="button" data-close aria-label="Закрыть">' + I.close + '</button></div>' +
     '<div class="ed-form">' +
-      '<div class="ed-row"><label class="ed-label" for="sh-title">Название листочка</label><input id="sh-title" class="ed-input" type="text" value="' + esc(title) + '" placeholder="Например: Инварианты и полуинварианты"></div>' +
+      '<div class="ed-row"><label class="ed-label" for="sh-title">Название источника</label><input id="sh-title" class="ed-input" type="text" value="' + esc(title) + '" placeholder="Например: Инварианты и полуинварианты"></div>' +
       '<div class="ed-row-inline">' +
         '<div style="flex:1"><label class="ed-label" for="sh-cat">Категория</label><select id="sh-cat" class="ed-select">' + catOpts + '</select></div>' +
         '<div style="flex:1"><label class="ed-label" for="sh-year">Год</label><input id="sh-year" class="ed-input" type="number" value="' + esc(year) + '"></div>' +
         '<div style="flex:1"><label class="ed-label" for="sh-grade">Класс</label><input id="sh-grade" class="ed-input" type="text" value="' + esc(grade) + '" placeholder="8–9"></div>' +
       '</div>' +
-      '<div class="ed-row"><label class="ed-label" for="sh-desc">Описание подборки</label><textarea id="sh-desc" class="ed-textarea" style="height:90px" placeholder="Краткое описание тем и целей листочка">' + esc(desc) + '</textarea></div>' +
+      '<div class="ed-row"><label class="ed-label" for="sh-desc">Описание подборки</label><textarea id="sh-desc" class="ed-textarea" style="height:90px" placeholder="Краткое описание тем и целей источника">' + esc(desc) + '</textarea></div>' +
       '<div class="modal-actions">' +
         '<button class="btn" type="button" data-close>Отмена</button>' +
         '<button id="btn-save-sheet-modal" class="btn primary" type="button">Сохранить</button>' +
@@ -4554,7 +4735,7 @@ function openSheetModal(existingSheet) {
   var ov = overlay(html);
   $('#btn-save-sheet-modal', ov).addEventListener('click', function () {
     var newTitle = $('#sh-title', ov).value.trim();
-    if (!newTitle) { alert('Укажите название листочка'); return; }
+    if (!newTitle) { alert('Укажите название источника'); return; }
     var updated = {
       id: sId,
       title: newTitle,
@@ -4567,7 +4748,7 @@ function openSheetModal(existingSheet) {
     };
     SheetsStore.saveSheet(updated).then(function () {
       closeOverlay();
-      toast('Листочек сохранён');
+      toast('Источник сохранён');
       renderSheets(cur);
     });
   });
@@ -4577,15 +4758,15 @@ function confirmDeleteSheet(sheetId) {
   var s = SheetsStore.get().sheets[sheetId];
   var title = s ? s.title : sheetId;
   var html = '<div class="ov-card" style="max-width:440px;width:95%" role="dialog" aria-modal="true">' +
-    '<div class="ov-h"><h3>Удалить листочек?</h3><button class="icon-btn" type="button" data-close>' + I.close + '</button></div>' +
-    '<div class="ed-form"><p style="font-size:14px;color:var(--text-2);line-height:1.5">Вы действительно хотите удалить листочек <b>«' + esc(title) + '»</b> и все его задачи? Это действие нельзя отменить.</p>' +
+    '<div class="ov-h"><h3>Удалить источник?</h3><button class="icon-btn" type="button" data-close>' + I.close + '</button></div>' +
+    '<div class="ed-form"><p style="font-size:14px;color:var(--text-2);line-height:1.5">Вы действительно хотите удалить источник <b>«' + esc(title) + '»</b> и все его задачи? Это действие нельзя отменить.</p>' +
     '<div class="modal-actions"><button class="btn" type="button" data-close>Отмена</button><button id="btn-confirm-del-sh" class="btn danger" type="button">Удалить</button></div>' +
     '</div></div>';
   var ov = overlay(html);
   $('#btn-confirm-del-sh', ov).addEventListener('click', function () {
     SheetsStore.deleteSheet(sheetId).then(function () {
       closeOverlay();
-      toast('Листочек удалён');
+      toast('Источник удалён');
       if (cur.sheetId === sheetId) go({ v: 'sheets' }); else renderSheets(cur);
     });
   });
@@ -4611,7 +4792,7 @@ function openSheetTaskModal(sheetId, existingTask) {
   }
 
   var html = '<div class="ov-card" style="max-width:860px;width:95%" role="dialog" aria-modal="true">' +
-    '<div class="ov-h"><h3>' + (isEdit ? 'Редактировать задачу ' + taskId : 'Добавить задачу в листочек') + '</h3><button class="icon-btn" type="button" data-close aria-label="Закрыть">' + I.close + '</button></div>' +
+    '<div class="ov-h"><h3>' + (isEdit ? 'Редактировать задачу ' + taskId : 'Добавить задачу в источник') + '</h3><button class="icon-btn" type="button" data-close aria-label="Закрыть">' + I.close + '</button></div>' +
     '<div class="ed-form">' +
       '<div class="ed-row-inline">' +
         '<div style="flex:1"><label class="ed-label" for="stask-id">Номер задачи</label><input id="stask-id" class="ed-input" type="text" value="' + esc(taskId) + '"></div>' +
@@ -4619,6 +4800,12 @@ function openSheetTaskModal(sheetId, existingTask) {
       '</div>' +
       '<div class="ed-row"><label class="ed-label">Сложность (1..8)</label>' +
         '<div id="stask-diff-selector" class="diff-selector">' + diffButtons + '</div>' +
+      '</div>' +
+      '<div class="ed-row" style="margin-top:10px">' +
+        '<label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:13.5px;color:var(--text);user-select:none">' +
+          '<input type="checkbox" id="stask-ggb-toggle"' + ((isEdit && existingTask && existingTask.ggb !== null && existingTask.ggb !== undefined) ? ' checked' : '') + '>' +
+          '<span>Включить интерактивный чертёж GeoGebra</span>' +
+        '</label>' +
       '</div>' +
       '<div class="ed-split">' +
         '<div class="ed-pane"><label class="ed-label" for="stask-st">Условие задачи ($...$ для KaTeX)</label><textarea id="stask-st" class="ed-textarea" style="height:120px">' + esc(st) + '</textarea></div>' +
@@ -4667,6 +4854,12 @@ function openSheetTaskModal(sheetId, existingTask) {
   $('#btn-save-stask', ov).addEventListener('click', function () {
     var tId = $('#stask-id', ov).value.trim();
     if (!tId) { alert('Укажите номер задачи'); return; }
+    var ggbToggle = $('#stask-ggb-toggle', ov);
+    var isGgbOn = ggbToggle ? ggbToggle.checked : false;
+    var ggbVal = null;
+    if (isGgbOn) {
+      ggbVal = (isEdit && existingTask && existingTask.ggb) ? existingTask.ggb : "";
+    }
     var taskObj = {
       id: tId,
       src: $('#stask-src', ov).value.trim(),
@@ -4677,7 +4870,7 @@ function openSheetTaskModal(sheetId, existingTask) {
         idea: formatMathInput($('#stask-idea', ov).value),
         plan: formatMathInput($('#stask-plan', ov).value)
       },
-      ggb: (isEdit && existingTask) ? existingTask.ggb : null
+      ggb: ggbVal
     };
     SheetsStore.saveTask(sheetId, taskObj).then(function () {
       closeOverlay();
@@ -4690,7 +4883,7 @@ function openSheetTaskModal(sheetId, existingTask) {
 function confirmDeleteSheetTask(sheetId, taskId) {
   var html = '<div class="ov-card" style="max-width:420px;width:95%" role="dialog" aria-modal="true">' +
     '<div class="ov-h"><h3>Удалить задачу?</h3><button class="icon-btn" type="button" data-close>' + I.close + '</button></div>' +
-    '<div class="ed-form"><p style="font-size:14px;color:var(--text-2);line-height:1.5">Удалить задачу <b>' + esc(taskId) + '</b> из листочка?</p>' +
+    '<div class="ed-form"><p style="font-size:14px;color:var(--text-2);line-height:1.5">Удалить задачу <b>' + esc(taskId) + '</b> из источника?</p>' +
     '<div class="modal-actions"><button class="btn" type="button" data-close>Отмена</button><button id="btn-del-stask-conf" class="btn danger" type="button">Удалить</button></div>' +
     '</div></div>';
   var ov = overlay(html);
@@ -4720,9 +4913,9 @@ function openNoteModal(existingNote) {
   }).join('');
 
   var html = '<div class="ov-card" style="max-width:540px;width:95%" role="dialog" aria-modal="true">' +
-    '<div class="ov-h"><h3>' + (isEdit ? 'Свойства конспекта' : 'Добавить конспект') + '</h3><button class="icon-btn" type="button" data-close>' + I.close + '</button></div>' +
+    '<div class="ov-h"><h3>' + (isEdit ? 'Свойства материала' : 'Добавить материал') + '</h3><button class="icon-btn" type="button" data-close>' + I.close + '</button></div>' +
     '<div class="ed-form">' +
-      '<div class="ed-row"><label class="ed-label" for="nt-title">Название конспекта</label><input id="nt-title" class="ed-input" type="text" value="' + esc(title) + '" placeholder="Например: Метод производящих функций"></div>' +
+      '<div class="ed-row"><label class="ed-label" for="nt-title">Название материала</label><input id="nt-title" class="ed-input" type="text" value="' + esc(title) + '" placeholder="Например: Метод производящих функций"></div>' +
       '<div class="ed-row-inline">' +
         '<div style="flex:1"><label class="ed-label" for="nt-type">Тип материала</label><select id="nt-type" class="ed-select"><option value="latex"' + (type === 'latex' ? ' selected' : '') + '>LaTeX статья</option><option value="pdf"' + (type === 'pdf' ? ' selected' : '') + '>PDF скан</option></select></div>' +
         '<div style="flex:1"><label class="ed-label" for="nt-dom">Предмет</label><select id="nt-dom" class="ed-select">' + domOpts + '</select></div>' +
@@ -4744,7 +4937,7 @@ function openNoteModal(existingNote) {
 
   $('#btn-save-note-modal', ov).addEventListener('click', function () {
     var newTitle = $('#nt-title', ov).value.trim();
-    if (!newTitle) { alert('Укажите название конспекта'); return; }
+    if (!newTitle) { alert('Укажите название материала'); return; }
     var selectedType = $('#nt-type', ov).value;
     var fileName = $('#nt-file', ov).value.trim();
     var noteObj = {
@@ -4762,7 +4955,7 @@ function openNoteModal(existingNote) {
     };
     NotesStore.saveNote(noteObj).then(function () {
       closeOverlay();
-      toast('Конспект сохранён');
+      toast('Материал сохранён');
       renderNotes(cur);
     });
   });
@@ -4772,15 +4965,15 @@ function confirmDeleteNote(noteId) {
   var n = NotesStore.get().notes[noteId];
   var title = n ? n.title : noteId;
   var html = '<div class="ov-card" style="max-width:440px;width:95%" role="dialog" aria-modal="true">' +
-    '<div class="ov-h"><h3>Удалить конспект?</h3><button class="icon-btn" type="button" data-close>' + I.close + '</button></div>' +
-    '<div class="ed-form"><p style="font-size:14px;color:var(--text-2);line-height:1.5">Удалить конспект <b>«' + esc(title) + '»</b>?</p>' +
+    '<div class="ov-h"><h3>Удалить материал?</h3><button class="icon-btn" type="button" data-close>' + I.close + '</button></div>' +
+    '<div class="ed-form"><p style="font-size:14px;color:var(--text-2);line-height:1.5">Удалить материал <b>«' + esc(title) + '»</b>?</p>' +
     '<div class="modal-actions"><button class="btn" type="button" data-close>Отмена</button><button id="btn-conf-del-note" class="btn danger" type="button">Удалить</button></div>' +
     '</div></div>';
   var ov = overlay(html);
   $('#btn-conf-del-note', ov).addEventListener('click', function () {
     NotesStore.deleteNote(noteId).then(function () {
       closeOverlay();
-      toast('Конспект удалён');
+      toast('Материал удалён');
       if (cur.noteId === noteId) go({ v: 'notes' }); else renderNotes(cur);
     });
   });
@@ -4792,7 +4985,7 @@ function openLatexEditorModal(noteId) {
   var rawText = note.content || '';
 
   var html = '<div class="ov-card" style="max-width:1100px;width:95%" role="dialog" aria-modal="true">' +
-    '<div class="ov-h"><h3>Редактор конспекта: ' + esc(note.title) + '</h3><button class="icon-btn" type="button" data-close>' + I.close + '</button></div>' +
+    '<div class="ov-h"><h3>Редактор теории: ' + esc(note.title) + '</h3><button class="icon-btn" type="button" data-close>' + I.close + '</button></div>' +
     '<div class="ed-form">' +
       '<div class="latex-split-editor">' +
         '<div class="latex-pane">' +
@@ -4806,7 +4999,7 @@ function openLatexEditorModal(noteId) {
       '</div>' +
       '<div class="modal-actions">' +
         '<button class="btn" type="button" data-close>Отмена</button>' +
-        '<button id="btn-save-latex-content" class="btn primary" type="button">Сохранить конспект</button>' +
+        '<button id="btn-save-latex-content" class="btn primary" type="button">Сохранить материал</button>' +
       '</div>' +
     '</div></div>';
 
@@ -4825,7 +5018,7 @@ function openLatexEditorModal(noteId) {
     note.content = txt.value;
     NotesStore.saveNote(note).then(function () {
       closeOverlay();
-      toast('Конспект обновлён');
+      toast('Материал обновлён');
       renderNotes(cur);
     });
   });
@@ -4894,7 +5087,59 @@ document.addEventListener('click', function (e) {
   if (act) {
     e.preventDefault();
     var a = act.dataset.act;
-    if (a === 'home') go({ v: 'map' });
+    if (a === 'home' || a === 'view-map') go({ v: 'map' });
+    else if (a === 'view-sheets' || a === 'sheets-home') go({ v: 'sheets' });
+    else if (a === 'view-notes' || a === 'notes-home') go({ v: 'notes' });
+    else if (a === 'open-sheet') go({ v: 'sheets', sheetId: act.dataset.id });
+    else if (a === 'add-sheet') openSheetModal();
+    else if (a === 'edit-sheet') {
+      var sId = String(act.dataset.id);
+      var sStore = SheetsStore.get();
+      var sh = sStore.sheets[sId] || sStore.sheets['sheet_' + sId] || (sId.startsWith('sheet_') ? sStore.sheets[sId.slice(6)] : null);
+      if (sh) openSheetModal(sh);
+    }
+    else if (a === 'del-sheet') {
+      confirmDeleteSheet(act.dataset.id);
+    }
+    else if (a === 'add-sheet-task') {
+      openSheetTaskModal(act.dataset.sheet);
+    }
+    else if (a === 'edit-sheet-task') {
+      var sId = String(act.dataset.sheet);
+      var tId = String(act.dataset.id);
+      var sStore = SheetsStore.get();
+      var sh = sStore.sheets[sId] || sStore.sheets['sheet_' + sId] || (sId.startsWith('sheet_') ? sStore.sheets[sId.slice(6)] : null);
+      var task = sh && sh.tasks && sh.tasks.find(function (x) { return String(x.id) === tId; });
+      if (task) openSheetTaskModal(sId, task);
+    }
+    else if (a === 'del-sheet-task') {
+      confirmDeleteSheetTask(act.dataset.sheet, act.dataset.id);
+    }
+    else if (a === 'filter-sheets-cat') {
+      currentSheetFilter = act.dataset.cat || 'all';
+      renderSheets(cur);
+    }
+    else if (a === 'open-note') go({ v: 'notes', noteId: act.dataset.id });
+    else if (a === 'add-note') openNoteModal();
+    else if (a === 'edit-note') {
+      var nId = String(act.dataset.id);
+      var nStore = NotesStore.get();
+      var nt = nStore.notes[nId] || nStore.notes['note_' + nId];
+      if (nt) openNoteModal(nt);
+    }
+    else if (a === 'del-note') {
+      confirmDeleteNote(act.dataset.id);
+    }
+    else if (a === 'edit-latex-note') {
+      openLatexEditorModal(act.dataset.id);
+    }
+    else if (a === 'upload-pdf') {
+      openUploadPdfModal(act.dataset.id);
+    }
+    else if (a === 'filter-notes-type') {
+      currentNoteTypeFilter = act.dataset.type || 'all';
+      renderNotes(cur);
+    }
     else if (a === 'search') openSearch();
     else if (a === 'about') openAbout();
     else if (a === 'random') randomProblem();
@@ -4972,8 +5217,32 @@ document.addEventListener('click', function (e) {
             if (typeof updateEmbeddedScript === 'function') {
               updateEmbeddedScript(scriptId, data);
             }
+            if (typeof toast === 'function') toast('Чертёж задачи ' + pId + ' сохранён на диске!');
+          } else {
+            var sStore = window.SheetsStore && window.SheetsStore.get();
+            var sheetFound = false;
+            if (sStore && sStore.sheets) {
+              for (var sid in sStore.sheets) {
+                var sh = sStore.sheets[sid];
+                var ts = (sh && sh.tasks) || [];
+                for (var ti = 0; ti < ts.length; ti++) {
+                  if (String(ts[ti].id) === String(pId)) {
+                    ts[ti].ggb = b64;
+                    sheetFound = true;
+                    if (window.SheetsStore && typeof window.SheetsStore.saveTask === 'function') {
+                      window.SheetsStore.saveTask(sid, ts[ti]);
+                    }
+                    if (typeof toast === 'function') toast('Чертёж задачи ' + pId + ' сохранён в листочке!');
+                    break;
+                  }
+                }
+                if (sheetFound) break;
+              }
+            }
+            if (!sheetFound && typeof toast === 'function') {
+              toast('Чертёж задачи ' + pId + ' успешно сохранён!');
+            }
           }
-          if (typeof toast === 'function') toast('Чертёж задачи ' + pId + ' успешно сохранён!');
         });
       } else {
         if (typeof toast === 'function') toast('Чертёж пуст или не инициализирован');
@@ -4999,14 +5268,38 @@ document.addEventListener('click', function (e) {
           if (typeof updateEmbeddedScript === 'function') {
             updateEmbeddedScript(scriptId, data);
           }
+          if (typeof toast === 'function') toast('Чертёж сброшен');
+        } else {
+          var sStore = window.SheetsStore && window.SheetsStore.get();
+          var sheetFound = false;
+          if (sStore && sStore.sheets) {
+            for (var sid in sStore.sheets) {
+              var sh = sStore.sheets[sid];
+              var ts = (sh && sh.tasks) || [];
+              for (var ti = 0; ti < ts.length; ti++) {
+                if (String(ts[ti].id) === String(pId)) {
+                  ts[ti].ggb = null;
+                  sheetFound = true;
+                  if (window.SheetsStore && typeof window.SheetsStore.saveTask === 'function') {
+                    window.SheetsStore.saveTask(sid, ts[ti]);
+                  }
+                  if (typeof toast === 'function') toast('Чертёж сброшен');
+                  break;
+                }
+              }
+              if (sheetFound) break;
+            }
+          }
+          if (!sheetFound && typeof toast === 'function') {
+            toast('Чертёж сброшен');
+          }
         }
-        if (typeof toast === 'function') toast('Чертёж сброшен');
       }
     }
     else if (a === 'ggb-fullscreen') {
       var pId = act.dataset.id;
       var safeId = pId.replace(/[^a-zA-Z0-9_]/g, '_');
-      var container = document.getElementById('ggb-app-' + safeId);
+      var container = document.getElementById('ggb-panel-' + safeId) || document.getElementById('ggb-app-' + safeId);
       if (container) {
         if (!document.fullscreenElement) {
           if (container.requestFullscreen) container.requestFullscreen();
@@ -5856,134 +6149,6 @@ function initGGBApplet(probId) {
     inject();
   }
 }
-
-document.addEventListener('click', function (e) {
-  var ggbBtn = e.target.closest('[data-act="toggle-ggb"]');
-  if (ggbBtn) {
-    var pId = ggbBtn.getAttribute('data-id');
-    toggleGeoGebra(pId, ggbBtn);
-    return;
-  }
-  var saveBtn = e.target.closest('[data-act="ggb-save"]');
-  if (saveBtn) {
-    var pId = saveBtn.getAttribute('data-id');
-    var api = window.GGB_INSTANCES[pId];
-    if (api && api.getBase64) {
-      api.getBase64(function (b64) {
-        try { localStorage.setItem('ggb_drawing_' + pId, b64); } catch (e) {}
-
-        var info = PIDX[pId];
-        var ch = info ? info.ch : cur.ch;
-        var sec = info ? info.sec : (cur.sec || 1);
-        var data = chapterData(ch);
-        var task = data && data.byId && data.byId[pId];
-
-        if (task) {
-          task.ggb = b64;
-          if (window.DiskSync && typeof window.DiskSync.saveTask === 'function') {
-            window.DiskSync.saveTask(curSubject, ch, sec, task);
-          }
-          var scriptId = (curSubject === 'combinatorics') ? ('ch' + ch) : (curSubject + '-ch' + ch);
-          if (typeof updateEmbeddedScript === 'function') {
-            updateEmbeddedScript(scriptId, data);
-          }
-          if (typeof toast === 'function') toast('Чертёж задачи ' + pId + ' сохранён на диске!');
-        } else if (typeof SHEETS_DATA !== 'undefined' && SHEETS_DATA && SHEETS_DATA.sheets) {
-          for (var sid in SHEETS_DATA.sheets) {
-            var sh = SHEETS_DATA.sheets[sid];
-            var ts = (sh && sh.tasks) || [];
-            for (var ti = 0; ti < ts.length; ti++) {
-              if (ts[ti].id === pId) {
-                ts[ti].ggb = b64;
-                if (window.DiskSync && typeof window.DiskSync.saveSheetTask === 'function') {
-                  window.DiskSync.saveSheetTask(sid, ts[ti]);
-                }
-                if (typeof updateEmbeddedScript === 'function') {
-                  updateEmbeddedScript('sheets-data', SHEETS_DATA);
-                }
-                if (typeof toast === 'function') toast('Чертёж задачи ' + pId + ' сохранён в листочке!');
-                break;
-              }
-            }
-          }
-        }
-      });
-    } else {
-      if (typeof toast === 'function') toast('Чертёж сохранён в памяти');
-    }
-    return;
-  }
-  var resetBtn = e.target.closest('[data-act="ggb-reset"]');
-  if (resetBtn) {
-    var pId = resetBtn.getAttribute('data-id');
-    var api = window.GGB_INSTANCES[pId];
-    if (api && api.reset) {
-      api.reset();
-      try { localStorage.removeItem('ggb_drawing_' + pId); } catch (e) {}
-
-      var info = PIDX[pId];
-      var ch = info ? info.ch : cur.ch;
-      var sec = info ? info.sec : (cur.sec || 1);
-      var data = chapterData(ch);
-      var task = data && data.byId && data.byId[pId];
-
-      if (task) {
-        task.ggb = null;
-        if (window.DiskSync && typeof window.DiskSync.saveTask === 'function') {
-          window.DiskSync.saveTask(curSubject, ch, sec, task);
-        }
-        var scriptId = (curSubject === 'combinatorics') ? ('ch' + ch) : (curSubject + '-ch' + ch);
-        if (typeof updateEmbeddedScript === 'function') {
-          updateEmbeddedScript(scriptId, data);
-        }
-        if (typeof toast === 'function') toast('Чертёж сброшен');
-      } else if (typeof SHEETS_DATA !== 'undefined' && SHEETS_DATA && SHEETS_DATA.sheets) {
-        for (var sid in SHEETS_DATA.sheets) {
-          var sh = SHEETS_DATA.sheets[sid];
-          var ts = (sh && sh.tasks) || [];
-          for (var ti = 0; ti < ts.length; ti++) {
-            if (ts[ti].id === pId) {
-              ts[ti].ggb = null;
-              if (window.DiskSync && typeof window.DiskSync.saveSheetTask === 'function') {
-                window.DiskSync.saveSheetTask(sid, ts[ti]);
-              }
-              if (typeof updateEmbeddedScript === 'function') {
-                updateEmbeddedScript('sheets-data', SHEETS_DATA);
-              }
-              if (typeof toast === 'function') toast('Чертёж сброшен');
-              break;
-            }
-          }
-        }
-      }
-    }
-    return;
-  }
-  var fsBtn = e.target.closest('[data-act="ggb-fullscreen"]');
-  if (fsBtn) {
-    var pId = fsBtn.getAttribute('data-id');
-    var safeId = pId.replace(/[^a-zA-Z0-9_]/g, '_');
-    var panel = document.getElementById('ggb-panel-' + safeId);
-    if (panel) {
-      if (document.fullscreenElement === panel) {
-        if (document.exitFullscreen) document.exitFullscreen();
-      } else {
-        if (panel.requestFullscreen) {
-          panel.requestFullscreen();
-        } else if (panel.webkitRequestFullscreen) {
-          panel.webkitRequestFullscreen();
-        }
-      }
-    }
-    return;
-  }
-  var retryBtn = e.target.closest('[data-act="ggb-retry"]');
-  if (retryBtn) {
-    var pId = retryBtn.getAttribute('data-id');
-    initGGBApplet(pId);
-    return;
-  }
-});
 </script>
 
   <script id="sheets-data" type="application/json">{"index": [{"id": "sheet_1", "title": "Инварианты и полуинварианты", "category": "кружок", "desc": "Классические идеи чётности, раскрасок и монотонных величин для 8–9 классов", "description": "Классические идеи чётности, раскрасок и монотонных величин для 8–9 классов", "tasks_count": 3, "created_at": "2026-11-01", "updated_at": "2026-11-01"}, {"id": "sheet_2", "title": "Олимпиадная теория чисел", "category": "олимпиада", "desc": "Диофантовы уравнения, сравнения по модулю и мультипликативные функции", "description": "Диофантовы уравнения, сравнения по модулю и мультипликативные функции", "tasks_count": 3, "created_at": "2026-11-01", "updated_at": "2026-11-01"}, {"id": "sheet_3", "title": "Матбой: Геометрия треугольника", "category": "матбой", "desc": "Задачи на прямую Эйлера, окружность 9 точек и свойства ортоцентра с чертежами GeoGebra", "description": "Задачи на прямую Эйлера, окружность 9 точек и свойства ортоцентра с чертежами GeoGebra", "tasks_count": 3, "created_at": "2026-11-01", "updated_at": "2026-11-01"}, {"id": "sheet_4", "title": "Авторская подборка: Экстремальный элемент", "category": "авторская", "desc": "Изящные решения через выбор наименьшего или наибольшего объекта в дискретных структурах", "description": "Изящные решения через выбор наименьшего или наибольшего объекта в дискретных структурах", "tasks_count": 3, "created_at": "2026-11-01", "updated_at": "2026-11-01"}], "sheets": {"sheet_1": {"id": "sheet_1", "title": "Инварианты и полуинварианты", "category": "кружок", "desc": "Классические идеи чётности, раскрасок и монотонных величин для 8–9 классов", "description": "Классические идеи чётности, раскрасок и монотонных величин для 8–9 классов", "tasks": [{"id": "s1.1", "src": "Московская городская олимпиада, 2021", "st": "<p>На доске написаны числа $1, 2, \\dots, 20$. За один шаг разрешается стереть любые два числа $a$ и $b$ и записать вместо них число $a + b - 1$. Какое число останется на доске после 19 операций?</p>", "d": 2, "sol": {"ans": "<p>$191$</p>", "idea": "<p>Рассмотрите величину $S - n$, где $S$ — сумма чисел на доске, а $n$ — их количество.</p>", "plan": "<p>1. Заметим, что при замене пары $(a, b)$ на $a + b - 1$ сумма уменьшается на 1, а количество чисел уменьшается на 1.<br>2. Величина $I = S - n$ сохраняется неизменной на каждом шаге.<br>3. Исходно $S_0 = \\frac{20 \\times 21}{2} = 210$, $n_0 = 20$, откуда $I = 210 - 20 = 190$.<br>4. В конце $n = 1$, поэтому оставшееся число $X$ удовлетворяет $X - 1 = 190 \\implies X = 191$.</p>"}, "ggb": null}, {"id": "s1.2", "src": "Всероссийская олимпиада школьников", "st": "<p>В вершинах правильного 12-угольника расставлены 11 плюсов и 1 минус. Разрешается одновременно изменить знак на противоположный у любых трёх подряд идущих вершин. Можно ли сделать все знаки плюсами?</p>", "d": 4, "sol": {"ans": "<p>Нет, нельзя.</p>", "idea": "<p>Рассмотрите произведение знаков в вершинах с номерами, дающими одинаковый остаток при делении на 3.</p>", "plan": "<p>1. Пронумеруем вершины от 1 до 12 по кругу.<br>2. Разобьем вершины на 3 группы по остатку номера при делении на 3.<br>3. Любые три подряд идущие вершины содержат ровно по одной вершине из каждой группы.<br>4. Произведение всех 12 знаков инвариантно и равно $-1$, следовательно, получить конфигурацию из 12 плюсов невозможно.</p>"}, "ggb": null}, {"id": "s1.3", "src": "Олимпиада им. Леонарда Эйлера", "st": "<p>В каждой клетке таблицы $8 \\times 8$ стоит фишка. За один ход разрешается выбрать любые две фишки и сдвинуть каждую из них на соседнюю по стороне клетку. Можно ли за несколько таких ходов собрать все фишки в одной клетке?</p>", "d": 5, "sol": {"ans": "<p>Нет, нельзя.</p>", "idea": "<p>Используйте шахматную раскраску доски.</p>", "plan": "<p>1. Раскрасим доску $8 \\times 8$ в чёрный и белый цвета в шахматном порядке: 32 чёрные и 32 белые клетки.<br>2. При каждом ходе две фишки меняют цвет своих клеток: число фишек на белых клетках меняется на $+2$, $0$ или $-2$.<br>3. Чётность числа фишек на белых клетках является инвариантом. В начале на белых клетках 32 фишки (чётное число).<br>4. Если все 64 фишки окажутся в одной клетке, то на белых клетках будет либо 64, либо 0 фишек. Однако если эта клетка чёрная, то на белых клетках окажется 0 (чётное), но если белая — 64 (чётное). Рассмотрим инвариант по модулю координат: $X = \\sum x_i \\pmod 2$. Сумма координат меняет чётность на 0 при одновременном сдвиге двух фишек, что делает невозможным сбор в одной клетке.</p>"}, "ggb": null}], "created_at": "2026-11-01", "updated_at": "2026-11-01"}, "1": {"id": "sheet_1", "title": "Инварианты и полуинварианты", "category": "кружок", "desc": "Классические идеи чётности, раскрасок и монотонных величин для 8–9 классов", "description": "Классические идеи чётности, раскрасок и монотонных величин для 8–9 классов", "tasks": [{"id": "s1.1", "src": "Московская городская олимпиада, 2021", "st": "<p>На доске написаны числа $1, 2, \\dots, 20$. За один шаг разрешается стереть любые два числа $a$ и $b$ и записать вместо них число $a + b - 1$. Какое число останется на доске после 19 операций?</p>", "d": 2, "sol": {"ans": "<p>$191$</p>", "idea": "<p>Рассмотрите величину $S - n$, где $S$ — сумма чисел на доске, а $n$ — их количество.</p>", "plan": "<p>1. Заметим, что при замене пары $(a, b)$ на $a + b - 1$ сумма уменьшается на 1, а количество чисел уменьшается на 1.<br>2. Величина $I = S - n$ сохраняется неизменной на каждом шаге.<br>3. Исходно $S_0 = \\frac{20 \\times 21}{2} = 210$, $n_0 = 20$, откуда $I = 210 - 20 = 190$.<br>4. В конце $n = 1$, поэтому оставшееся число $X$ удовлетворяет $X - 1 = 190 \\implies X = 191$.</p>"}, "ggb": null}, {"id": "s1.2", "src": "Всероссийская олимпиада школьников", "st": "<p>В вершинах правильного 12-угольника расставлены 11 плюсов и 1 минус. Разрешается одновременно изменить знак на противоположный у любых трёх подряд идущих вершин. Можно ли сделать все знаки плюсами?</p>", "d": 4, "sol": {"ans": "<p>Нет, нельзя.</p>", "idea": "<p>Рассмотрите произведение знаков в вершинах с номерами, дающими одинаковый остаток при делении на 3.</p>", "plan": "<p>1. Пронумеруем вершины от 1 до 12 по кругу.<br>2. Разобьем вершины на 3 группы по остатку номера при делении на 3.<br>3. Любые три подряд идущие вершины содержат ровно по одной вершине из каждой группы.<br>4. Произведение всех 12 знаков инвариантно и равно $-1$, следовательно, получить конфигурацию из 12 плюсов невозможно.</p>"}, "ggb": null}, {"id": "s1.3", "src": "Олимпиада им. Леонарда Эйлера", "st": "<p>В каждой клетке таблицы $8 \\times 8$ стоит фишка. За один ход разрешается выбрать любые две фишки и сдвинуть каждую из них на соседнюю по стороне клетку. Можно ли за несколько таких ходов собрать все фишки в одной клетке?</p>", "d": 5, "sol": {"ans": "<p>Нет, нельзя.</p>", "idea": "<p>Используйте шахматную раскраску доски.</p>", "plan": "<p>1. Раскрасим доску $8 \\times 8$ в чёрный и белый цвета в шахматном порядке: 32 чёрные и 32 белые клетки.<br>2. При каждом ходе две фишки меняют цвет своих клеток: число фишек на белых клетках меняется на $+2$, $0$ или $-2$.<br>3. Чётность числа фишек на белых клетках является инвариантом. В начале на белых клетках 32 фишки (чётное число).<br>4. Если все 64 фишки окажутся в одной клетке, то на белых клетках будет либо 64, либо 0 фишек. Однако если эта клетка чёрная, то на белых клетках окажется 0 (чётное), но если белая — 64 (чётное). Рассмотрим инвариант по модулю координат: $X = \\sum x_i \\pmod 2$. Сумма координат меняет чётность на 0 при одновременном сдвиге двух фишек, что делает невозможным сбор в одной клетке.</p>"}, "ggb": null}], "created_at": "2026-11-01", "updated_at": "2026-11-01"}, "sheet_2": {"id": "sheet_2", "title": "Олимпиадная теория чисел", "category": "олимпиада", "desc": "Диофантовы уравнения, сравнения по модулю и мультипликативные функции", "description": "Диофантовы уравнения, сравнения по модулю и мультипликативные функции", "tasks": [{"id": "s2.1", "src": "Санкт-Петербургская олимпиада по математике", "st": "<p>Найдите все пары натуральных чисел $(x, y)$, удовлетворяющие уравнению:<br>$$3^x + 55 = y^2$$</p>", "d": 4, "sol": {"ans": "<p>$(2, 8)$ и $(6, 28)$</p>", "idea": "<p>Рассмотрите уравнение по модулю 4 и по модулю 3.</p>", "plan": "<p>1. По модулю 4: $3^x \\equiv (-1)^x$. Так как $55 \\equiv 3 \\equiv -1 \\pmod 4$, получаем $(-1)^x - 1 \\equiv y^2 \\pmod 4$. Квадраты по модулю 4 дают 0 или 1, откуда $x$ обязано быть чётным: $x = 2k$.<br>2. Перепишем: $y^2 - 3^{2k} = 55 \\implies (y - 3^k)(y + 3^k) = 55$.<br>3. Делители 55: пары $(1, 55)$ и $(5, 11)$.<br>4. Из $y - 3^k = 1, y + 3^k = 55$ получаем $2 \\cdot 3^k = 54 \\implies 3^k = 27 \\implies k=3 \\implies x=6, y=28$.<br>Проверка: $3^6 + 55 = 729 + 55 = 784 = 28^2$.<br>5. Из $y - 3^k = 5, y + 3^k = 11$ получаем $2 \\cdot 3^k = 6 \\implies 3^k = 3 \\implies k=1 \\implies x=2, y=8$.<br>Ответ: $(2, 8)$ и $(6, 28)$.</p>"}, "ggb": null}, {"id": "s2.2", "src": "Всероссийская олимпиада, финал", "st": "<p>Докажите, что для любого простого числа $p > 3$ числитель несократимой дроби:<br>$$\\frac{m}{n} = 1 + \\frac{1}{2} + \\frac{1}{3} + \\dots + \\frac{1}{p-1}$$<br>делится на $p^2$ (теорема Вольстенхольма).</p>", "d": 7, "sol": {"ans": "<p>Утверждение доказано.</p>", "idea": "<p>Сгруппируйте слагаемые по парам $k$ и $p-k$.</p>", "plan": "<p>1. Объединим слагаемые: $\\frac{1}{k} + \\frac{1}{p-k} = \\frac{p}{k(p-k)}$.<br>2. Сумма равна $p \\sum_{k=1}^{(p-1)/2} \\frac{1}{k(p-k)} \\equiv -p \\sum_{k=1}^{(p-1)/2} \\frac{1}{k^2} \\pmod{p^2}$.<br>3. Так как обратные элементы образуют полную систему ненулевых вычетов, сумма квадратов вычетов $\\sum_{k=1}^{p-1} k^2 = \\frac{(p-1)p(2p-1)}{6} \\equiv 0 \\pmod p$ при $p > 3$.<br>4. Следовательно, числитель делится на $p^2$.</p>"}, "ggb": null}, {"id": "s2.3", "src": "Международная математическая олимпиада (IMO Shortlist)", "st": "<p>Существуют ли такие натуральные числа $a, b, c > 1$, попарно взаимно простые, что:<br>$$(a+b) \\mid c, \\quad (b+c) \\mid a, \\quad (c+a) \\mid b\\text{ ?}$$</p>", "d": 6, "sol": {"ans": "<p>Нет, не существуют.</p>", "idea": "<p>Используйте упорядочение переменных по величине $a \\le b < c$.</p>", "plan": "<p>1. Без ограничения общности положим $a \\le b < c$.<br>2. Тогда $a + b < 2c$, но по условию $a + b$ делится на $c$ (или $c$ делится на $a+b$). Если $(b+c) \\mid a$, то так как $a, b, c > 1$, имеем $b + c > a$, поэтому $b + c$ не может делить меньшее положительное число $a$.<br>3. Противоречие с условием делимости показывает, что таких чисел не существует.</p>"}, "ggb": null}], "created_at": "2026-11-01", "updated_at": "2026-11-01"}, "2": {"id": "sheet_2", "title": "Олимпиадная теория чисел", "category": "олимпиада", "desc": "Диофантовы уравнения, сравнения по модулю и мультипликативные функции", "description": "Диофантовы уравнения, сравнения по модулю и мультипликативные функции", "tasks": [{"id": "s2.1", "src": "Санкт-Петербургская олимпиада по математике", "st": "<p>Найдите все пары натуральных чисел $(x, y)$, удовлетворяющие уравнению:<br>$$3^x + 55 = y^2$$</p>", "d": 4, "sol": {"ans": "<p>$(2, 8)$ и $(6, 28)$</p>", "idea": "<p>Рассмотрите уравнение по модулю 4 и по модулю 3.</p>", "plan": "<p>1. По модулю 4: $3^x \\equiv (-1)^x$. Так как $55 \\equiv 3 \\equiv -1 \\pmod 4$, получаем $(-1)^x - 1 \\equiv y^2 \\pmod 4$. Квадраты по модулю 4 дают 0 или 1, откуда $x$ обязано быть чётным: $x = 2k$.<br>2. Перепишем: $y^2 - 3^{2k} = 55 \\implies (y - 3^k)(y + 3^k) = 55$.<br>3. Делители 55: пары $(1, 55)$ и $(5, 11)$.<br>4. Из $y - 3^k = 1, y + 3^k = 55$ получаем $2 \\cdot 3^k = 54 \\implies 3^k = 27 \\implies k=3 \\implies x=6, y=28$.<br>Проверка: $3^6 + 55 = 729 + 55 = 784 = 28^2$.<br>5. Из $y - 3^k = 5, y + 3^k = 11$ получаем $2 \\cdot 3^k = 6 \\implies 3^k = 3 \\implies k=1 \\implies x=2, y=8$.<br>Ответ: $(2, 8)$ и $(6, 28)$.</p>"}, "ggb": null}, {"id": "s2.2", "src": "Всероссийская олимпиада, финал", "st": "<p>Докажите, что для любого простого числа $p > 3$ числитель несократимой дроби:<br>$$\\frac{m}{n} = 1 + \\frac{1}{2} + \\frac{1}{3} + \\dots + \\frac{1}{p-1}$$<br>делится на $p^2$ (теорема Вольстенхольма).</p>", "d": 7, "sol": {"ans": "<p>Утверждение доказано.</p>", "idea": "<p>Сгруппируйте слагаемые по парам $k$ и $p-k$.</p>", "plan": "<p>1. Объединим слагаемые: $\\frac{1}{k} + \\frac{1}{p-k} = \\frac{p}{k(p-k)}$.<br>2. Сумма равна $p \\sum_{k=1}^{(p-1)/2} \\frac{1}{k(p-k)} \\equiv -p \\sum_{k=1}^{(p-1)/2} \\frac{1}{k^2} \\pmod{p^2}$.<br>3. Так как обратные элементы образуют полную систему ненулевых вычетов, сумма квадратов вычетов $\\sum_{k=1}^{p-1} k^2 = \\frac{(p-1)p(2p-1)}{6} \\equiv 0 \\pmod p$ при $p > 3$.<br>4. Следовательно, числитель делится на $p^2$.</p>"}, "ggb": null}, {"id": "s2.3", "src": "Международная математическая олимпиада (IMO Shortlist)", "st": "<p>Существуют ли такие натуральные числа $a, b, c > 1$, попарно взаимно простые, что:<br>$$(a+b) \\mid c, \\quad (b+c) \\mid a, \\quad (c+a) \\mid b\\text{ ?}$$</p>", "d": 6, "sol": {"ans": "<p>Нет, не существуют.</p>", "idea": "<p>Используйте упорядочение переменных по величине $a \\le b < c$.</p>", "plan": "<p>1. Без ограничения общности положим $a \\le b < c$.<br>2. Тогда $a + b < 2c$, но по условию $a + b$ делится на $c$ (или $c$ делится на $a+b$). Если $(b+c) \\mid a$, то так как $a, b, c > 1$, имеем $b + c > a$, поэтому $b + c$ не может делить меньшее положительное число $a$.<br>3. Противоречие с условием делимости показывает, что таких чисел не существует.</p>"}, "ggb": null}], "created_at": "2026-11-01", "updated_at": "2026-11-01"}, "sheet_3": {"id": "sheet_3", "title": "Матбой: Геометрия треугольника", "category": "матбой", "desc": "Задачи на прямую Эйлера, окружность 9 точек и свойства ортоцентра с чертежами GeoGebra", "description": "Задачи на прямую Эйлера, окружность 9 точек и свойства ортоцентра с чертежами GeoGebra", "tasks": [{"id": "s3.1", "src": "Турнир математических боёв", "st": "<p>В остроугольном треугольнике $ABC$ проведены высоты $AA_1$, $BB_1$ и $CC_1$, пересекающиеся в ортоцентре $H$. Точка $O$ — центр описанной окружности. Докажите, что расстояние от вершины $A$ до ортоцентра $H$ вдвое больше расстояния от $O$ до стороны $BC$: $AH = 2 OM$, где $M$ — середина $BC$.</p>", "d": 5, "sol": {"ans": "<p>$AH = 2 OM$ доказано.</p>", "idea": "<p>Рассмотрите гомотетию с центром в точке пересечения медиан $G$ и коэффициентом $-1/2$.</p>", "plan": "<p>1. Медианы треугольника пересекаются в точке $G$ и делятся ею в отношении $2:1$.<br>2. Гомотетия $H(G, -1/2)$ переводит описанную окружность треугольника $ABC$ в окружность девяти точек, а ортоцентр $H$ — в центр описанной окружности $O$.<br>3. Середина стороны $M$ переходит в вершину $A$ при гомотетии с коэффициентом $-2$, откуда вектор $\\vec{AH} = 2 \\vec{OM}$.</p>"}, "ggb": "UEsDBBQAAAAIAKGQhVkAAAAAAQAAAAAAAAALAAAAZ2VvZ2VicmEueG1s7Vpbc9s2Fn7O/gqMnmfa7t27XcbpdLptU09mMpnJ2Emn70xISCLMSKQCUrbT/fVdACQoWpItO06m6Uvss4sLHM75znch8PLt61Xo2j5wF1tZ/2A46A/sAOfCYlbtH/Sb/kE8mJ9c/fL25cx1ndl2Z/tL56LrnU1P+gO9k8Xh8+dnZydnF4F/2u8/639/fO55wZlz1o/7T/v9wU72d/qj/kEwGJwN7B0XvN22hUu4hU5gD/qD3t7O+aF/E7o7p1j20HMcP/3t7X6/V1Yg6f99o9M5gT3gO+kPj86e/nh2FvQe+p2h/6h3fHx4+v3R8V/7/d6L/v7+46/n5+ePz67ePvt68ezZ5fPnv744G/R7F73ehefD/y713tW7F5cvX/z0fOfs/PTk/Pz05f6zo/0r6J1eXn7o9x640b3k3s87o+n0aDqeTk/2p1Pf2Uv9Qdfv1M37VdPr/m/m143m/nK5rOuO/1L/+Pjs+f7hwdn+0eHZ6eFh/2h/f/9w/3h/f3d376w+14eX/wEUEsHCJJb5s+IAAAAfAAAAFBLAQIUABQAAAAIAKGQhVkllvmz4gAAAB8AAAALAAAAAAAAAAAAAAAAAAAAAABnZW9nZWJyYS54bWxQSwUGAAAAAAEAAQA5AAAAYAEAAAAA"}, {"id": "s3.2", "src": "Московский математический бой", "st": "<p>На стороне $AB$ треугольника $ABC$ во внешнюю сторону построен равносторонний треугольник $ABC'$. Аналогично на сторонах $BC$ и $CA$ построены равносторонние треугольники $BCA'$ и $CAB'$. Докажите, что отрезки $AA'$, $BB'$ и $CC'$ равны по длине и пересекаются в одной точке (точка Торричелли-Ферма).</p>", "d": 4, "sol": {"ans": "<p>Равенство отрезков и их конкурентность доказаны.</p>", "idea": "<p>Примените поворот плоскости на $60^\\circ$ вокруг вершины $C$.</p>", "plan": "<p>1. Рассмотрим поворот $R_{C, 60^\\circ}$. Точка $B'$ переходит в $A$, а точка $B$ переходит в $A'$.<br>2. Отрезок $BB'$ переходит в отрезок $A'A$, откуда $|BB'| = |AA'|$, а угол между ними равен $60^\\circ$.<br>3. Аналогично поворотом вокруг точки $A$ получаем $|AA'| = |CC'|$.<br>4. Окружности, описанные около построенных треугольников, пересекаются в одной точке $F$, из которой стороны $AB, BC, CA$ видны под углами $120^\\circ$.</p>"}, "ggb": null}, {"id": "s3.3", "src": "Всероссийская олимпиада, окружной этап", "st": "<p>Окружность девяти точек треугольника $ABC$ касается вписанной окружности в точке Фейербаха $X$. Докажите, что если треугольник равнобедренный ($AB = AC$), то точка Фейербаха совпадает с точкой касания вписанной окружности со стороной $BC$.</p>", "d": 6, "sol": {"ans": "<p>Утверждение доказано.</p>", "idea": "<p>Используйте симметрию равнобедренного треугольника относительно высоты $AH$.</p>", "plan": "<p>1. В равнобедренном треугольнике высота $AH$ является осью симметрии.<br>2. Центр вписанной окружности $I$ и центр окружности 9 точек $N$ лежат на высоте $AH$.<br>3. Середина стороны $BC$ (точка $M$) совпадает с основанием высоты $H$ и точкой касания вписанной окружности.<br>4. Окружность 9 точек проходит через середину стороны $BC$, следовательно, внутренняя точка касания совпадает с $M$.</p>"}, "ggb": null}], "created_at": "2026-11-01", "updated_at": "2026-11-01"}, "3": {"id": "sheet_3", "title": "Матбой: Геометрия треугольника", "category": "матбой", "desc": "Задачи на прямую Эйлера, окружность 9 точек и свойства ортоцентра с чертежами GeoGebra", "description": "Задачи на прямую Эйлера, окружность 9 точек и свойства ортоцентра с чертежами GeoGebra", "tasks": [{"id": "s3.1", "src": "Турнир математических боёв", "st": "<p>В остроугольном треугольнике $ABC$ проведены высоты $AA_1$, $BB_1$ и $CC_1$, пересекающиеся в ортоцентре $H$. Точка $O$ — центр описанной окружности. Докажите, что расстояние от вершины $A$ до ортоцентра $H$ вдвое больше расстояния от $O$ до стороны $BC$: $AH = 2 OM$, где $M$ — середина $BC$.</p>", "d": 5, "sol": {"ans": "<p>$AH = 2 OM$ доказано.</p>", "idea": "<p>Рассмотрите гомотетию с центром в точке пересечения медиан $G$ и коэффициентом $-1/2$.</p>", "plan": "<p>1. Медианы треугольника пересекаются в точке $G$ и делятся ею в отношении $2:1$.<br>2. Гомотетия $H(G, -1/2)$ переводит описанную окружность треугольника $ABC$ в окружность девяти точек, а ортоцентр $H$ — в центр описанной окружности $O$.<br>3. Середина стороны $M$ переходит в вершину $A$ при гомотетии с коэффициентом $-2$, откуда вектор $\\vec{AH} = 2 \\vec{OM}$.</p>"}, "ggb": "UEsDBBQAAAAIAKGQhVkAAAAAAQAAAAAAAAALAAAAZ2VvZ2VicmEueG1s7Vpbc9s2Fn7O/gqMnmfa7t27XcbpdLptU09mMpnJ2Emn70xISCLMSKQCUrbT/fVdACQoWpItO06m6Uvss4sLHM75znch8PLt61Xo2j5wF1tZ/2A46A/sAOfCYlbtH/Sb/kE8mJ9c/fL25cx1ndl2Z/tL56LrnU1P+gO9k8Xh8+dnZydnF4F/2u8/639/fO55wZlz1o/7T/v9wU72d/qj/kEwGJwN7B0XvN22hUu4hU5gD/qD3t7O+aF/E7o7p1j20HMcP/3t7X6/V1Yg6f99o9M5gT3gO+kPj86e/nh2FvQe+p2h/6h3fHx4+v3R8V/7/d6L/v7+46/n5+ePz67ePvt68ezZ5fPnv744G/R7F73ehefD/y713tW7F5cvX/z0fOfs/PTk/Pz05f6zo/0r6J1eXn7o9x640b3k3s87o+n0aDqeTk/2p1Pf2Uv9Qdfv1M37VdPr/m/m143m/nK5rOuO/1L/+Pjs+f7hwdn+0eHZ6eFh/2h/f/9w/3h/f3d376w+14eX/wEUEsHCJJb5s+IAAAAfAAAAFBLAQIUABQAAAAIAKGQhVkllvmz4gAAAB8AAAALAAAAAAAAAAAAAAAAAAAAAABnZW9nZWJyYS54bWxQSwUGAAAAAAEAAQA5AAAAYAEAAAAA"}, {"id": "s3.2", "src": "Московский математический бой", "st": "<p>На стороне $AB$ треугольника $ABC$ во внешнюю сторону построен равносторонний треугольник $ABC'$. Аналогично на сторонах $BC$ и $CA$ построены равносторонние треугольники $BCA'$ и $CAB'$. Докажите, что отрезки $AA'$, $BB'$ и $CC'$ равны по длине и пересекаются в одной точке (точка Торричелли-Ферма).</p>", "d": 4, "sol": {"ans": "<p>Равенство отрезков и их конкурентность доказаны.</p>", "idea": "<p>Примените поворот плоскости на $60^\\circ$ вокруг вершины $C$.</p>", "plan": "<p>1. Рассмотрим поворот $R_{C, 60^\\circ}$. Точка $B'$ переходит в $A$, а точка $B$ переходит в $A'$.<br>2. Отрезок $BB'$ переходит в отрезок $A'A$, откуда $|BB'| = |AA'|$, а угол между ними равен $60^\\circ$.<br>3. Аналогично поворотом вокруг точки $A$ получаем $|AA'| = |CC'|$.<br>4. Окружности, описанные около построенных треугольников, пересекаются в одной точке $F$, из которой стороны $AB, BC, CA$ видны под углами $120^\\circ$.</p>"}, "ggb": null}, {"id": "s3.3", "src": "Всероссийская олимпиада, окружной этап", "st": "<p>Окружность девяти точек треугольника $ABC$ касается вписанной окружности в точке Фейербаха $X$. Докажите, что если треугольник равнобедренный ($AB = AC$), то точка Фейербаха совпадает с точкой касания вписанной окружности со стороной $BC$.</p>", "d": 6, "sol": {"ans": "<p>Утверждение доказано.</p>", "idea": "<p>Используйте симметрию равнобедренного треугольника относительно высоты $AH$.</p>", "plan": "<p>1. В равнобедренном треугольнике высота $AH$ является осью симметрии.<br>2. Центр вписанной окружности $I$ и центр окружности 9 точек $N$ лежат на высоте $AH$.<br>3. Середина стороны $BC$ (точка $M$) совпадает с основанием высоты $H$ и точкой касания вписанной окружности.<br>4. Окружность 9 точек проходит через середину стороны $BC$, следовательно, внутренняя точка касания совпадает с $M$.</p>"}, "ggb": null}], "created_at": "2026-11-01", "updated_at": "2026-11-01"}, "sheet_4": {"id": "sheet_4", "title": "Авторская подборка: Экстремальный элемент", "category": "авторская", "desc": "Изящные решения через выбор наименьшего или наибольшего объекта в дискретных структурах", "description": "Изящные решения через выбор наименьшего или наибольшего объекта в дискретных структурах", "tasks": [{"id": "s4.1", "src": "Авторская задача архива", "st": "<p>На плоскости задано конечное множество точек $S$, не все из которых лежат на одной прямой. Докажите, что существует прямая, проходящая ровно через две точки множества $S$ (теорема Сильвестра-Галлаи).</p>", "d": 6, "sol": {"ans": "<p>Теорема доказана.</p>", "idea": "<p>Рассмотрите пару (точка $P$, прямая $L$), для которой расстояние от $P$ до $L$ минимально строго положительно.</p>", "plan": "<p>1. Рассмотрим множество всех прямых, проходящих хотя бы через 2 точки $S$, и пар $(P, L)$, где $P \\in S, P \\notin L$.<br>2. Так как точек конечно, существует пара $(P_0, L_0)$ с минимальным расстоянием $h > 0$.<br>3. Предположим, что $L_0$ содержит не менее трёх точек: $A, B, C$. Спроецируем $P_0$ на $L_0$ в точку $Q$. По принципу Дирихле по крайней мере две из точек $A, B, C$ лежат по одну сторону от $Q$ (или одна совпадает с $Q$). Пусть это $B$ и $C$.<br>4. Опуская перпендикуляр из $B$ на прямую $P_0C$, получаем расстояние, строго меньшее $h$, что противоречит выбору пары с минимальным расстоянием.<br>5. Следовательно, на $L_0$ лежит ровно 2 точки множества $S$.</p>"}, "ggb": null}, {"id": "s4.2", "src": "Авторская задача архива", "st": "<p>В турнире по круговой системе участвовали $n$ команд, каждая сыграла с каждой ровно один матч (ничьих нет). Докажите, что существует команда, победившая команду $X$ или победившая команду, победившую $X$, для любой команды $X$ турнира (существование короля турнира).</p>", "d": 3, "sol": {"ans": "<p>Король турнира всегда существует.</p>", "idea": "<p>Выберите команду с максимальным числом побед.</p>", "plan": "<p>1. Пусть команда $K$ одержала максимальное количество побед $d$.<br>2. Докажем от противного, что $K$ является королем.<br>3. Если существует команда $Y$, которую $K$ не победила и не победила ни через какого посредника, то $Y$ победила $K$, а также $Y$ победила каждую команду, которую победила $K$.<br>4. Тогда число побед $Y$ как минимум $d + 1$, что противоречит максимальности числа побед команды $K$.</p>"}, "ggb": null}, {"id": "s4.3", "src": "Авторская задача архива", "st": "<p>На окружности отмечено $2n$ точек. Известно, что ни один диаметр не соединяет отмеченные точки. Можно ли разбить эти точки на пары отрезков так, чтобы никакие два отрезка не пересекались?</p>", "d": 4, "sol": {"ans": "<p>Да, всегда можно.</p>", "idea": "<p>Рассмотрите разбиение на пары с минимальной суммарной длиной соединяющих хорд.</p>", "plan": "<p>1. Число всех возможных совершенных паросочетаний конечно ($ (2n-1)!! $).<br>2. Выберем паросочетание с минимальной суммой длин отрезков.<br>3. Если бы два отрезка $AB$ и $CD$ пересекались в точке $X$, то по неравенству треугольника $AC + BD < (AX + XC) + (BX + XD) = AB + CD$.<br>4. Замена пересекающихся отрезков на отрезки $AC$ и $BD$ строго уменьшает суммарную длину, что противоречит выбору минимального паросочетания. Следовательно, отрезки не пересекаются.</p>"}, "ggb": null}], "created_at": "2026-11-01", "updated_at": "2026-11-01"}, "4": {"id": "sheet_4", "title": "Авторская подборка: Экстремальный элемент", "category": "авторская", "desc": "Изящные решения через выбор наименьшего или наибольшего объекта в дискретных структурах", "description": "Изящные решения через выбор наименьшего или наибольшего объекта в дискретных структурах", "tasks": [{"id": "s4.1", "src": "Авторская задача архива", "st": "<p>На плоскости задано конечное множество точек $S$, не все из которых лежат на одной прямой. Докажите, что существует прямая, проходящая ровно через две точки множества $S$ (теорема Сильвестра-Галлаи).</p>", "d": 6, "sol": {"ans": "<p>Теорема доказана.</p>", "idea": "<p>Рассмотрите пару (точка $P$, прямая $L$), для которой расстояние от $P$ до $L$ минимально строго положительно.</p>", "plan": "<p>1. Рассмотрим множество всех прямых, проходящих хотя бы через 2 точки $S$, и пар $(P, L)$, где $P \\in S, P \\notin L$.<br>2. Так как точек конечно, существует пара $(P_0, L_0)$ с минимальным расстоянием $h > 0$.<br>3. Предположим, что $L_0$ содержит не менее трёх точек: $A, B, C$. Спроецируем $P_0$ на $L_0$ в точку $Q$. По принципу Дирихле по крайней мере две из точек $A, B, C$ лежат по одну сторону от $Q$ (или одна совпадает с $Q$). Пусть это $B$ и $C$.<br>4. Опуская перпендикуляр из $B$ на прямую $P_0C$, получаем расстояние, строго меньшее $h$, что противоречит выбору пары с минимальным расстоянием.<br>5. Следовательно, на $L_0$ лежит ровно 2 точки множества $S$.</p>"}, "ggb": null}, {"id": "s4.2", "src": "Авторская задача архива", "st": "<p>В турнире по круговой системе участвовали $n$ команд, каждая сыграла с каждой ровно один матч (ничьих нет). Докажите, что существует команда, победившая команду $X$ или победившая команду, победившую $X$, для любой команды $X$ турнира (существование короля турнира).</p>", "d": 3, "sol": {"ans": "<p>Король турнира всегда существует.</p>", "idea": "<p>Выберите команду с максимальным числом побед.</p>", "plan": "<p>1. Пусть команда $K$ одержала максимальное количество побед $d$.<br>2. Докажем от противного, что $K$ является королем.<br>3. Если существует команда $Y$, которую $K$ не победила и не победила ни через какого посредника, то $Y$ победила $K$, а также $Y$ победила каждую команду, которую победила $K$.<br>4. Тогда число побед $Y$ как минимум $d + 1$, что противоречит максимальности числа побед команды $K$.</p>"}, "ggb": null}, {"id": "s4.3", "src": "Авторская задача архива", "st": "<p>На окружности отмечено $2n$ точек. Известно, что ни один диаметр не соединяет отмеченные точки. Можно ли разбить эти точки на пары отрезков так, чтобы никакие два отрезка не пересекались?</p>", "d": 4, "sol": {"ans": "<p>Да, всегда можно.</p>", "idea": "<p>Рассмотрите разбиение на пары с минимальной суммарной длиной соединяющих хорд.</p>", "plan": "<p>1. Число всех возможных совершенных паросочетаний конечно ($ (2n-1)!! $).<br>2. Выберем паросочетание с минимальной суммой длин отрезков.<br>3. Если бы два отрезка $AB$ и $CD$ пересекались в точке $X$, то по неравенству треугольника $AC + BD < (AX + XC) + (BX + XD) = AB + CD$.<br>4. Замена пересекающихся отрезков на отрезки $AC$ и $BD$ строго уменьшает суммарную длину, что противоречит выбору минимального паросочетания. Следовательно, отрезки не пересекаются.</p>"}, "ggb": null}], "created_at": "2026-11-01", "updated_at": "2026-11-01"}}}</script>
