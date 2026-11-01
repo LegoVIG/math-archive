@@ -1225,13 +1225,34 @@ class MathArchiveRequestHandler(SimpleHTTPRequestHandler):
                 norm_task["d"] = max(1, min(8, diff_int))
                 norm_tasks.append(norm_task)
 
+        pdfs = sheet_data.get("pdfs", [])
+        if not isinstance(pdfs, list):
+            pdfs = []
+        clean_pdfs = []
+        for pidx, pdf_item in enumerate(pdfs):
+            if isinstance(pdf_item, dict):
+                fname = str(pdf_item.get("file") or pdf_item.get("filename") or "").strip()
+                fpath = str(pdf_item.get("path") or (f"data/scans/{fname}" if fname else "")).strip()
+                clean_pdfs.append({
+                    "id": str(pdf_item.get("id") or f"pdf_{pidx+1}"),
+                    "title": str(pdf_item.get("title") or fname or f"PDF {pidx+1}").strip(),
+                    "file": fname,
+                    "path": fpath,
+                    "year": str(pdf_item.get("year") or "").strip(),
+                })
+
         now_date = time.strftime("%Y-%m-%d", time.localtime())
         clean_sheet = {
             "id": sheet_id,
             "title": title,
             "category": category,
+            "year": sheet_data.get("year", 2026),
+            "grade": str(sheet_data.get("grade", "")),
+            "years_range": str(sheet_data.get("years_range", "")),
+            "years_count": int(sheet_data.get("years_count", 0) or 0),
             "desc": desc,
             "description": desc,
+            "pdfs": clean_pdfs,
             "tasks": norm_tasks,
             "created_at": sheet_data.get("created_at", now_date),
             "updated_at": now_date,
@@ -1242,6 +1263,10 @@ class MathArchiveRequestHandler(SimpleHTTPRequestHandler):
 
         sheet_file = sheets_dir / f"sheet_{sheet_id}.json"
         atomic_write_json(sheet_file, clean_sheet)
+        if sheet_id.startswith("sheet_"):
+            alt_file = sheets_dir / f"{sheet_id}.json"
+            if alt_file.exists():
+                atomic_write_json(alt_file, clean_sheet)
 
         # Update sheets-index.json
         index_path = sheets_dir / "sheets-index.json"
@@ -1256,6 +1281,11 @@ class MathArchiveRequestHandler(SimpleHTTPRequestHandler):
             "id": sheet_id,
             "title": title,
             "category": category,
+            "year": clean_sheet["year"],
+            "grade": clean_sheet["grade"],
+            "years_range": clean_sheet["years_range"],
+            "years_count": clean_sheet["years_count"],
+            "pdfs_count": len(clean_pdfs),
             "desc": desc,
             "description": desc,
             "tasks_count": len(norm_tasks),
@@ -1290,6 +1320,8 @@ class MathArchiveRequestHandler(SimpleHTTPRequestHandler):
 
         sheets_dir = DATA_DIR / "sheets"
         sheet_file = sheets_dir / f"sheet_{sheet_id}.json"
+        if not sheet_file.exists() and sheet_id.startswith("sheet_"):
+            sheet_file = sheets_dir / f"{sheet_id}.json"
         if sheet_file.exists():
             try:
                 sheet_file.unlink()
@@ -1332,6 +1364,8 @@ class MathArchiveRequestHandler(SimpleHTTPRequestHandler):
 
         sheets_dir = DATA_DIR / "sheets"
         sheet_file = sheets_dir / f"sheet_{sheet_id}.json"
+        if not sheet_file.exists() and sheet_id.startswith("sheet_"):
+            sheet_file = sheets_dir / f"{sheet_id}.json"
         if not sheet_file.exists():
             return self.send_json(404, {"status": "not_found", "message": f"Sheet {sheet_id} not found"})
 
@@ -1388,6 +1422,8 @@ class MathArchiveRequestHandler(SimpleHTTPRequestHandler):
 
         sheets_dir = DATA_DIR / "sheets"
         sheet_file = sheets_dir / f"sheet_{sheet_id}.json"
+        if not sheet_file.exists() and sheet_id.startswith("sheet_"):
+            sheet_file = sheets_dir / f"{sheet_id}.json"
         if not sheet_file.exists():
             return self.send_json(404, {"status": "not_found", "message": f"Sheet {sheet_id} not found"})
 
